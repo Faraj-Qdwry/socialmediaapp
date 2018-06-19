@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Social Media App</string>
+    <string name="Name">Name :</string>
+    <string name="login">Login</string>
+    <string name="skip">Skip</string>
+    <string name="nameError">Please kee in you name</string>
+</resources>
