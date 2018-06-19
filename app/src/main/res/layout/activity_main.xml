@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Name"
+        android:text="@string/username"
         android:id="@+id/nameTextView"
         android:textSize="24dp"
         android:textColor="@color/black"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/Skip"
+        android:id="@+id/skipText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/skip"

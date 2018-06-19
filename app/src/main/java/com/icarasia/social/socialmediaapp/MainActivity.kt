@@ -1,86 +1,69 @@
 package com.icarasia.social.socialmediaapp
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
+import com.icarasia.social.socialmediaapp.API.kickApiCall
+import com.icarasia.social.socialmediaapp.DataModels.*
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.google.gson.Gson
+import android.content.Intent
+
 
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var userCall: Call<ArrayList<User>>
-    private lateinit var albumsCall: Call<ArrayList<albums>>
-    private lateinit var todosCall: Call<ArrayList<todos>>
-    lateinit var user : User
-    lateinit var todos: todos
-    lateinit var albums: albums
+    private lateinit var albumsCall: Call<ArrayList<album>>
+    private lateinit var todosCall: Call<ArrayList<todo>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         loginButton.setOnClickListener {
             var name = nameEditText.text
-
-            if (name.isNullOrEmpty()){
+            if (name.isNullOrEmpty()) {
                 nameEditText.error = getString(R.string.nameError)
-            }else{
-
+            } else {
                 userCall = RetrofitSectviceAPI.create().getUserDetails(name.toString())
-                kickApiCall(userCall) { user = it[0]
-                    nameTextView.text = user.username}
-
-                todosCall = RetrofitSectviceAPI.create().getUserTodos(user.id)
-                kickApiCall(todosCall) {todos = it[0]}
-
-
-//                userCall.enqueue(object : Callback<User> {
-//                    override fun onFailure(call: Call<User>?, t: Throwable?) {
-//                        Log.d("Failure", "Failure")
-//                    }
-//                    override fun onResponse(call: Call<User>?, response: Response<User>?) {
-//                        user = response?.body()!!
-//                    }
-//                })
-
-                //
-
-
-
-
+                kickApiCall(userCall) {
+                    if (it.size >= 1) callTodos(it[0]) else {
+                        nameEditText.error = getString(R.string.nameError)
+                    }
+                }
             }
         }
 
-
-        //todosCall = RetrofitSectviceAPI.create().getUserAlbums(user.id)
-
-
-        //albumsCall = RetrofitSectviceAPI.create().getUserTodos(user.id)
-
-
+        skipText.setOnClickListener { toPostsActivity() }
     }
 
-
-
-    fun <T> kickApiCall(call: Call<T>, operation: (T)->Unit )
-    {
-        val callback: Callback<T> = object : Callback<T> {
-            override fun onFailure(call: Call<T>?, t: Throwable?) {
-                failure(t)
-            }
-            override fun onResponse(call: Call<T>?, response: Response<T>){
-                operation(response?.body()!!)
-            }
+    private fun callTodos(user: User) {
+        todosCall = RetrofitSectviceAPI.create().getUserTodos(user.id)
+        kickApiCall(todosCall) {
+            user.todosNumber = it.size
+            callAlbums(user)
         }
-        call.enqueue(callback)
     }
 
-    private fun failure(t: Throwable?) {
-        Log.d("Failure",t.toString());
+    private fun callAlbums(user: User) {
+        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(user.id)
+        kickApiCall(albumsCall) {
+            user.albumsNumber = it.size
+            saveUser(user)
+        }
     }
 
+    private fun saveUser(user: User) {
+        getPreferences(Context.MODE_PRIVATE)
+                .edit()
+                .putString("User", Gson()
+                        .toJson(user))
+                .commit()
+        toPostsActivity()
+    }
+
+    private fun toPostsActivity() = startActivity(Intent(this@MainActivity, PostsActivity::class.java))
 }
