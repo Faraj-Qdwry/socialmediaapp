@@ -44,9 +44,9 @@ class PostsRecyclerViewAdapter(private val loadMoreData : ()->Unit,private val c
         private val postTitle: TextView = itemView.findViewById(R.id.postTitle)
         private val postBody: TextView = itemView.findViewById(R.id.postBody)
 
-        fun bindData(user: Post, click: (Post) -> Unit): Unit = with(user) {
+        fun bindData(post: Post, click: (Post) -> Unit): Unit = with(post) {
             itemView.setOnClickListener {
-                click(user)
+                click(post)
             }
             postTitle.text = title
             postBody.text = body

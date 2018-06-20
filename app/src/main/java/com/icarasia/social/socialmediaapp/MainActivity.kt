@@ -98,5 +98,6 @@ class MainActivity : AppCompatActivity() {
         toPostsActivity()
     }
 
-    private fun toPostsActivity() = startActivity(Intent(this@MainActivity, PostsActivity::class.java))
+    private fun toPostsActivity()
+            {startActivity(Intent(this@MainActivity, PostsActivity::class.java));this@MainActivity.finish()}
 }

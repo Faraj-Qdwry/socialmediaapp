@@ -9,7 +9,6 @@ class UserDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_details)
 
-
         //TODO get all users data and update UI elements
 
 
