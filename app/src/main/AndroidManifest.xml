@@ -22,7 +22,8 @@
         <activity
             android:name=".Posts.PostsActivity"
             android:label="@string/title_activity_posts"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".PostCommintsActivity"></activity>
     </application>
 
 </manifest>

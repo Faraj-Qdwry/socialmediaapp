@@ -1,5 +1,6 @@
 package com.icarasia.social.socialmediaapp.Posts
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +13,7 @@ import com.icarasia.social.socialmediaapp.R
 import kotlinx.android.synthetic.main.activity_posts.*
 import retrofit2.Call
 import android.view.View
-
+import com.icarasia.social.socialmediaapp.PostCommintsActivity
 
 
 class PostsActivity : AppCompatActivity() {
@@ -40,7 +41,6 @@ class PostsActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         postCall = RetrofitSectviceAPI.create().getPosts()
         kickApiCall(postCall) {
-            //Toast.makeText(this@PostsActivity,"Loading new Posts",Toast.LENGTH_SHORT).show()
                 postsAdapter.addData(it)
                 postsAdapter.notifyDataSetChanged()
                 progressBar.visibility = View.GONE
@@ -53,8 +53,14 @@ class PostsActivity : AppCompatActivity() {
     }
 
     private val click: (Post, Int) -> Unit =
-            { user , _ -> with(user){
-        //SecondActivity.startActivity(this@MainActivity, login, avatar_url)}
-    } }
-
+            { post , _ -> with(post){
+                startActivity(
+                with(Intent(this@PostsActivity,PostCommintsActivity::class.java)) {
+                    putExtra("id", post.id)
+                    putExtra("userId", post.userId)
+                    putExtra("title", post.title)
+                    putExtra("body", post.body)
+                })
+                }
+            }
 }
