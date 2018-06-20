@@ -20,7 +20,7 @@
         </activity>
         <activity android:name=".UserDetailsActivity" />
         <activity
-            android:name=".PostsActivity"
+            android:name=".Posts.PostsActivity"
             android:label="@string/title_activity_posts"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

@@ -5,4 +5,6 @@
     <string name="skip">Skip</string>
     <string name="nameError">Empty or Wrong username !!</string>
     <string name="title_activity_posts">PostsActivity</string>
+    <string name="postTitle">Title</string>
+    <string name="postbody">postBody</string>
 </resources>

@@ -10,8 +10,8 @@ import retrofit2.http.Query
 
 interface RetrofitSectviceAPI {
 
-//    @GET("users")
-//    fun getUserDetails(): Call<ArrayList<User>>
+    @GET("posts")
+    fun getPosts(): Call<ArrayList<Post>>
 
     @GET("users")
     fun getUserDetails(@Query("username") Name: String): Call<ArrayList<User>>

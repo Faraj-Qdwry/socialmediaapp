@@ -1,5 +1,6 @@
 package com.icarasia.social.socialmediaapp
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import com.google.gson.Gson
 import android.content.Intent
+import android.content.SharedPreferences
+import com.icarasia.social.socialmediaapp.Posts.PostsActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,10 +21,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userCall: Call<ArrayList<User>>
     private lateinit var albumsCall: Call<ArrayList<album>>
     private lateinit var todosCall: Call<ArrayList<todo>>
+    private lateinit var user : User
+    private var todoFinishFlage = false
+    private var albumsFinishFlage = false
+    private lateinit var progressDialog : ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        skipText.setOnClickListener { toPostsActivity() }
+
+        login()
+
+        // TODO check if user already logedin
+
+        //getSharedPreferences(Context.MODE_PRIVATE).getString("User","")
+
+    }
+
+    fun login(){
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Validating...")
+        progressDialog.setCancelable(false)
+
 
         loginButton.setOnClickListener {
             var name = nameEditText.text
@@ -29,30 +52,40 @@ class MainActivity : AppCompatActivity() {
                 nameEditText.error = getString(R.string.nameError)
             } else {
                 userCall = RetrofitSectviceAPI.create().getUserDetails(name.toString())
+                progressDialog.show()
+
                 kickApiCall(userCall) {
-                    if (it.size >= 1) callTodos(it[0]) else {
+                    if (it.size >= 1) {
+                        user = it[0]
+                        callTodos(user.id)
+                        callAlbums(user.id)
+                        toPostsActivity()
+                    }
+                    else {
+                        progressDialog.dismiss()
                         nameEditText.error = getString(R.string.nameError)
                     }
                 }
             }
         }
 
-        skipText.setOnClickListener { toPostsActivity() }
     }
 
-    private fun callTodos(user: User) {
-        todosCall = RetrofitSectviceAPI.create().getUserTodos(user.id)
+    private fun callTodos(userId: Int) {
+        todosCall = RetrofitSectviceAPI.create().getUserTodos(userId)
         kickApiCall(todosCall) {
             user.todosNumber = it.size
-            callAlbums(user)
+            todoFinishFlage = true
+            if (albumsFinishFlage) saveUser(user)
         }
     }
 
-    private fun callAlbums(user: User) {
-        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(user.id)
+    private fun callAlbums(userId: Int) {
+        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(userId)
         kickApiCall(albumsCall) {
             user.albumsNumber = it.size
-            saveUser(user)
+            albumsFinishFlage = true
+            if (albumsFinishFlage) saveUser(user)
         }
     }
 
@@ -61,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 .edit()
                 .putString("User", Gson()
                         .toJson(user))
-                .commit()
+                .apply()
         toPostsActivity()
     }
 
