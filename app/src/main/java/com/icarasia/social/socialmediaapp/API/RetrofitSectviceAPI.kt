@@ -4,18 +4,23 @@ import com.icarasia.social.socialmediaapp.DataModels.*
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
+import com.icarasia.social.socialmediaapp.DataModels.User
+import retrofit2.http.POST
+
+
 
 
 interface RetrofitSectviceAPI {
 
+    @POST("posts")
+    fun createPost(@Body post: Post): Call<Post>
+
     @GET("posts/{postId}/comments")
-    fun getCommetsForPost(@Path("postId") postId: String) : Call<ArrayList<Comment>>
+    fun getCommetsForPost(@Path("postId") postId: String): Call<ArrayList<Comment>>
 
     @GET("posts")
-    fun getPosts(@Query("page_number")page:Int,@Query("page_size")pageCount:Int): Call<ArrayList<Post>>
+    fun getPosts(@Query("page_number") page: Int, @Query("page_size") pageCount: Int): Call<ArrayList<Post>>
 
     @GET("users")
     fun getUserDetails(@Query("username") Name: String): Call<ArrayList<User>>
