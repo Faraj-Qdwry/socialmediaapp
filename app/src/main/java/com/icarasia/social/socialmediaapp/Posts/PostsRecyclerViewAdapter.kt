@@ -13,29 +13,31 @@ import com.icarasia.social.socialmediaapp.R
 fun ViewGroup.inflate(@LayoutRes id: Int): View = LayoutInflater.from(context).inflate(id, this, false)
 
 
-class PostsRecyclerViewAdapter(private val loadMoreData : ()->Unit,private val click: (Post, Int) -> Unit) : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
+class PostsRecyclerViewAdapter(private val loadMoreData : (Int, Int) -> Unit ,private val click: (Post, Int) -> Unit) : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
 
-    private val userList: ArrayList<Post> = ArrayList()
+    private val postList: ArrayList<Post> = ArrayList()
     private val totalCount = 500
+    private var page = 1
+    private var itemsPerPage = 20
 
     //region Override Methods
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             RecyclerViewHolder(parent.inflate(viewType))
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        if (position == getItemCount() - 1 && getItemCount() != totalCount){
-            loadMoreData()
+        if (position == getItemCount() - 1 && getItemCount() < totalCount){
+            loadMoreData(++page,itemsPerPage)
         }
-        holder.bindData(userList[position]) { user -> click(user, position)}
+        holder.bindData(postList[position]) { user -> click(user, position)}
     }
 
     override fun getItemViewType(position: Int) = R.layout.post_item_view
 
-    override fun getItemCount() = userList.size
+    override fun getItemCount() = postList.size
     //endregion
 
     //region Public Methods
-    fun addData(data: ArrayList<Post>) = userList.addAll(data)
+    fun addData(data: ArrayList<Post>) = postList.addAll(data)
     //endregion
 
 

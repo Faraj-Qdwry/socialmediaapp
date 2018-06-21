@@ -11,16 +11,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import com.google.gson.Gson
 import android.content.Intent
-import android.content.SharedPreferences
-import com.icarasia.social.socialmediaapp.Posts.PostsActivity
+import android.support.v4.app.FragmentActivity
+import com.icarasia.social.socialmediaapp.Fragments.NavigationActivity
 
 
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var userCall: Call<ArrayList<User>>
-    private lateinit var albumsCall: Call<ArrayList<album>>
-    private lateinit var todosCall: Call<ArrayList<todo>>
+    private lateinit var albumsCall: Call<ArrayList<Album>>
+    private lateinit var todosCall: Call<ArrayList<Todo>>
     private lateinit var user : User
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
@@ -98,6 +98,9 @@ class MainActivity : AppCompatActivity() {
         toPostsActivity()
     }
 
-    private fun toPostsActivity()
-            {startActivity(Intent(this@MainActivity, PostsActivity::class.java));this@MainActivity.finish()}
+    private fun toPostsActivity() {
+    //    startActivity(Intent(this@MainActivity, PostsActivity::class.java));this@MainActivity.finish()
+    //    NavigationActivity.StartActivity(this@MainActivity)
+        navigationActivity.StartActivity(this@MainActivity)
+    }
 }

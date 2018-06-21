@@ -1,6 +1,6 @@
 package com.icarasia.social.socialmediaapp.DataModels
 
-data class todo(
+data class Todo(
         val userId: Int,
         val id: Int,
         val title: String,

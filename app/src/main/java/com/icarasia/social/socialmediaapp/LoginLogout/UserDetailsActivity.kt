@@ -1,7 +1,8 @@
-package com.icarasia.social.socialmediaapp
+package com.icarasia.social.socialmediaapp.LoginLogout
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.icarasia.social.socialmediaapp.R
 
 class UserDetailsActivity : AppCompatActivity() {
 

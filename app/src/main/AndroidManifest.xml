@@ -18,12 +18,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserDetailsActivity" />
+        <activity android:name=".LoginLogout.UserDetailsActivity" />
         <activity
             android:name=".Posts.PostsActivity"
             android:label="@string/title_activity_posts"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PostCommintsActivity"></activity>
+        <activity android:name=".Comments.PostCommintsActivity" />
+        <activity
+            android:name=".Fragments.NavigationActivity"
+            android:label="@string/title_activity_navigation" />
+        <activity
+            android:name=".navigationActivity"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

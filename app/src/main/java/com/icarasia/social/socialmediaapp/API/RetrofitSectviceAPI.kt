@@ -5,22 +5,26 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
 interface RetrofitSectviceAPI {
 
+    @GET("posts/{postId}/comments")
+    fun getCommetsForPost(@Path("postId") postId: String) : Call<ArrayList<Comment>>
+
     @GET("posts")
-    fun getPosts(): Call<ArrayList<Post>>
+    fun getPosts(@Query("page_number")page:Int,@Query("page_size")pageCount:Int): Call<ArrayList<Post>>
 
     @GET("users")
     fun getUserDetails(@Query("username") Name: String): Call<ArrayList<User>>
 
     @GET("albums")
-    fun getUserAlbums(@Query("userId") id: Int): Call<ArrayList<album>>
+    fun getUserAlbums(@Query("userId") id: Int): Call<ArrayList<Album>>
 
     @GET("todos")
-    fun getUserTodos(@Query("userId") id: Int): Call<ArrayList<todo>>
+    fun getUserTodos(@Query("userId") id: Int): Call<ArrayList<Todo>>
 
     companion object Factory {
         fun create(): RetrofitSectviceAPI = Retrofit.Builder().apply {

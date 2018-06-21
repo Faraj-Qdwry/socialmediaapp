@@ -4,7 +4,26 @@
     <string name="login">Login</string>
     <string name="skip">Skip</string>
     <string name="nameError">Empty or Wrong username !!</string>
-    <string name="title_activity_posts">PostsActivity</string>
+    <string name="title_activity_posts">Posts</string>
     <string name="postTitle">Title</string>
     <string name="postbody">postBody</string>
+    <string name="commentName">commentName</string>
+    <string name="commentBody">commentBody</string>
+    <string name="title_activity_fragment">FragmentActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="MyProfile">My Profile</string>
+    <string name="drawer_open">drawer is open</string>
+    <string name="drawer_close">drawe is closed</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 </resources>
