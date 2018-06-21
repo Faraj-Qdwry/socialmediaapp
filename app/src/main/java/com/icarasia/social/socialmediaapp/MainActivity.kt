@@ -10,9 +10,6 @@ import com.icarasia.social.socialmediaapp.DataModels.*
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import com.google.gson.Gson
-import android.content.Intent
-import android.support.v4.app.FragmentActivity
-import com.icarasia.social.socialmediaapp.Fragments.NavigationActivity
 
 
 class MainActivity : AppCompatActivity() {

@@ -4,18 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
 import android.view.MenuItem
-import com.icarasia.social.socialmediaapp.Fragments.NavigationActivity
 import com.icarasia.social.socialmediaapp.LoginLogout.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
-import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
@@ -82,22 +78,13 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
+            R.id.orderAce -> {
                 // Handle the camera action
             }
-            R.id.nav_gallery -> {
+            R.id.orderDec -> {
 
             }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
+            R.id.delete -> {
 
             }
         }
