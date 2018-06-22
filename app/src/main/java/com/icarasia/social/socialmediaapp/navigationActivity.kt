@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.icarasia.social.socialmediaapp.LoginLogout.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
+import com.icarasia.social.socialmediaapp.Posts.PostsRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
@@ -53,12 +54,13 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
-                openFragment(UserDetailsFragment.newInstance("sdad","asd"))
+                openFragment(UserDetailsFragment.newInstance())
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
+
 
     companion object {
         fun StartActivity(context: Context){
@@ -80,6 +82,7 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.orderAce -> {
                 // Handle the camera action
+                PostsFragment.Sort(0)
             }
             R.id.orderDec -> {
 

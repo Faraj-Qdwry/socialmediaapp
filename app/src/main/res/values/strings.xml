@@ -29,4 +29,9 @@
     <string name="delete">delete</string>
     <string name="orderdec">orderDec</string>
     <string name="orderace">orderAce</string>
+    <string name="Logout">logout</string>
+    <string name="you_are_loged_out">You Are Loged Out</string>
+    <string name="writePost">Write A New Post</string>
+    <string name="title">Title</string>
+    <string name="what_s_in_your_mind">what\'s in your mind!!</string>
 </resources>

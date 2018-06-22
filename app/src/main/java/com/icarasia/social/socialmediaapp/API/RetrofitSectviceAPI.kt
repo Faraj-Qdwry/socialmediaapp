@@ -26,10 +26,10 @@ interface RetrofitSectviceAPI {
     fun getUserDetails(@Query("username") Name: String): Call<ArrayList<User>>
 
     @GET("albums")
-    fun getUserAlbums(@Query("userId") id: Int): Call<ArrayList<Album>>
+    fun getUserAlbums(@Query("userId") id: Int): Call<ArrayList<Any>>
 
     @GET("todos")
-    fun getUserTodos(@Query("userId") id: Int): Call<ArrayList<Todo>>
+    fun getUserTodos(@Query("userId") id: Int): Call<ArrayList<Any>>
 
     companion object Factory {
         fun create(): RetrofitSectviceAPI = Retrofit.Builder().apply {

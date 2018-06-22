@@ -2,22 +2,23 @@ package com.icarasia.social.socialmediaapp
 
 import android.app.ProgressDialog
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.kickApiCall
-import com.icarasia.social.socialmediaapp.DataModels.*
+import com.icarasia.social.socialmediaapp.DataModels.User
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
-import com.google.gson.Gson
 
 
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var userCall: Call<ArrayList<User>>
-    private lateinit var albumsCall: Call<ArrayList<Album>>
-    private lateinit var todosCall: Call<ArrayList<Todo>>
+    private lateinit var albumsCall: Call<ArrayList<Any>>
+    private lateinit var todosCall: Call<ArrayList<Any>>
     private lateinit var user : User
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
@@ -29,12 +30,21 @@ class MainActivity : AppCompatActivity() {
 
         skipText.setOnClickListener { toPostsActivity() }
 
-        login()
+        var pref = this.getSharedPreferences("UserDetails",Context.MODE_PRIVATE)
+        var user = pref.getString("User","")
 
-        // TODO check if user already logedin
+        if (user.isNullOrEmpty()){
+            login()
+        }else{
+            toPostsActivity()
+        }
 
-        //getSharedPreferences(Context.MODE_PRIVATE).getString("User","")
+    }
 
+    companion object {
+        fun startMainActivity(context: Context){
+            context.startActivity(Intent(context,MainActivity::class.java))
+        }
     }
 
     fun login(){
@@ -87,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveUser(user: User) {
-        getPreferences(Context.MODE_PRIVATE)
+        getSharedPreferences("UserDetails",Context.MODE_PRIVATE)
                 .edit()
                 .putString("User", Gson()
                         .toJson(user))
@@ -99,5 +109,6 @@ class MainActivity : AppCompatActivity() {
     //    startActivity(Intent(this@MainActivity, PostsActivity::class.java));this@MainActivity.finish()
     //    NavigationActivity.StartActivity(this@MainActivity)
         navigationActivity.StartActivity(this@MainActivity)
+        this.finish()
     }
 }

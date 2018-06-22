@@ -1,100 +1,91 @@
 package com.icarasia.social.socialmediaapp.LoginLogout
 
-import android.net.Uri
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import com.google.gson.Gson
+import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.DataModels.UserDetails
+import com.icarasia.social.socialmediaapp.MainActivity
 
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.navigationActivity
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [UserDetailsFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [UserDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class UserDetailsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_details, container, false)
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
+        with(inflater.inflate(R.layout.fragment_user_details, container, false)){
 
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        if (context is OnFragmentInteractionListener) {
-//            listener = context
-//        } else {
-//            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-//        }
-//    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UserDetailsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                UserDetailsFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+            with(context.getSharedPreferences("UserDetails", Context.MODE_PRIVATE)){
+                with(this.getString("User","")){
+                    if (this.isNullOrEmpty()){
+                        findViewById<ConstraintLayout>(R.id.containerOfAllViews).visibility = View.GONE
+                        findViewById<LinearLayout>(R.id.logedoutView).visibility = View.VISIBLE
+                    }else {
+                        //TODO setUp Login
+                        var listview = findViewById<ListView>(R.id.userListView)
+                        SetUpListView(listview , Gson().fromJson(this,User::class.java))
                     }
                 }
+                setUPLogin(findViewById<Button>(R.id.loginButtonFragment))
+                findViewById<Button>(R.id.logout).setUp(this)
+            }
+            return this
+        }
+
+    }
+
+    private fun SetUpListView(listview: ListView?,user: User) {
+        var arr = ArrayList<UserDetails>()
+
+        arr.add(UserDetails("Id",user.id.toString()))
+        arr.add(UserDetails("User Name",user.username))
+        arr.add(UserDetails("Name",user.name))
+        arr.add(UserDetails("Email",user.email))
+        arr.add(UserDetails("Phone",user.phone))
+        arr.add(UserDetails("Website",user.website))
+        arr.add(UserDetails("Albums",user.albumsNumber.toString()))
+        arr.add(UserDetails("Todos",user.todosNumber.toString()))
+        arr.add(UserDetails("Company",user.company.toString()))
+        arr.add(UserDetails("Address",user.address.toString()))
+
+
+        var adapt =  UserListAdapter(activity!!,arr)
+
+        listview!!.adapter = adapt
+    }
+
+    private fun Button.setUp(pref: SharedPreferences) {
+        setOnClickListener {
+            pref.edit().putString("User","").apply()
+            navigationActivity.StartActivity(this.context)
+        }
+    }
+
+
+    private fun setUPLogin(bt : Button) {
+        bt.setOnClickListener {
+            MainActivity.startMainActivity(this.context!!)
+        }
+    }
+
+
+    companion object {
+        @JvmStatic
+        fun newInstance()= UserDetailsFragment()
     }
 }
+
+
+
+
+
+
