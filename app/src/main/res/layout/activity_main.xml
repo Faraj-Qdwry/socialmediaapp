@@ -6,20 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".LoginLogout.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/username"
-        android:id="@+id/nameTextView"
-        android:textSize="24dp"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".2"
-        app:layout_constraintHorizontal_bias=".1"/>
-
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/nameEditText"
         android:layout_width="0dp"
@@ -27,9 +13,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias=".2"
-        android:layout_marginRight="20dp"
+        android:layout_margin="20dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/nameTextView"/>
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/loginButton"

@@ -10,11 +10,17 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.TextureView
+import android.widget.TextView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
+import kotlinx.android.synthetic.main.nav_header_navigation.*
 
 class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,11 +39,30 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        with(this.supportActionBar!!) { show(); title = "Posts" }
+        showActionbar()
 
         openFragment(fragmentposts)
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        var user = this.getSharedPreferences("UserDetails",Context.MODE_PRIVATE).getString("User","")
+        if (!user.isNullOrEmpty()) setUpheader(user)
+    }
+
+    private fun setUpheader(userJs: String) {
+        var user = Gson().fromJson<User>(userJs)
+
+        with(findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)){
+            findViewById<TextView>(R.id.userName).text = user.username
+            findViewById<TextView>(R.id.userEmail).text = user.email
+        }
+    }
+
+    inline fun <reified T> Gson.fromJson(json: String) =
+            this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+
+    private fun showActionbar() {
+        with(this.supportActionBar!!) { show(); title = "Posts" }
     }
 
 
@@ -51,6 +76,7 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
+                showActionbar()
                 openFragment(PostsFragment.newInstance())
                 return@OnNavigationItemSelectedListener true
             }
@@ -89,7 +115,7 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 fragmentposts.postsAdapter.sortDec()
             }
             R.id.delete -> {
-
+                fragmentposts.postsAdapter.clearSelected()
             }
         }
 

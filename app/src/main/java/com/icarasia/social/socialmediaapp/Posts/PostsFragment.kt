@@ -14,12 +14,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.kickApiCall
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
+import com.icarasia.social.socialmediaapp.DataModels.PostContainer
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.LoginLogout.MainActivity
 
@@ -28,8 +30,9 @@ import retrofit2.Call
 
 class PostsFragment : Fragment() {
 
-    val postsAdapter: PostsRecyclerViewAdapter by lazy { PostsRecyclerViewAdapter(callpost, click) }
+    val postsAdapter: PostsRecyclerViewAdapter by lazy { PostsRecyclerViewAdapter(postsToremove, callpost, click) }
     private lateinit var postCall: Call<ArrayList<Post>>
+    private lateinit var deletePostCall: Call<Post>
     private lateinit var postCreateCall: Call<Post>
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
@@ -60,15 +63,29 @@ class PostsFragment : Fragment() {
 
 
     private fun RecyclerView.setUp() {
+        setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
         this.adapter = postsAdapter
+    }
+
+    private val postsToremove: (ArrayList<PostContainer>) -> Unit = { listOfPostContainers ->
+        var listofPosts = ArrayList<Post>()
+        listOfPostContainers.forEach {listofPosts.add(it.post) }
+        listofPosts.forEach { deletePost(it) }
+    }
+
+    fun deletePost(post : Post){
+        deletePostCall = RetrofitSectviceAPI.create().deletePosts(post.id)
+        kickApiCall(deletePostCall) {
+            Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
+        }
     }
 
     private val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
         postCall = RetrofitSectviceAPI.create().getPosts(page, pageCount)
         kickApiCall(postCall) {
-            postsAdapter.addData(it)
+            postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
             postsAdapter.notifyDataSetChanged()
             progressFragment.visibility = View.GONE
         }
@@ -104,9 +121,7 @@ class PostsFragment : Fragment() {
                             if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
                                 sendApost(title.text.toString(), body.text.toString(), view)
                             } else {
-                                //TODO 2 cases
-                                title.setError("Please Write your post")
-                                snakeMessage(/*this.text.toString()*/"Empty Post", view)
+                                snakeMessage("Empty Post", view)
                             }
                         }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
@@ -127,8 +142,8 @@ class PostsFragment : Fragment() {
         var post = Post(user.id, 0, title, body)
         postCreateCall = RetrofitSectviceAPI.create().createPost(post)
         kickApiCall(postCreateCall) {
-            var newpost = ArrayList<Post>()
-            newpost.add(it)
+            var newpost = ArrayList<PostContainer>()
+            newpost.add(PostContainer(it, false))
             postsAdapter.addData(newpost)
             postsAdapter.notifyDataSetChanged()
             snakeMessage(it.toString(), view)

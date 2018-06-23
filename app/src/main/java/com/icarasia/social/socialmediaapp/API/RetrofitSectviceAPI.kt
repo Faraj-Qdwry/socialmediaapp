@@ -13,6 +13,9 @@ import retrofit2.http.POST
 
 interface RetrofitSectviceAPI {
 
+    @DELETE("posts/{postsId}")
+    fun deletePosts(@Path("postsId") postsId : Int) : Call<Post>
+
     @POST("posts")
     fun createPost(@Body post: Post): Call<Post>
 

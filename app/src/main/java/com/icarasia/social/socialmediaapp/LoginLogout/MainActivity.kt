@@ -110,8 +110,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toPostsActivity() {
-    //    startActivity(Intent(this@MainActivity, PostsActivity::class.java));this@MainActivity.finish()
-    //    NavigationActivity.StartActivity(this@MainActivity)
         navigationActivity.StartActivity(this@MainActivity)
         this.finish()
     }
