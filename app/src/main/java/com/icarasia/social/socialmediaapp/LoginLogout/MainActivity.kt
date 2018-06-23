@@ -1,4 +1,4 @@
-package com.icarasia.social.socialmediaapp
+package com.icarasia.social.socialmediaapp.LoginLogout
 
 import android.app.ProgressDialog
 import android.content.Context
@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.kickApiCall
 import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.navigationActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 
@@ -28,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        this.supportActionBar!!.hide()
+
         skipText.setOnClickListener { toPostsActivity() }
 
         var pref = this.getSharedPreferences("UserDetails",Context.MODE_PRIVATE)
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         fun startMainActivity(context: Context){
-            context.startActivity(Intent(context,MainActivity::class.java))
+            context.startActivity(Intent(context, MainActivity::class.java))
         }
     }
 

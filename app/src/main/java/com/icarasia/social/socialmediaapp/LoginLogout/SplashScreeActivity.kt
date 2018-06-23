@@ -1,10 +1,11 @@
-package com.icarasia.social.socialmediaapp
+package com.icarasia.social.socialmediaapp.LoginLogout
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
+import com.icarasia.social.socialmediaapp.R
 import kotlinx.android.synthetic.main.activity_splash_scree.*
 
 class SplashScreeActivity : AppCompatActivity() {
@@ -12,6 +13,8 @@ class SplashScreeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_scree)
+
+        this.supportActionBar!!.hide()
 
         var arr = ArrayList<TextView>()
         arr.add(textView2)

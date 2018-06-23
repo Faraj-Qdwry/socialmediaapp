@@ -23,6 +23,8 @@ class PostCommintsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_commints)
 
+        this.supportActionBar!!.title = "Comments"
+
         with(intent){
             postTitleComment.text = getStringExtra("title")
             postBodyComment.text = getStringExtra("body")

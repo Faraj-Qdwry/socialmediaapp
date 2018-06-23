@@ -25,7 +25,7 @@ class CommentsRecyclerViewAdapter(private val click: (Comment, Int) -> Unit) : R
         holder.bindData(commentsList[position]) { commnet -> click(commnet, position) }
     }
 
-    override fun getItemViewType(position: Int) = R.layout.comment_item_view
+    override fun getItemViewType(position: Int) = R.layout.recycler_item_view
 
     override fun getItemCount() = commentsList.size
     //endregion
@@ -37,8 +37,8 @@ class CommentsRecyclerViewAdapter(private val click: (Comment, Int) -> Unit) : R
 
     class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val commentName: TextView = itemView.findViewById(R.id.commentName)
-        private val commentBody: TextView = itemView.findViewById(R.id.commentBody)
+        private val commentName: TextView = itemView.findViewById(R.id.itemTitle)
+        private val commentBody: TextView = itemView.findViewById(R.id.itemBody)
 
         fun bindData(commnet: Comment, click: (Comment) -> Unit): Unit = with(commnet) {
             itemView.setOnClickListener {

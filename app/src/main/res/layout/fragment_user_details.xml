@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     style="@style/AppTheme.NoActionBar"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".LoginLogout.UserDetailsFragment">
+    tools:context=".UserDetalsFragmet.UserDetailsFragment">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"

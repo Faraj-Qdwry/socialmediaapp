@@ -1,6 +1,5 @@
-package com.icarasia.social.socialmediaapp.LoginLogout
+package com.icarasia.social.socialmediaapp.UserDetalsFragmet
 
-import android.app.Activity
 import android.content.Context
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater

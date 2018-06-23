@@ -10,14 +10,15 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.icarasia.social.socialmediaapp.LoginLogout.UserDetailsFragment
+import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
-import com.icarasia.social.socialmediaapp.Posts.PostsRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
 
 class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val fragmentposts: PostsFragment by lazy { PostsFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +33,18 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        with(this.supportActionBar!!) { show(); title = "Posts" }
 
-
-        openFragment(PostsFragment.newInstance())
+        openFragment(fragmentposts)
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
 
-    fun openFragment(fragment: Fragment){
+    fun openFragment(fragment: Fragment) {
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.framLayoutNavigation,fragment)
+                .replace(R.id.framLayoutNavigation, fragment)
                 .commit()
     }
 
@@ -55,6 +56,7 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
             R.id.navigation_dashboard -> {
                 openFragment(UserDetailsFragment.newInstance())
+                this.supportActionBar!!.hide()
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -63,7 +65,7 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
 
     companion object {
-        fun StartActivity(context: Context){
+        fun StartActivity(context: Context) {
             context.startActivity(Intent(context, navigationActivity::class.java))
         }
     }
@@ -81,11 +83,10 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.orderAce -> {
-                // Handle the camera action
-                PostsFragment.Sort(0)
+                fragmentposts.postsAdapter.sortAsc()
             }
             R.id.orderDec -> {
-
+                fragmentposts.postsAdapter.sortDec()
             }
             R.id.delete -> {
 

@@ -13,7 +13,7 @@ import com.icarasia.social.socialmediaapp.R
 fun ViewGroup.inflate(@LayoutRes id: Int): View = LayoutInflater.from(context).inflate(id, this, false)
 
 
-class PostsRecyclerViewAdapter(private val loadMoreData : (Int, Int) -> Unit ,private val click: (Post, Int) -> Unit) : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
+class PostsRecyclerViewAdapter(private val loadMoreData: (Int, Int) -> Unit, private val click: (Post, Int) -> Unit) : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
 
     private val postList: ArrayList<Post> = ArrayList()
     private val totalCount = 500
@@ -25,15 +25,25 @@ class PostsRecyclerViewAdapter(private val loadMoreData : (Int, Int) -> Unit ,pr
             RecyclerViewHolder(parent.inflate(viewType))
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        if (position == getItemCount() - 1 && getItemCount() < totalCount){
-            loadMoreData(++page,itemsPerPage)
+        if (position == getItemCount() - 1 && getItemCount() < totalCount) {
+            loadMoreData(++page, itemsPerPage)
         }
-        holder.bindData(postList[position]) { user -> click(user, position)}
+        holder.bindData(postList[position]) { user -> click(user, position) }
     }
 
-    override fun getItemViewType(position: Int) = R.layout.post_item_view
+    override fun getItemViewType(position: Int) = R.layout.recycler_item_view
 
     override fun getItemCount() = postList.size
+
+    fun sortAsc() {
+        postList.sortBy { it.title }
+        notifyDataSetChanged()
+    }
+
+    fun sortDec(){
+        postList.sortByDescending { it.title }
+        notifyDataSetChanged()
+    }
     //endregion
 
     //region Public Methods
@@ -43,8 +53,8 @@ class PostsRecyclerViewAdapter(private val loadMoreData : (Int, Int) -> Unit ,pr
 
     class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val postTitle: TextView = itemView.findViewById(R.id.postTitle)
-        private val postBody: TextView = itemView.findViewById(R.id.postBody)
+        private val postTitle: TextView = itemView.findViewById(R.id.itemTitle)
+        private val postBody: TextView = itemView.findViewById(R.id.itemBody)
 
         fun bindData(post: Post, click: (Post) -> Unit): Unit = with(post) {
             itemView.setOnClickListener {

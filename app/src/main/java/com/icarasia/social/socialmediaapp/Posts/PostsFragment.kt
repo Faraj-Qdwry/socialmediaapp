@@ -12,16 +12,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.kickApiCall
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.LoginLogout.MainActivity
 
 import com.icarasia.social.socialmediaapp.R
 import retrofit2.Call
@@ -32,14 +32,18 @@ class PostsFragment : Fragment() {
     private lateinit var postCall: Call<ArrayList<Post>>
     private lateinit var postCreateCall: Call<Post>
     private lateinit var progressFragment: ProgressBar
-    private var posterId : Int = 0
+    private lateinit var user: User
+    private var logedinFlag = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        posterId = (Gson().fromJson<User>(
-                this.context!!.getSharedPreferences("UserDetails", Context.MODE_PRIVATE).getString("User","").toString(),
-                User::class.java)).id
+        var userjson = this.activity!!.getSharedPreferences("UserDetails", Context.MODE_PRIVATE).getString("User", "").toString()
+        if (!userjson.isNullOrBlank()) {
+            user = Gson().fromJson<User>(userjson)
+            logedinFlag = true
+        }
+
         //Toast.makeText(this.context,posterId.toString(),Toast.LENGTH_SHORT).show()
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             findViewById<RecyclerView>(R.id.postsFragmentRecyclerView).setUp()
@@ -50,6 +54,10 @@ class PostsFragment : Fragment() {
         }
 
     }
+
+    inline fun <reified T> Gson.fromJson(json: String) =
+            this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+
 
     private fun RecyclerView.setUp() {
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
@@ -82,47 +90,49 @@ class PostsFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance() = PostsFragment()
-
-//        fun Sort(type : Int){
-//            postsAdapter
-//        }
     }
 
     private fun FloatingActionButton.setAddNewPost() {
         setOnClickListener { view ->
-
-            val poster = layoutInflater.inflate(R.layout.post_lyout, null)
-            val title = poster.findViewById<TextView>(R.id.postTitle)
-            val body = poster.findViewById<TextView>(R.id.postBody)
-
-            AlertDialog.Builder(this@PostsFragment.context)
-                    .setTitle("Write a new post")
-                    .setView(poster)
-                    .setPositiveButton("Post") { dialog, p1 ->
-
-                        if (!title.text.isNullOrBlank()&&!body.text.isNullOrEmpty()) {
-                            sendApost(title.text.toString(),body.text.toString(),view)
-                        } else {
-                            //TODO 2 cases
-                            title.setError("Please Write your post")
-                            snakeMessage(/*this.text.toString()*/"Empty Post", view)
+            if (logedinFlag) {
+                val poster = layoutInflater.inflate(R.layout.post_lyout, null)
+                val title = poster.findViewById<TextView>(R.id.postTitle)
+                val body = poster.findViewById<TextView>(R.id.postBody)
+                AlertDialog.Builder(this@PostsFragment.context)
+                        .setView(poster)
+                        .setPositiveButton("Post") { dialog, p1 ->
+                            if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
+                                sendApost(title.text.toString(), body.text.toString(), view)
+                            } else {
+                                //TODO 2 cases
+                                title.setError("Please Write your post")
+                                snakeMessage(/*this.text.toString()*/"Empty Post", view)
+                            }
                         }
-                    }
-                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                    .show()
+                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                        .show()
+            } else {
+                AlertDialog.Builder(this@PostsFragment.context)
+                        .setTitle("you are not Loged In")
+                        .setPositiveButton("Login") { dialog, _ ->
+                            MainActivity.startMainActivity(this@PostsFragment.context!!)
+                        }
+                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                        .show()
+            }
         }
     }
 
-    private fun sendApost(title: String,body:String, view: View) {
-        var post = Post(posterId,0,title,body)
+    private fun sendApost(title: String, body: String, view: View) {
+        var post = Post(user.id, 0, title, body)
         postCreateCall = RetrofitSectviceAPI.create().createPost(post)
         kickApiCall(postCreateCall) {
             var newpost = ArrayList<Post>()
             newpost.add(it)
             postsAdapter.addData(newpost)
             postsAdapter.notifyDataSetChanged()
-            snakeMessage(it.toString(),view)
-            snakeMessage("Your post was added Successfully with the ID : ${post.id}", view)
+            snakeMessage(it.toString(), view)
+            snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
         }
     }
 

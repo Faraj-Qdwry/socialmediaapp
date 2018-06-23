@@ -1,4 +1,4 @@
-package com.icarasia.social.socialmediaapp.LoginLogout
+package com.icarasia.social.socialmediaapp.UserDetalsFragmet
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,7 +12,7 @@ import android.widget.*
 import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.DataModels.UserDetails
-import com.icarasia.social.socialmediaapp.MainActivity
+import com.icarasia.social.socialmediaapp.LoginLogout.MainActivity
 
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.navigationActivity
@@ -58,7 +58,7 @@ class UserDetailsFragment : Fragment() {
         arr.add(UserDetails("Address",user.address.toString()))
 
 
-        var adapt =  UserListAdapter(activity!!,arr)
+        var adapt = UserListAdapter(activity!!, arr)
 
         listview!!.adapter = adapt
     }

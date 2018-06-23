@@ -14,7 +14,7 @@
             android:layout_margin="5dp"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/postTitle"
+                android:id="@+id/itemTitle"
                 android:layout_width="wrap_content"
                 android:text="@string/postTitle"
                 android:textColor="@color/black"
@@ -22,18 +22,13 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/postBody"
+                android:id="@+id/itemBody"
                 android:text="@string/postbody"
                 android:textSize="20dp"
                 android:layout_margin="5dp"
                 android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <android.support.v7.widget.AppCompatImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                />
         </LinearLayout>
     </android.support.design.circularreveal.cardview.CircularRevealCardView>
 
