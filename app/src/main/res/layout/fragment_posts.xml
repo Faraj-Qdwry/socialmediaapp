@@ -26,7 +26,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            tools:listitem="@layout/post_item_view" />
+            tools:listitem="@layout/recycler_item_view" />
 
 
         <android.support.design.widget.FloatingActionButton
@@ -52,6 +52,34 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias=".5"
             app:layout_constraintVertical_bias=".95" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/deleteConfirmation"
+            android:layout_width="73dp"
+            android:layout_height="59dp"
+            android:visibility="gone"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@android:drawable/ic_delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias=".80"
+            app:layout_constraintVertical_bias=".10"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/deleteCancel"
+            android:layout_width="73dp"
+            android:layout_height="59dp"
+            android:visibility="gone"
+            android:background="@color/colorAccent"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias=".20"
+            app:layout_constraintVertical_bias=".10"/>
 
 
     </android.support.constraint.ConstraintLayout>

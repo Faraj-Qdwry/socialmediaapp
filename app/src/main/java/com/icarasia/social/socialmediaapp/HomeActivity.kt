@@ -2,6 +2,8 @@ package com.icarasia.social.socialmediaapp
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
@@ -10,21 +12,20 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import android.view.TextureView
 import android.widget.TextView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.icarasia.social.socialmediaapp.API.NetworkChangeReceiver
 import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
-import kotlinx.android.synthetic.main.nav_header_navigation.*
 
-class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val fragmentposts: PostsFragment by lazy { PostsFragment() }
+    private val fragmentPost: PostsFragment by lazy { PostsFragment.newInstance() }
+    private val fragmentUserDetails: UserDetailsFragment by lazy { UserDetailsFragment.newInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,28 +42,36 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         showActionbar()
 
-        openFragment(fragmentposts)
+        fragmentPost.setShowHid(showActionbar,hidActionbar)
+        openFragment(fragmentPost)
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        var user = this.getSharedPreferences("UserDetails",Context.MODE_PRIVATE).getString("User","")
-        if (!user.isNullOrEmpty()) setUpheader(user)
+        registerReceiver(NetworkChangeReceiver(findViewById(R.id.drawer_layout)),
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
+
+        with(getUserlogedIn(this)){
+            if (this!=null){
+                setUpheader(this)
+            }
+        }
     }
 
-    private fun setUpheader(userJs: String) {
-        var user = Gson().fromJson<User>(userJs)
-
+    private fun setUpheader(user: User) {
         with(findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)){
-            findViewById<TextView>(R.id.userName).text = user.username
+            findViewById<TextView>(R.id.userName).text = "${user.username} ${user.id}"
             findViewById<TextView>(R.id.userEmail).text = user.email
         }
     }
 
-    inline fun <reified T> Gson.fromJson(json: String) =
-            this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
-    private fun showActionbar() {
+    private val showActionbar : ()-> Unit = {
         with(this.supportActionBar!!) { show(); title = "Posts" }
+    }
+    
+    private val hidActionbar : ()-> Unit = {
+        with(this.supportActionBar!!) { hide()}
     }
 
 
@@ -77,22 +86,23 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.navigation_home -> {
                 showActionbar()
-                openFragment(PostsFragment.newInstance())
+                openFragment(fragmentPost)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
-                openFragment(UserDetailsFragment.newInstance())
-                this.supportActionBar!!.hide()
+                openFragment(fragmentUserDetails)
+                hidActionbar()
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
+    
 
 
     companion object {
         fun StartActivity(context: Context) {
-            context.startActivity(Intent(context, navigationActivity::class.java))
+            context.startActivity(Intent(context, HomeActivity::class.java))
         }
     }
 
@@ -109,13 +119,13 @@ class navigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.orderAce -> {
-                fragmentposts.postsAdapter.sortAsc()
+                fragmentPost.postsAdapter.sortAsc()
             }
             R.id.orderDec -> {
-                fragmentposts.postsAdapter.sortDec()
+                fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-                fragmentposts.postsAdapter.clearSelected()
+                fragmentPost.postsAdapter.clearSelected()
             }
         }
 

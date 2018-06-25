@@ -1,5 +1,9 @@
 package com.icarasia.social.socialmediaapp.API
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
@@ -9,6 +13,7 @@ fun <T> kickApiCall(call: Call<T>, operation: (T) -> Unit) {
     val callback: Callback<T> = object : Callback<T> {
         override fun onFailure(call: Call<T>?, t: Throwable) {
             failure(t)
+
         }
 
         override fun onResponse(call: Call<T>?, response: Response<T>) {
@@ -23,3 +28,4 @@ fun <T> kickApiCall(call: Call<T>, operation: (T) -> Unit) {
 fun failure(t: Throwable) {
     Log.d("Failure", t.toString());
 }
+

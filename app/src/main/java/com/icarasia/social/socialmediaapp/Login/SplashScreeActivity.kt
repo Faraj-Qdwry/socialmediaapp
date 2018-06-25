@@ -1,4 +1,4 @@
-package com.icarasia.social.socialmediaapp.LoginLogout
+package com.icarasia.social.socialmediaapp.Login
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -34,7 +34,7 @@ class SplashScreeActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                MainActivity.startMainActivity(this@SplashScreeActivity)
+                LoginActivity.startMainActivity(this@SplashScreeActivity)
                 this@SplashScreeActivity.finish()
             }
         }.start()

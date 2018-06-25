@@ -9,13 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.DataModels.UserDetails
-import com.icarasia.social.socialmediaapp.LoginLogout.MainActivity
+import com.icarasia.social.socialmediaapp.Login.LoginActivity
+import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
+import com.icarasia.social.socialmediaapp.Login.sharedPreferencesName
 
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.navigationActivity
+import com.icarasia.social.socialmediaapp.HomeActivity
 
 class UserDetailsFragment : Fragment() {
 
@@ -24,19 +25,17 @@ class UserDetailsFragment : Fragment() {
 
         with(inflater.inflate(R.layout.fragment_user_details, container, false)){
 
-            with(context.getSharedPreferences("UserDetails", Context.MODE_PRIVATE)){
-                with(this.getString("User","")){
-                    if (this.isNullOrEmpty()){
-                        findViewById<ConstraintLayout>(R.id.containerOfAllViews).visibility = View.GONE
-                        findViewById<LinearLayout>(R.id.logedoutView).visibility = View.VISIBLE
-                    }else {
-                        //TODO setUp Login
-                        var listview = findViewById<ListView>(R.id.userListView)
-                        SetUpListView(listview , Gson().fromJson(this,User::class.java))
-                    }
+            with(getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)){
+                if (this==null){
+                    findViewById<ConstraintLayout>(R.id.containerOfAllViews).visibility = View.GONE
+                    findViewById<LinearLayout>(R.id.logedoutView).visibility = View.VISIBLE
+                    setUPLogin(findViewById(R.id.loginButtonFragment))
+                }else{
+                    var listview = findViewById<ListView>(R.id.userListView)
+                    SetUpListView(listview , this)
+                    findViewById<Button>(R.id.logout).setUp(this@UserDetailsFragment.activity
+                    !!.baseContext.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE))
                 }
-                setUPLogin(findViewById<Button>(R.id.loginButtonFragment))
-                findViewById<Button>(R.id.logout).setUp(this)
             }
             return this
         }
@@ -66,14 +65,14 @@ class UserDetailsFragment : Fragment() {
     private fun Button.setUp(pref: SharedPreferences) {
         setOnClickListener {
             pref.edit().putString("User","").apply()
-            navigationActivity.StartActivity(this.context)
+            HomeActivity.StartActivity(this.context)
         }
     }
 
 
     private fun setUPLogin(bt : Button) {
         bt.setOnClickListener {
-            MainActivity.startMainActivity(this.context!!)
+            LoginActivity.startMainActivity(this.context!!)
         }
     }
 

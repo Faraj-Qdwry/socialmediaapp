@@ -1,7 +1,7 @@
 package com.icarasia.social.socialmediaapp.Posts
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -15,52 +15,74 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.kickApiCall
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.DataModels.PostContainer
 import com.icarasia.social.socialmediaapp.DataModels.User
-import com.icarasia.social.socialmediaapp.LoginLogout.MainActivity
+import com.icarasia.social.socialmediaapp.Login.LoginActivity
+import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 
 import com.icarasia.social.socialmediaapp.R
+import kotlinx.android.synthetic.main.fragment_posts.view.*
 import retrofit2.Call
 
-class PostsFragment : Fragment() {
+class PostsFragment() : Fragment() {
 
-    val postsAdapter: PostsRecyclerViewAdapter by lazy { PostsRecyclerViewAdapter(postsToremove, callpost, click) }
+    val postsAdapter: PostsRecyclerViewAdapter by lazy {
+        PostsRecyclerViewAdapter(this@PostsFragment.activity!!.baseContext,
+                postsToremove,
+                callpost,
+                click,
+                setDeletionMode,
+                hidActionbar,
+                showActionbar) }
+
     private lateinit var postCall: Call<ArrayList<Post>>
     private lateinit var deletePostCall: Call<Post>
     private lateinit var postCreateCall: Call<Post>
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
     private var logedinFlag = false
+    private lateinit var showActionbar : ()-> Unit
+    private lateinit var hidActionbar: () -> Unit
+    private lateinit var confirmDelete : FloatingActionButton
+    private lateinit var cancleDelete : FloatingActionButton
+    private lateinit var addNewPostb : FloatingActionButton
+
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        var userjson = this.activity!!.getSharedPreferences("UserDetails", Context.MODE_PRIVATE).getString("User", "").toString()
-        if (!userjson.isNullOrBlank()) {
-            user = Gson().fromJson<User>(userjson)
-            logedinFlag = true
+        with(getUserlogedIn(this.activity!!.baseContext)){
+            if (this!=null){
+                user = this
+                logedinFlag = true
+            }
         }
 
-        //Toast.makeText(this.context,posterId.toString(),Toast.LENGTH_SHORT).show()
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             findViewById<RecyclerView>(R.id.postsFragmentRecyclerView).setUp()
-            findViewById<FloatingActionButton>(R.id.addNewPost).setAddNewPost()
+            addNewPostb = findViewById(R.id.addNewPost)
+            cancleDelete = findViewById(R.id.deleteCancel)
+            confirmDelete = findViewById(R.id.deleteConfirmation)
             progressFragment = findViewById(R.id.progressBarFragment)
             callpost(1, 20)
+
+            addNewPostb.setAddNewPost()
             return this
         }
 
     }
 
-    inline fun <reified T> Gson.fromJson(json: String) =
-            this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
+    fun setShowHid(show : ()-> Unit,hid:()->Unit){
+        showActionbar = show
+        hidActionbar = hid
+    }
 
     private fun RecyclerView.setUp() {
         setHasFixedSize(true)
@@ -80,6 +102,7 @@ class PostsFragment : Fragment() {
             Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
         }
     }
+
 
     private val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
@@ -109,6 +132,32 @@ class PostsFragment : Fragment() {
         fun newInstance() = PostsFragment()
     }
 
+
+    private val setDeletionMode : ()->Unit = {
+        cancleDelete.setUpDeleteCancle()
+        confirmDelete.setUpDeleteCofirmation()
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun FloatingActionButton.setUpDeleteCofirmation() {
+        //visibility = View.VISIBLE
+        setOnClickListener {
+            showActionbar()
+            visibility = View.GONE
+            deleteCancel.visibility = View.GONE
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun FloatingActionButton.setUpDeleteCancle() {
+        //visibility = View.GONE
+        setOnClickListener{
+            showActionbar()
+            visibility = View.GONE
+            confirmDelete.visibility = View.GONE
+        }
+    }
+
     private fun FloatingActionButton.setAddNewPost() {
         setOnClickListener { view ->
             if (logedinFlag) {
@@ -130,7 +179,7 @@ class PostsFragment : Fragment() {
                 AlertDialog.Builder(this@PostsFragment.context)
                         .setTitle("you are not Loged In")
                         .setPositiveButton("Login") { dialog, _ ->
-                            MainActivity.startMainActivity(this@PostsFragment.context!!)
+                            LoginActivity.startMainActivity(this@PostsFragment.context!!)
                         }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                         .show()
@@ -156,6 +205,8 @@ class PostsFragment : Fragment() {
                 .setAction("Action", null).show()
     }
 }
+
+
 
 
 
