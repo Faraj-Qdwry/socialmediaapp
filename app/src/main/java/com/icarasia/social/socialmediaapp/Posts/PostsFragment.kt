@@ -25,19 +25,23 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 
 import com.icarasia.social.socialmediaapp.R
+import kotlinx.android.synthetic.main.fragment_posts.*
 import kotlinx.android.synthetic.main.fragment_posts.view.*
 import retrofit2.Call
 
 class PostsFragment() : Fragment() {
+
+    //TODO Idea!   put the tow buttons in a view and show them and hid at same time , also add text counter on it
 
     val postsAdapter: PostsRecyclerViewAdapter by lazy {
         PostsRecyclerViewAdapter(this@PostsFragment.activity!!.baseContext,
                 postsToremove,
                 callpost,
                 click,
-                setDeletionMode,
                 hidActionbar,
-                showActionbar) }
+                showActionbar,
+                deleteCancel,
+                deleteConfirmation) }
 
     private lateinit var postCall: Call<ArrayList<Post>>
     private lateinit var deletePostCall: Call<Post>
@@ -70,8 +74,8 @@ class PostsFragment() : Fragment() {
             cancleDelete = findViewById(R.id.deleteCancel)
             confirmDelete = findViewById(R.id.deleteConfirmation)
             progressFragment = findViewById(R.id.progressBarFragment)
-            callpost(1, 20)
 
+            callpost(1, 20)
             addNewPostb.setAddNewPost()
             return this
         }
@@ -130,32 +134,6 @@ class PostsFragment() : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance() = PostsFragment()
-    }
-
-
-    private val setDeletionMode : ()->Unit = {
-        cancleDelete.setUpDeleteCancle()
-        confirmDelete.setUpDeleteCofirmation()
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun FloatingActionButton.setUpDeleteCofirmation() {
-        //visibility = View.VISIBLE
-        setOnClickListener {
-            showActionbar()
-            visibility = View.GONE
-            deleteCancel.visibility = View.GONE
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun FloatingActionButton.setUpDeleteCancle() {
-        //visibility = View.GONE
-        setOnClickListener{
-            showActionbar()
-            visibility = View.GONE
-            confirmDelete.visibility = View.GONE
-        }
     }
 
     private fun FloatingActionButton.setAddNewPost() {
