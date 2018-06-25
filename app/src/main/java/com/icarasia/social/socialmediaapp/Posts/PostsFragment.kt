@@ -40,8 +40,8 @@ class PostsFragment() : Fragment() {
                 click,
                 hidActionbar,
                 showActionbar,
-                deleteCancel,
-                deleteConfirmation) }
+                cancleDelete,
+                confirmDelete) }
 
     private lateinit var postCall: Call<ArrayList<Post>>
     private lateinit var deletePostCall: Call<Post>

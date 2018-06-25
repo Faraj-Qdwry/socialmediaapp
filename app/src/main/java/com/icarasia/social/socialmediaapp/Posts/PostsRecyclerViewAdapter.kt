@@ -101,8 +101,8 @@ class PostsRecyclerViewAdapter(private val conext: Context,
         deletionMod = true
         hidActionbar()
         notifyChange()
-        cancleButton.visibility = View.VISIBLE
-        confirmButton.visibility = View.VISIBLE
+        //cancleButton.visibility = View.VISIBLE
+        //confirmButton.visibility = View.VISIBLE
     }
 
     //endregion
