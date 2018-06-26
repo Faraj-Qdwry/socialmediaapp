@@ -42,7 +42,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         showActionbar()
 
-        fragmentPost.setShowHid(showActionbar,hidActionbar)
+        fragmentPost.setShowHidActionBar(showActionbar,hidActionbar)
         openFragment(fragmentPost)
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -116,7 +116,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.orderAce -> {
                 fragmentPost.postsAdapter.sortAsc()

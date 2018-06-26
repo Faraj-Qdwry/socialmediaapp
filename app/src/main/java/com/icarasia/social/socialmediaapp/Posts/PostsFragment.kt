@@ -1,6 +1,5 @@
 package com.icarasia.social.socialmediaapp.Posts
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
@@ -23,15 +23,10 @@ import com.icarasia.social.socialmediaapp.DataModels.PostContainer
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
-
 import com.icarasia.social.socialmediaapp.R
-import kotlinx.android.synthetic.main.fragment_posts.*
-import kotlinx.android.synthetic.main.fragment_posts.view.*
 import retrofit2.Call
 
-class PostsFragment() : Fragment() {
-
-    //TODO Idea!   put the tow buttons in a view and show them and hid at same time , also add text counter on it
+class PostsFragment : Fragment() {
 
     val postsAdapter: PostsRecyclerViewAdapter by lazy {
         PostsRecyclerViewAdapter(this@PostsFragment.activity!!.baseContext,
@@ -40,20 +35,22 @@ class PostsFragment() : Fragment() {
                 click,
                 hidActionbar,
                 showActionbar,
-                cancleDelete,
-                confirmDelete) }
+                deletionGroupRelativeLayout,
+                selectionCounterTextView)}
 
+    private var logedinFlag = false
     private lateinit var postCall: Call<ArrayList<Post>>
     private lateinit var deletePostCall: Call<Post>
     private lateinit var postCreateCall: Call<Post>
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
-    private var logedinFlag = false
     private lateinit var showActionbar : ()-> Unit
     private lateinit var hidActionbar: () -> Unit
     private lateinit var confirmDelete : FloatingActionButton
     private lateinit var cancleDelete : FloatingActionButton
     private lateinit var addNewPostb : FloatingActionButton
+    private lateinit var deletionGroupRelativeLayout: RelativeLayout
+    private lateinit var selectionCounterTextView: TextView
 
 
 
@@ -69,12 +66,14 @@ class PostsFragment() : Fragment() {
         }
 
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
-            findViewById<RecyclerView>(R.id.postsFragmentRecyclerView).setUp()
             addNewPostb = findViewById(R.id.addNewPost)
-            cancleDelete = findViewById(R.id.deleteCancel)
+            cancleDelete = findViewById(R.id.deleteCancelation)
             confirmDelete = findViewById(R.id.deleteConfirmation)
             progressFragment = findViewById(R.id.progressBarFragment)
+            deletionGroupRelativeLayout = findViewById(R.id.deletionGroup)
+            selectionCounterTextView = findViewById(R.id.selectionCounter)
 
+            findViewById<RecyclerView>(R.id.postsFragmentRecyclerView).setUp()
             callpost(1, 20)
             addNewPostb.setAddNewPost()
             return this
@@ -82,8 +81,22 @@ class PostsFragment() : Fragment() {
 
     }
 
+    private fun setUpdeletConfirmation(postsAdapter: PostsRecyclerViewAdapter) {
+        confirmDelete.setOnClickListener {
+            postsAdapter.clearSelected()
+            deletionGroupRelativeLayout.visibility = View.GONE
+        }
+    }
 
-    fun setShowHid(show : ()-> Unit,hid:()->Unit){
+    private fun setUpdeletCancelation(postsAdapter: PostsRecyclerViewAdapter) {
+        cancleDelete.setOnClickListener {
+            postsAdapter.cancelSelection()
+            deletionGroupRelativeLayout.visibility = View.GONE
+        }
+    }
+
+
+    fun setShowHidActionBar(show : ()-> Unit,hid:()->Unit){
         showActionbar = show
         hidActionbar = hid
     }
@@ -92,6 +105,12 @@ class PostsFragment() : Fragment() {
         setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
         this.adapter = postsAdapter
+        if(deletionMod){
+            hidActionbar()
+            deletionGroupRelativeLayout.visibility = View.VISIBLE
+        }
+        setUpdeletConfirmation(postsAdapter)
+        setUpdeletCancelation(postsAdapter)
     }
 
     private val postsToremove: (ArrayList<PostContainer>) -> Unit = { listOfPostContainers ->
@@ -183,9 +202,3 @@ class PostsFragment() : Fragment() {
                 .setAction("Action", null).show()
     }
 }
-
-
-
-
-
-

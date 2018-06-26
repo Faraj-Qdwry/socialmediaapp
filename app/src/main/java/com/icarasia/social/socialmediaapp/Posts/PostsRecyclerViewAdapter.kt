@@ -1,15 +1,14 @@
 package com.icarasia.social.socialmediaapp.Posts
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.support.annotation.LayoutRes
 import android.support.design.circularreveal.cardview.CircularRevealCardView
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.DataModels.PostContainer
@@ -23,22 +22,21 @@ fun ViewGroup.inflate(@LayoutRes id: Int): View =
 
 var deletionMod: Boolean = false
 lateinit var thisUser: User
-
 class PostsRecyclerViewAdapter(private val conext: Context,
                                private val removeAll: (ArrayList<PostContainer>) -> Unit,
                                private val loadMoreData: (Int, Int) -> Unit,
                                private val click: (Post, Int) -> Unit,
                                private val hidActionbar: () -> Unit,
                                private val showActionbar: () -> Unit,
-                               private val cancleButton: FloatingActionButton,
-                               private val confirmButton: FloatingActionButton)
-
+                               private val deletionGroupRelativeLayout: RelativeLayout,
+                               private val selectionCounterTextView: TextView)
     : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
 
     private val postList: ArrayList<PostContainer> = ArrayList()
     private val totalCount = 500
     private var page = 1
     private var itemsPerPage = 20
+    private var selectionCounter = mutableListOf(0)
 
 
 
@@ -51,6 +49,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
             loadMoreData(++page, itemsPerPage)
         }
         holder.bindData(
+                selectionCounter,
                 activateDeletionMode,
                 notifyChange,
                 conext,
@@ -60,6 +59,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
 
     private val notifyChange: () -> Unit = {
         notifyDataSetChanged()
+        selectionCounterTextView.text = "${selectionCounter[0]}"
     }
 
     //region Override + Sorting Methods
@@ -90,19 +90,25 @@ class PostsRecyclerViewAdapter(private val conext: Context,
         removeAll(dataToremove)
     }
 
+    fun cancelSelection() {
+        postList.forEach { it.checked = false }
+        deActivateDeletionMode()
+    }
+
     private val deActivateDeletionMode: () -> Unit = {
         deletionMod = false
         showActionbar()
         notifyChange()
-
+        deletionGroupRelativeLayout.visibility = View.GONE
+        selectionCounter[0] = 0
     }
 
     private val activateDeletionMode: () -> Unit = {
         deletionMod = true
         hidActionbar()
         notifyChange()
-        //cancleButton.visibility = View.VISIBLE
-        //confirmButton.visibility = View.VISIBLE
+        deletionGroupRelativeLayout.visibility = View.VISIBLE
+        selectionCounter[0] = 0
     }
 
     //endregion
@@ -115,6 +121,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
         private val cardView: CircularRevealCardView = itemView.findViewById(R.id.cardContainer)
 
         fun bindData(
+                selectionCounter : MutableList<Int>,
                 activateDeletionMode: () -> Unit,
                 notify: () -> Unit,
                 conext: Context,
@@ -124,13 +131,13 @@ class PostsRecyclerViewAdapter(private val conext: Context,
 
                 itemView.setOnClickListener {
                     if (deletionMod)
-                        ifcanBeCheckedCheckit(postContainer, notify)
+                        ifPostCanBeCheckedCheckit(postContainer, notify,selectionCounter)
                     else
                         click(post)
                 }
 
                 itemView.setOnLongClickListener {
-                    longClikeed(activateDeletionMode, conext, postContainer, notify)
+                    longClikeed(activateDeletionMode, conext, postContainer, notify,selectionCounter)
                 }
 
                 postTitle.text = "${post.userId}  ${post.title}"
@@ -146,25 +153,32 @@ class PostsRecyclerViewAdapter(private val conext: Context,
                 activateDeletionMode: () -> Unit,
                 conext: Context,
                 postContainer: PostContainer,
-                notify: () -> Unit): Boolean {
+                notify: () -> Unit,
+                selectionCounter: MutableList<Int>): Boolean {
 
             with(getUserlogedIn(conext)) {
                 if (this != null) {
                     activateDeletionMode()
                     thisUser = this
-                    ifcanBeCheckedCheckit(postContainer, notify)
+                    ifPostCanBeCheckedCheckit(postContainer, notify, selectionCounter)
                 }
             }
             return true
         }
 
-        private fun ifcanBeCheckedCheckit(postContainer: PostContainer, notify: () -> Unit) {
+        private fun ifPostCanBeCheckedCheckit(postContainer: PostContainer,
+                                              notify: () -> Unit,
+                                              selectionCounter: MutableList<Int>) {
             if (postContainer.post.userId == thisUser.id) {
-                postContainer.checked = true
+                if (!postContainer.checked){
+                    postContainer.checked = true
+                    selectionCounter[0] += 1
+                }
             }
             colorCard(cardView, postContainer)
             notify()
         }
+
 
         private fun colorCard(cardView: CircularRevealCardView, container: PostContainer) {
             if (deletionMod) {

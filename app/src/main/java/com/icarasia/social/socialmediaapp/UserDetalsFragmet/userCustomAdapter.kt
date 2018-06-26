@@ -17,8 +17,8 @@ class UserListAdapter(private var activity: FragmentActivity, private var items:
         var txtComment: TextView? = null
 
         init {
-            this.txtName = row?.findViewById<TextView>(R.id.attribute)
-            this.txtComment = row?.findViewById<TextView>(R.id.value)
+            this.txtName = row?.findViewById(R.id.attribute)
+            this.txtComment = row?.findViewById(R.id.value)
         }
     }
 
