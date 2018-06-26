@@ -53,8 +53,6 @@ class PostsFragment : Fragment() {
     private lateinit var selectionCounterTextView: TextView
 
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -81,17 +79,17 @@ class PostsFragment : Fragment() {
 
     }
 
+
+
     private fun setUpdeletConfirmation(postsAdapter: PostsRecyclerViewAdapter) {
         confirmDelete.setOnClickListener {
             postsAdapter.clearSelected()
-            deletionGroupRelativeLayout.visibility = View.GONE
         }
     }
 
     private fun setUpdeletCancelation(postsAdapter: PostsRecyclerViewAdapter) {
         cancleDelete.setOnClickListener {
             postsAdapter.cancelSelection()
-            deletionGroupRelativeLayout.visibility = View.GONE
         }
     }
 
@@ -105,12 +103,19 @@ class PostsFragment : Fragment() {
         setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
         this.adapter = postsAdapter
-        if(deletionMod){
+
+        //Toast.makeText(this@PostsFragment.context,"RecycerView Set Up",Toast.LENGTH_LONG).show()
+
+        if (deletionMod){
             hidActionbar()
             deletionGroupRelativeLayout.visibility = View.VISIBLE
         }
+
+        postsAdapter.setUpDeletionGroup(deletionGroupRelativeLayout,selectionCounterTextView)
+
         setUpdeletConfirmation(postsAdapter)
         setUpdeletCancelation(postsAdapter)
+
     }
 
     private val postsToremove: (ArrayList<PostContainer>) -> Unit = { listOfPostContainers ->

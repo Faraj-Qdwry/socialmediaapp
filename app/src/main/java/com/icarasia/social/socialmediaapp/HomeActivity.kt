@@ -18,6 +18,7 @@ import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
+import com.icarasia.social.socialmediaapp.Posts.deletionMod
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
@@ -124,6 +125,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
+                if (deletionMod)
                 fragmentPost.postsAdapter.clearSelected()
             }
         }

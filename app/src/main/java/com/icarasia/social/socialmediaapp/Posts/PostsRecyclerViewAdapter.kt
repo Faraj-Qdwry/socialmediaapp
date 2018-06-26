@@ -28,8 +28,8 @@ class PostsRecyclerViewAdapter(private val conext: Context,
                                private val click: (Post, Int) -> Unit,
                                private val hidActionbar: () -> Unit,
                                private val showActionbar: () -> Unit,
-                               private val deletionGroupRelativeLayout: RelativeLayout,
-                               private val selectionCounterTextView: TextView)
+                               private var deletionGroupRelativeLayout: RelativeLayout,
+                               private var selectionCounterTextView: TextView)
     : RecyclerView.Adapter<PostsRecyclerViewAdapter.RecyclerViewHolder>() {
 
     private val postList: ArrayList<PostContainer> = ArrayList()
@@ -80,6 +80,13 @@ class PostsRecyclerViewAdapter(private val conext: Context,
 
     //region Public Methods
     fun addData(data: ArrayList<PostContainer>) = postList.addAll(data)
+
+
+    fun setUpDeletionGroup(relativeLayout: RelativeLayout, selectionCounterText: TextView){
+        deletionGroupRelativeLayout = relativeLayout
+        selectionCounterTextView = selectionCounterText
+        selectionCounterTextView.text = "${selectionCounter[0]}"
+    }
 
     fun clearSelected() {
         var dataToremove = postList.filter { it.checked } as ArrayList<PostContainer>
