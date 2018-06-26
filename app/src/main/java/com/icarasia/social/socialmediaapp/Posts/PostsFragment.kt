@@ -51,6 +51,7 @@ class PostsFragment : Fragment() {
     private lateinit var addNewPostb : FloatingActionButton
     private lateinit var deletionGroupRelativeLayout: RelativeLayout
     private lateinit var selectionCounterTextView: TextView
+    lateinit var recyclerView: RecyclerView
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +72,9 @@ class PostsFragment : Fragment() {
             deletionGroupRelativeLayout = findViewById(R.id.deletionGroup)
             selectionCounterTextView = findViewById(R.id.selectionCounter)
 
-            findViewById<RecyclerView>(R.id.postsFragmentRecyclerView).setUp()
+            recyclerView = findViewById<RecyclerView>(R.id.postsFragmentRecyclerView)
+
+            recyclerView.setUp()
             callpost(1, 20)
             addNewPostb.setAddNewPost()
             return this
@@ -104,7 +107,6 @@ class PostsFragment : Fragment() {
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
         this.adapter = postsAdapter
 
-        //Toast.makeText(this@PostsFragment.context,"RecycerView Set Up",Toast.LENGTH_LONG).show()
 
         if (deletionMod){
             hidActionbar()
@@ -117,6 +119,7 @@ class PostsFragment : Fragment() {
         setUpdeletCancelation(postsAdapter)
 
     }
+
 
     private val postsToremove: (ArrayList<PostContainer>) -> Unit = { listOfPostContainers ->
         var listofPosts = ArrayList<Post>()

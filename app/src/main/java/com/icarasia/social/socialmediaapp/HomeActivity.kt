@@ -3,8 +3,12 @@ package com.icarasia.social.socialmediaapp
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.gesture.Gesture
+import android.gesture.GestureOverlayView
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -22,6 +26,7 @@ import com.icarasia.social.socialmediaapp.Posts.deletionMod
 import kotlinx.android.synthetic.main.activity_navigation2.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
+import kotlinx.android.synthetic.main.fragment_posts.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -57,6 +62,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 setUpheader(this)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(NetworkChangeReceiver(findViewById(R.id.mainLoginActivity)))
     }
 
     private fun setUpheader(user: User) {
@@ -116,6 +126,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    //@RequiresApi(Build.VERSION_CODES.N)
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.orderAce -> {
@@ -125,8 +136,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-                if (deletionMod)
-                fragmentPost.postsAdapter.clearSelected()
+                fragmentPost.recyclerView.findViewHolderForAdapterPosition(0)
+                        ?.itemView!!.performLongClick()
             }
         }
 

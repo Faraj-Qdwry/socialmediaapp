@@ -52,6 +52,11 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(NetworkChangeReceiver(findViewById(R.id.mainLoginActivity)))
+    }
+
 
     companion object {
         fun startMainActivity(context: Context){

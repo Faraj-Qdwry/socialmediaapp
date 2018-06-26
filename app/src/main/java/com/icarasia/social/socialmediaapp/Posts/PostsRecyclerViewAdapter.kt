@@ -102,7 +102,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
         deActivateDeletionMode()
     }
 
-    private val deActivateDeletionMode: () -> Unit = {
+    val deActivateDeletionMode: () -> Unit = {
         deletionMod = false
         showActionbar()
         notifyChange()
@@ -110,7 +110,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
         selectionCounter[0] = 0
     }
 
-    private val activateDeletionMode: () -> Unit = {
+    val activateDeletionMode: () -> Unit = {
         deletionMod = true
         hidActionbar()
         notifyChange()
