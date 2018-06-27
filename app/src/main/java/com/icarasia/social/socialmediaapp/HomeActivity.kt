@@ -2,34 +2,29 @@ package com.icarasia.social.socialmediaapp
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
-import com.icarasia.social.socialmediaapp.API.NetworkChangeReceiver
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
-import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import com.icarasia.social.socialmediaapp.Posts.postRecyclercurruntPosition
+import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
+import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
 import kotlinx.android.synthetic.main.home_navigation_avtivity.*
-import java.lang.Exception
 
-class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : SocialMediaNetworkActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val fragmentPost: PostsFragment by lazy { PostsFragment.newInstance() }
     private val fragmentUserDetails: UserDetailsFragment by lazy { UserDetailsFragment.newInstance() }
-    private var networkChangeReceiver : NetworkChangeReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,17 +41,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         showActionbar()
 
-        fragmentPost.setShowHidActionBar(showActionbar,hidActionbar)
+        fragmentPost.setShowHidActionBar(showActionbar, hidActionbar)
         openFragment(fragmentPost)
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        networkChangeReceiver = NetworkChangeReceiver(findViewById(R.id.drawer_layout))
-        registerReceiver(networkChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
 
-        with(getUserlogedIn(this)){
-            if (this!=null){
+        with(getUserlogedIn(this)) {
+            if (this != null) {
                 setUpheader(this)
             }
         }
@@ -64,25 +57,23 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         super.onDestroy()
-        if (networkChangeReceiver!=null)
-            unregisterReceiver(networkChangeReceiver)
 
     }
 
     private fun setUpheader(user: User) {
-        with(findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)){
+        with(findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)) {
             findViewById<TextView>(R.id.userName).text = "${user.username} ${user.id}"
             findViewById<TextView>(R.id.userEmail).text = user.email
         }
     }
 
 
-    private val showActionbar : ()-> Unit = {
+    private val showActionbar: () -> Unit = {
         with(this.supportActionBar!!) { show(); title = "Posts" }
     }
-    
-    private val hidActionbar : ()-> Unit = {
-        with(this.supportActionBar!!) { hide()}
+
+    private val hidActionbar: () -> Unit = {
+        with(this.supportActionBar!!) { hide() }
     }
 
 
@@ -108,7 +99,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         false
     }
-    
 
 
     companion object {
@@ -124,6 +114,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             super.onBackPressed()
         }
+
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -143,4 +135,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
+    override fun onInternetConnected() {
+
+        Snackbar.make(findViewById(R.id.drawer_layout), "Connected Message", Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onInternetDisconnected() {
+
+        Snackbar.make(findViewById(R.id.drawer_layout), "Disconnected Message", Snackbar.LENGTH_SHORT).show()
+
+    }
+
 }

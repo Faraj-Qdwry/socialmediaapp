@@ -34,11 +34,18 @@ fun <T> observData (call: Observable<T>, onSuccessOperation: (T)->Unit):Disposab
     return   call
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                    { result -> onSuccessOperation(result); },
-                    { error -> failure(error);}
-            )
+            .subscribe()
 }
+
+
+//
+//fun <T> Observable<T>.observData(onSuccessOperation: (T) -> Unit): Disposable =
+//        subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        { result -> onSuccessOperation(result); },
+//                        { error -> failure(error); }
+//                )
 
 
 

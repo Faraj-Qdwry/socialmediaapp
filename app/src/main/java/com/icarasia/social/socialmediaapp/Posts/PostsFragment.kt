@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -24,10 +23,21 @@ import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 import io.reactivex.disposables.CompositeDisposable
-import retrofit2.Call
 
-class PostsFragment : Fragment() {
+class PostsFragment : SocialMediaNetworkFragment() {
+
+    override fun onInternetConnected() {
+
+        showDialog()
+
+    }
+
+    override fun onInternetDisconnected() {
+
+        hideDialog()
+    }
 
     val postsAdapter: PostsRecyclerViewAdapter by lazy {
         PostsRecyclerViewAdapter(this@PostsFragment.activity!!.baseContext,
@@ -43,7 +53,6 @@ class PostsFragment : Fragment() {
   //  private lateinit var postCall: Call<ArrayList<Post>>
   //  private lateinit var deletePostCall: Call<Post>
   //  private lateinit var postCreateCall: Call<Post>
-    private lateinit var compositeDisposable : CompositeDisposable
     private lateinit var retrofitService : RetrofitSectviceAPI
 
     private lateinit var progressFragment: ProgressBar
@@ -204,6 +213,8 @@ class PostsFragment : Fragment() {
 
     private fun sendApost(title: String, body: String, view: View) {
         var post = Post(user.id, 0, title, body)
+
+
 
         compositeDisposable.add(observData(retrofitService.createPost(post)) {
             var newpost = ArrayList<PostContainer>()

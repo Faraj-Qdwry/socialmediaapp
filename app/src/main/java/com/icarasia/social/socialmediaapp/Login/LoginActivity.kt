@@ -1,42 +1,39 @@
 package com.icarasia.social.socialmediaapp.Login
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
+import android.support.design.widget.Snackbar
 import com.google.gson.Gson
-import com.icarasia.social.socialmediaapp.API.*
+import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
+import com.icarasia.social.socialmediaapp.API.observData
 import com.icarasia.social.socialmediaapp.DataModels.User
-import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.HomeActivity
+import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
 
 val sharedPreferencesName : String = "UserDetails"
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : SocialMediaNetworkActivity(){
 
+    override fun onInternetDisconnected() {
+        Snakbar.show()
+    }
 
-   // private lateinit var userCall: Call<ArrayList<User>>
-   // private lateinit var albumsCall: Call<ArrayList<Any>>
-   // private lateinit var todosCall: Call<ArrayList<Any>>
+    override fun onInternetConnected() {
+        Snakbar.dismiss()
+    }
 
-    private lateinit var compositeDisposable : CompositeDisposable
     private lateinit var retrofitService : RetrofitSectviceAPI
-    private var networkChangeReceiver : NetworkChangeReceiver? = null
 
+    private val Snakbar : Snackbar by lazy {
+        Snackbar.make(findViewById(R.id.mainLoginActivity),"Not Connected",Snackbar.LENGTH_INDEFINITE)}
 
     private lateinit var user : User
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
-    private lateinit var progressDialog : ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +42,6 @@ class LoginActivity : AppCompatActivity() {
         this.supportActionBar!!.hide()
 
         skipText.setOnClickListener { toPostsActivity() }
-
-        networkChangeReceiver = NetworkChangeReceiver(findViewById(R.id.mainLoginActivity))
-        registerReceiver(networkChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
 
         with(getUserlogedIn(this)){
@@ -59,12 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (networkChangeReceiver!=null)
-            unregisterReceiver(networkChangeReceiver)
 
-    }
 
     companion object {
         fun startMainActivity(context: Context){
@@ -73,9 +62,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun login() {
-        progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Validating...")
-        progressDialog.setCancelable(false)
 
         retrofitService = RetrofitSectviceAPI.create()
         compositeDisposable = CompositeDisposable()
@@ -86,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
             if (name.isNullOrEmpty()) {
                 nameEditText.error = getString(R.string.nameError)
             } else {
-                progressDialog.show()
+                showDialog()
 
 
                 compositeDisposable.add(observData(retrofitService.getUser(name.toString())) {
@@ -96,27 +82,12 @@ class LoginActivity : AppCompatActivity() {
                         callAlbums(this.user.id)
                         toPostsActivity()
                     } else {
-                        progressDialog.dismiss()
+                        hideDialog()
                         nameEditText.error = getString(R.string.nameError)
                     }
                 })
 
 
-
-//                userCall = RetrofitSectviceAPI.create().getUserDetails(name.toString())
-//                kickApiCall(userCall) {
-//                    if (it.size >= 1) {
-//                        this.user = it[0]
-//                        callTodos(this.user.id)
-//                        callAlbums(this.user.id)
-//                        toPostsActivity()
-//                    }
-//                    else {
-//                        progressDialog.dismiss()
-//                        nameEditText.error = getString(R.string.nameError)
-//                    }
-//                }
-//
 
             }
         }
@@ -132,15 +103,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-//        todosCall = RetrofitSectviceAPI.create().getUserTodos(userId)
-//        kickApiCall(todosCall) {
-//            user.todosNumber = it.size
-//            todoFinishFlage = true
-//            if (albumsFinishFlage) {
-//                saveUser(user)
-//                compositeDisposable.clear()
-//            }
-//        }
     }
 
     private fun callAlbums(userId: Int) {
@@ -153,15 +115,6 @@ class LoginActivity : AppCompatActivity() {
         })
 
 
-//        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(userId)
-//        kickApiCall(albumsCall) {
-//            user.albumsNumber = it.size
-//            albumsFinishFlage = true
-//            if (albumsFinishFlage) {
-//                saveUser(user)
-//                compositeDisposable.clear()
-//            }
-//        }
     }
 
     private fun saveUser(user: User) {
