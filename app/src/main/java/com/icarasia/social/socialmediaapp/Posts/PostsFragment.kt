@@ -139,12 +139,6 @@ class PostsFragment : Fragment() {
         })
 
         //compositeDisposable.clear()
-
-
-//        deletePostCall = RetrofitSectviceAPI.create().deletePosts(post.id)
-//        kickApiCall(deletePostCall) {
-//            Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
-//        }
     }
 
 
@@ -159,12 +153,6 @@ class PostsFragment : Fragment() {
 
         //compositeDisposable.clear()
 
-//        postCall = RetrofitSectviceAPI.create().getPosts(page, pageCount)
-//        kickApiCall(postCall) {
-//            postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
-//            postsAdapter.notifyDataSetChanged()
-//            progressFragment.visibility = View.GONE
-//        }
     }
 
     private val click: (Post, Int) -> Unit =
@@ -227,17 +215,6 @@ class PostsFragment : Fragment() {
         })
 
         //compositeDisposable.clear()
-
-
-//        postCreateCall = RetrofitSectviceAPI.create().createPost(post)
-//        kickApiCall(postCreateCall) {
-//            var newpost = ArrayList<PostContainer>()
-//            newpost.add(PostContainer(it, false))
-//            postsAdapter.addData(newpost)
-//            postsAdapter.notifyDataSetChanged()
-//            snakeMessage(it.toString(), view)
-//            snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
-//        }
     }
 
     fun snakeMessage(msg: String, view: View) {

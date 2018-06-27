@@ -126,7 +126,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    //@RequiresApi(Build.VERSION_CODES.N)
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.orderAce -> {
@@ -136,13 +135,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-                try {
-                    fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
-                            ?.itemView!!.performLongClick()
-                }catch (t : Exception){
-                    Log.d("HomeActivity","erroooooooooooooooooooooooor ${t.toString()}")
-                    //print(t.toString())
-                }
+                fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
+                        ?.itemView!!.performLongClick()
             }
         }
 

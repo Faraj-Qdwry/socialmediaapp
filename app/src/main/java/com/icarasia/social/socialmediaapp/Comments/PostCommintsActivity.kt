@@ -7,17 +7,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import com.icarasia.social.socialmediaapp.API.observData
-import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.R
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_post_commints.*
-import retrofit2.Call
 
 class PostCommintsActivity : AppCompatActivity() {
 
-    //private lateinit var commentCall : Call<ArrayList<Comment>>
     private val commentRecyclerView : RecyclerView by lazy { findViewById<RecyclerView>(R.id.commentsRecyclerView)}
-    private val commentadapter by lazy { CommentsRecyclerViewAdapter(click) }
+    private val commentadapter by lazy { CommentsRecyclerViewAdapter() }
     private lateinit var postId : String
 
     private lateinit var compositeDisposable : CompositeDisposable
@@ -54,12 +51,6 @@ class PostCommintsActivity : AppCompatActivity() {
 
         //compositeDisposable.clear()
 
-//        commentCall = RetrofitSectviceAPI.create().getCommetsForPost(postId)
-//        kickApiCall(commentCall) {
-//            commentadapter.addData(it)
-//            commentadapter.notifyDataSetChanged()
-//            commentProgressBar.visibility = View.GONE
-//        }
     }
 
 
@@ -67,17 +58,5 @@ class PostCommintsActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this@PostCommintsActivity,LinearLayoutManager.VERTICAL,false)
         this.adapter = commentadapter
     }
-
-    private val click: (Comment, Int) -> Unit =
-            { commnet , position -> with(commnet){
-//                startActivity(
-//                        with(Intent(this@PostCommintsActivity, PostCommintsActivity::class.java)) {
-//                            putExtra("id", post.id)
-//                            putExtra("userId", post.userId)
-//                            putExtra("title", post.title)
-//                            putExtra("body", post.body)
-//                        })
-            }
-            }
 }
 

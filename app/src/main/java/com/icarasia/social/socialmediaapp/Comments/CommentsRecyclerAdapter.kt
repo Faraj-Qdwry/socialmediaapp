@@ -13,7 +13,7 @@ import com.icarasia.social.socialmediaapp.R
 fun ViewGroup.inflate(@LayoutRes id: Int): View = LayoutInflater.from(context).inflate(id, this, false)
 
 
-class CommentsRecyclerViewAdapter(private val click: (Comment, Int) -> Unit) : RecyclerView.Adapter<CommentsRecyclerViewAdapter.RecyclerViewHolder>() {
+class CommentsRecyclerViewAdapter() : RecyclerView.Adapter<CommentsRecyclerViewAdapter.RecyclerViewHolder>() {
 
     private val commentsList: ArrayList<Comment> = ArrayList()
 
@@ -22,7 +22,7 @@ class CommentsRecyclerViewAdapter(private val click: (Comment, Int) -> Unit) : R
             RecyclerViewHolder(parent.inflate(viewType))
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        holder.bindData(commentsList[position]) { commnet -> click(commnet, position) }
+        holder.bindData(commentsList[position])
     }
 
     override fun getItemViewType(position: Int) = R.layout.recycler_item_view
@@ -40,12 +40,9 @@ class CommentsRecyclerViewAdapter(private val click: (Comment, Int) -> Unit) : R
         private val commentName: TextView = itemView.findViewById(R.id.itemTitle)
         private val commentBody: TextView = itemView.findViewById(R.id.itemBody)
 
-        fun bindData(commnet: Comment, click: (Comment) -> Unit): Unit = with(commnet) {
-            itemView.setOnClickListener {
-                click(commnet)
-            }
-            commentName.text = name
-            commentBody.text = body
+        fun bindData(commnet: Comment) {
+            commentName.text = commnet.name
+            commentBody.text = commnet.body
         }
     }
 }
