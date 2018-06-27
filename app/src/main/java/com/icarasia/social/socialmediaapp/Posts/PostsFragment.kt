@@ -16,7 +16,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.API.kickApiCall
+import com.icarasia.social.socialmediaapp.API.observData
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.DataModels.PostContainer
@@ -24,6 +24,7 @@ import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
+import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
 
 class PostsFragment : Fragment() {
@@ -39,9 +40,12 @@ class PostsFragment : Fragment() {
                 selectionCounterTextView)}
 
     private var logedinFlag = false
-    private lateinit var postCall: Call<ArrayList<Post>>
-    private lateinit var deletePostCall: Call<Post>
-    private lateinit var postCreateCall: Call<Post>
+  //  private lateinit var postCall: Call<ArrayList<Post>>
+  //  private lateinit var deletePostCall: Call<Post>
+  //  private lateinit var postCreateCall: Call<Post>
+    private lateinit var compositeDisposable : CompositeDisposable
+    private lateinit var retrofitService : RetrofitSectviceAPI
+
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
     private lateinit var showActionbar : ()-> Unit
@@ -64,6 +68,10 @@ class PostsFragment : Fragment() {
             }
         }
 
+        retrofitService = RetrofitSectviceAPI.create()
+        compositeDisposable = CompositeDisposable()
+
+
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             addNewPostb = findViewById(R.id.addNewPost)
             cancleDelete = findViewById(R.id.deleteCancelation)
@@ -72,7 +80,7 @@ class PostsFragment : Fragment() {
             deletionGroupRelativeLayout = findViewById(R.id.deletionGroup)
             selectionCounterTextView = findViewById(R.id.selectionCounter)
 
-            recyclerView = findViewById<RecyclerView>(R.id.postsFragmentRecyclerView)
+            recyclerView = findViewById(R.id.postsFragmentRecyclerView)
 
             recyclerView.setUp()
             callpost(1, 20)
@@ -81,8 +89,6 @@ class PostsFragment : Fragment() {
         }
 
     }
-
-
 
     private fun setUpdeletConfirmation(postsAdapter: PostsRecyclerViewAdapter) {
         confirmDelete.setOnClickListener {
@@ -128,21 +134,37 @@ class PostsFragment : Fragment() {
     }
 
     fun deletePost(post : Post){
-        deletePostCall = RetrofitSectviceAPI.create().deletePosts(post.id)
-        kickApiCall(deletePostCall) {
+        compositeDisposable.add(observData(retrofitService.deletePosts(post.id)) {
             Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
-        }
+        })
+
+        //compositeDisposable.clear()
+
+
+//        deletePostCall = RetrofitSectviceAPI.create().deletePosts(post.id)
+//        kickApiCall(deletePostCall) {
+//            Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
+//        }
     }
 
 
     private val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
-        postCall = RetrofitSectviceAPI.create().getPosts(page, pageCount)
-        kickApiCall(postCall) {
+
+        compositeDisposable.add(observData(retrofitService.getPosts(page,pageCount)) {
             postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
             postsAdapter.notifyDataSetChanged()
             progressFragment.visibility = View.GONE
-        }
+        })
+
+        //compositeDisposable.clear()
+
+//        postCall = RetrofitSectviceAPI.create().getPosts(page, pageCount)
+//        kickApiCall(postCall) {
+//            postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
+//            postsAdapter.notifyDataSetChanged()
+//            progressFragment.visibility = View.GONE
+//        }
     }
 
     private val click: (Post, Int) -> Unit =
@@ -194,15 +216,28 @@ class PostsFragment : Fragment() {
 
     private fun sendApost(title: String, body: String, view: View) {
         var post = Post(user.id, 0, title, body)
-        postCreateCall = RetrofitSectviceAPI.create().createPost(post)
-        kickApiCall(postCreateCall) {
+
+        compositeDisposable.add(observData(retrofitService.createPost(post)) {
             var newpost = ArrayList<PostContainer>()
             newpost.add(PostContainer(it, false))
             postsAdapter.addData(newpost)
             postsAdapter.notifyDataSetChanged()
             snakeMessage(it.toString(), view)
             snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
-        }
+        })
+
+        //compositeDisposable.clear()
+
+
+//        postCreateCall = RetrofitSectviceAPI.create().createPost(post)
+//        kickApiCall(postCreateCall) {
+//            var newpost = ArrayList<PostContainer>()
+//            newpost.add(PostContainer(it, false))
+//            postsAdapter.addData(newpost)
+//            postsAdapter.notifyDataSetChanged()
+//            snakeMessage(it.toString(), view)
+//            snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
+//        }
     }
 
     fun snakeMessage(msg: String, view: View) {

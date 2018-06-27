@@ -21,6 +21,8 @@ fun ViewGroup.inflate(@LayoutRes id: Int): View =
         LayoutInflater.from(context).inflate(id, this, false)
 
 var deletionMod: Boolean = false
+var postRecyclercurruntPosition : Int = 0
+
 lateinit var thisUser: User
 class PostsRecyclerViewAdapter(private val conext: Context,
                                private val removeAll: (ArrayList<PostContainer>) -> Unit,
@@ -55,6 +57,8 @@ class PostsRecyclerViewAdapter(private val conext: Context,
                 conext,
                 postList[position]
         ) { user -> click(user, position) }
+
+        postRecyclercurruntPosition = position
     }
 
     private val notifyChange: () -> Unit = {

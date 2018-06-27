@@ -9,12 +9,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.gson.Gson
-import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.API.kickApiCall
+import com.icarasia.social.socialmediaapp.API.*
 import com.icarasia.social.socialmediaapp.DataModels.User
-import com.icarasia.social.socialmediaapp.API.NetworkChangeReceiver
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.HomeActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 
@@ -23,9 +24,15 @@ val sharedPreferencesName : String = "UserDetails"
 class LoginActivity : AppCompatActivity() {
 
 
-    private lateinit var userCall: Call<ArrayList<User>>
-    private lateinit var albumsCall: Call<ArrayList<Any>>
-    private lateinit var todosCall: Call<ArrayList<Any>>
+   // private lateinit var userCall: Call<ArrayList<User>>
+   // private lateinit var albumsCall: Call<ArrayList<Any>>
+   // private lateinit var todosCall: Call<ArrayList<Any>>
+
+    private lateinit var compositeDisposable : CompositeDisposable
+    private lateinit var retrofitService : RetrofitSectviceAPI
+    private var networkChangeReceiver : NetworkChangeReceiver? = null
+
+
     private lateinit var user : User
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
@@ -39,8 +46,8 @@ class LoginActivity : AppCompatActivity() {
 
         skipText.setOnClickListener { toPostsActivity() }
 
-        registerReceiver(NetworkChangeReceiver(findViewById(R.id.mainLoginActivity)),
-                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        networkChangeReceiver = NetworkChangeReceiver(findViewById(R.id.mainLoginActivity))
+        registerReceiver(networkChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
 
         with(getUserlogedIn(this)){
@@ -52,11 +59,12 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(NetworkChangeReceiver(findViewById(R.id.mainLoginActivity)))
-    }
+    override fun onDestroy() {
+        super.onDestroy()
+        if (networkChangeReceiver!=null)
+            unregisterReceiver(networkChangeReceiver)
 
+    }
 
     companion object {
         fun startMainActivity(context: Context){
@@ -67,9 +75,10 @@ class LoginActivity : AppCompatActivity() {
     fun login() {
         progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Validating...")
-
-
         progressDialog.setCancelable(false)
+
+        retrofitService = RetrofitSectviceAPI.create()
+        compositeDisposable = CompositeDisposable()
 
 
         loginButton.setOnClickListener {
@@ -77,50 +86,91 @@ class LoginActivity : AppCompatActivity() {
             if (name.isNullOrEmpty()) {
                 nameEditText.error = getString(R.string.nameError)
             } else {
-                userCall = RetrofitSectviceAPI.create().getUserDetails(name.toString())
                 progressDialog.show()
 
-                kickApiCall(userCall) {
-                    if (it.size >= 1) {
+
+                compositeDisposable.add(observData(retrofitService.getUser(name.toString())) {
+                    if (it.isNotEmpty()) {
                         this.user = it[0]
                         callTodos(this.user.id)
                         callAlbums(this.user.id)
                         toPostsActivity()
-                    }
-                    else {
+                    } else {
                         progressDialog.dismiss()
                         nameEditText.error = getString(R.string.nameError)
                     }
-                }
+                })
+
+
+
+//                userCall = RetrofitSectviceAPI.create().getUserDetails(name.toString())
+//                kickApiCall(userCall) {
+//                    if (it.size >= 1) {
+//                        this.user = it[0]
+//                        callTodos(this.user.id)
+//                        callAlbums(this.user.id)
+//                        toPostsActivity()
+//                    }
+//                    else {
+//                        progressDialog.dismiss()
+//                        nameEditText.error = getString(R.string.nameError)
+//                    }
+//                }
+//
+
             }
         }
 
     }
 
     private fun callTodos(userId: Int) {
-        todosCall = RetrofitSectviceAPI.create().getUserTodos(userId)
-        kickApiCall(todosCall) {
+        compositeDisposable.add(observData(retrofitService.getTodos(userId)) {
             user.todosNumber = it.size
             todoFinishFlage = true
-            if (albumsFinishFlage) saveUser(user)
-        }
+            if (albumsFinishFlage) {
+                saveUser(user)
+            }
+        })
+
+//        todosCall = RetrofitSectviceAPI.create().getUserTodos(userId)
+//        kickApiCall(todosCall) {
+//            user.todosNumber = it.size
+//            todoFinishFlage = true
+//            if (albumsFinishFlage) {
+//                saveUser(user)
+//                compositeDisposable.clear()
+//            }
+//        }
     }
 
     private fun callAlbums(userId: Int) {
-        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(userId)
-        kickApiCall(albumsCall) {
+        compositeDisposable.add(observData(retrofitService.getAlbums(userId)) {
             user.albumsNumber = it.size
             albumsFinishFlage = true
-            if (albumsFinishFlage) saveUser(user)
-        }
+            if (albumsFinishFlage) {
+                saveUser(user)
+            }
+        })
+
+
+//        albumsCall = RetrofitSectviceAPI.create().getUserAlbums(userId)
+//        kickApiCall(albumsCall) {
+//            user.albumsNumber = it.size
+//            albumsFinishFlage = true
+//            if (albumsFinishFlage) {
+//                saveUser(user)
+//                compositeDisposable.clear()
+//            }
+//        }
     }
 
     private fun saveUser(user: User) {
-        getSharedPreferences("UserDetails",Context.MODE_PRIVATE)
+        getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
                 .edit()
                 .putString("User", Gson()
                         .toJson(user))
                 .apply()
+        compositeDisposable.clear()
         toPostsActivity()
     }
 
@@ -132,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
 }
 
 fun getUserlogedIn(context: Context): User? {
-    var pref = context.getSharedPreferences("UserDetails",Context.MODE_PRIVATE)
+    var pref = context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
     var userJs = pref.getString("User","")
     var user = Gson().fromJson<User>(userJs,User::class.java)
 

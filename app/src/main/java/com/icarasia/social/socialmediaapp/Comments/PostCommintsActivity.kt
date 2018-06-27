@@ -6,18 +6,22 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.API.kickApiCall
+import com.icarasia.social.socialmediaapp.API.observData
 import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.R
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_post_commints.*
 import retrofit2.Call
 
 class PostCommintsActivity : AppCompatActivity() {
 
-    private lateinit var commentCall : Call<ArrayList<Comment>>
+    //private lateinit var commentCall : Call<ArrayList<Comment>>
     private val commentRecyclerView : RecyclerView by lazy { findViewById<RecyclerView>(R.id.commentsRecyclerView)}
     private val commentadapter by lazy { CommentsRecyclerViewAdapter(click) }
     private lateinit var postId : String
+
+    private lateinit var compositeDisposable : CompositeDisposable
+    private lateinit var retrofitService : RetrofitSectviceAPI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +37,29 @@ class PostCommintsActivity : AppCompatActivity() {
 
         commentRecyclerView.setup()
 
+        retrofitService = RetrofitSectviceAPI.create()
+        compositeDisposable = CompositeDisposable()
+
         callComments(postId)
     }
 
     private fun callComments(postId: String) {
         commentProgressBar.visibility = View.VISIBLE
-        commentCall = RetrofitSectviceAPI.create().getCommetsForPost(postId)
-        kickApiCall(commentCall) {
+
+        compositeDisposable.add(observData(retrofitService.getCommetsForPost(postId)) {
             commentadapter.addData(it)
             commentadapter.notifyDataSetChanged()
             commentProgressBar.visibility = View.GONE
-        }
+        })
+
+        //compositeDisposable.clear()
+
+//        commentCall = RetrofitSectviceAPI.create().getCommetsForPost(postId)
+//        kickApiCall(commentCall) {
+//            commentadapter.addData(it)
+//            commentadapter.notifyDataSetChanged()
+//            commentProgressBar.visibility = View.GONE
+//        }
     }
 
 

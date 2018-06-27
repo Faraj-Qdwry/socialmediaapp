@@ -3,18 +3,15 @@ package com.icarasia.social.socialmediaapp
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.gesture.Gesture
-import android.gesture.GestureOverlayView
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.API.NetworkChangeReceiver
@@ -22,20 +19,21 @@ import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
-import com.icarasia.social.socialmediaapp.Posts.deletionMod
-import kotlinx.android.synthetic.main.activity_navigation2.*
+import com.icarasia.social.socialmediaapp.Posts.postRecyclercurruntPosition
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
-import kotlinx.android.synthetic.main.fragment_posts.*
+import kotlinx.android.synthetic.main.home_navigation_avtivity.*
+import java.lang.Exception
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val fragmentPost: PostsFragment by lazy { PostsFragment.newInstance() }
     private val fragmentUserDetails: UserDetailsFragment by lazy { UserDetailsFragment.newInstance() }
+    private var networkChangeReceiver : NetworkChangeReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigation2)
+        setContentView(R.layout.home_navigation_avtivity)
         setSupportActionBar(toolbar)
 
 
@@ -53,8 +51,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        registerReceiver(NetworkChangeReceiver(findViewById(R.id.drawer_layout)),
-                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        networkChangeReceiver = NetworkChangeReceiver(findViewById(R.id.drawer_layout))
+        registerReceiver(networkChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
 
         with(getUserlogedIn(this)){
@@ -64,9 +62,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(NetworkChangeReceiver(findViewById(R.id.mainLoginActivity)))
+    override fun onDestroy() {
+        super.onDestroy()
+        if (networkChangeReceiver!=null)
+            unregisterReceiver(networkChangeReceiver)
+
     }
 
     private fun setUpheader(user: User) {
@@ -136,8 +136,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-                fragmentPost.recyclerView.findViewHolderForAdapterPosition(0)
-                        ?.itemView!!.performLongClick()
+                try {
+                    fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
+                            ?.itemView!!.performLongClick()
+                }catch (t : Exception){
+                    Log.d("HomeActivity","erroooooooooooooooooooooooor ${t.toString()}")
+                    //print(t.toString())
+                }
             }
         }
 
