@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -21,7 +20,7 @@ import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
 import kotlinx.android.synthetic.main.home_navigation_avtivity.*
 
-class HomeActivity : SocialMediaNetworkActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)), NavigationView.OnNavigationItemSelectedListener {
 
     private val fragmentPost: PostsFragment by lazy { PostsFragment.newInstance() }
     private val fragmentUserDetails: UserDetailsFragment by lazy { UserDetailsFragment.newInstance() }
@@ -37,27 +36,20 @@ class HomeActivity : SocialMediaNetworkActivity(), NavigationView.OnNavigationIt
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
 
         showActionbar()
 
         fragmentPost.setShowHidActionBar(showActionbar, hidActionbar)
         openFragment(fragmentPost)
 
+        nav_view.setNavigationItemSelectedListener(this)
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-
-
         with(getUserlogedIn(this)) {
-            if (this != null) {
+            this?.let {
                 setUpheader(this)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
     }
 
     private fun setUpheader(user: User) {
@@ -138,14 +130,11 @@ class HomeActivity : SocialMediaNetworkActivity(), NavigationView.OnNavigationIt
 
 
     override fun onInternetConnected() {
-
-        Snackbar.make(findViewById(R.id.drawer_layout), "Connected Message", Snackbar.LENGTH_SHORT).show()
+        snakBar.dismiss()
     }
 
     override fun onInternetDisconnected() {
-
-        Snackbar.make(findViewById(R.id.drawer_layout), "Disconnected Message", Snackbar.LENGTH_SHORT).show()
-
+        snakBar.show()
     }
 
 }

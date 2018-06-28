@@ -2,6 +2,7 @@ package com.icarasia.social.socialmediaapp.abstracts
 
 import android.content.Context
 import android.os.Bundle
+import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
 import io.reactivex.disposables.CompositeDisposable
 
 interface NetworkInformer {
@@ -13,19 +14,21 @@ abstract class SocialMediaNetworkFragment : SocialMediaFragment(), NetworkInform
 
 
     protected lateinit var compositeDisposable: CompositeDisposable
+    protected lateinit var retrofitSectviceAPI: RetrofitSectviceAPI
 
     private lateinit var networkActivity: SocialMediaNetworkActivity
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         networkActivity = context as SocialMediaNetworkActivity
 
-        android.widget.ImageButton
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         networkActivity.register(this)
         compositeDisposable = CompositeDisposable()
+        retrofitSectviceAPI = RetrofitSectviceAPI.create()
     }
 
     override fun onDestroy() {

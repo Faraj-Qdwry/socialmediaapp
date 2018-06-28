@@ -6,9 +6,10 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
 import kotlinx.android.synthetic.main.activity_splash_scree.*
 
-class SplashScreeActivity : AppCompatActivity() {
+class SplashScreeActivity : SocialMediaActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

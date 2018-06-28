@@ -3,10 +3,9 @@ package com.icarasia.social.socialmediaapp.Login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.API.observData
+import com.icarasia.social.socialmediaapp.API.onObservData
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.HomeActivity
 import com.icarasia.social.socialmediaapp.R
@@ -14,22 +13,17 @@ import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 
-val sharedPreferencesName : String = "UserDetails"
+const val sharedPreferencesName : String = "UserDetails"
 
-class LoginActivity : SocialMediaNetworkActivity(){
+class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
 
     override fun onInternetDisconnected() {
-        Snakbar.show()
+        snakBar.show()
     }
 
     override fun onInternetConnected() {
-        Snakbar.dismiss()
+        snakBar.dismiss()
     }
-
-    private lateinit var retrofitService : RetrofitSectviceAPI
-
-    private val Snakbar : Snackbar by lazy {
-        Snackbar.make(findViewById(R.id.mainLoginActivity),"Not Connected",Snackbar.LENGTH_INDEFINITE)}
 
     private lateinit var user : User
     private var todoFinishFlage = false
@@ -74,8 +68,7 @@ class LoginActivity : SocialMediaNetworkActivity(){
             } else {
                 showDialog()
 
-
-                compositeDisposable.add(observData(retrofitService.getUser(name.toString())) {
+                compositeDisposable.add(retrofitService.getUser(name.toString()).onObservData {
                     if (it.isNotEmpty()) {
                         this.user = it[0]
                         callTodos(this.user.id)
@@ -86,16 +79,13 @@ class LoginActivity : SocialMediaNetworkActivity(){
                         nameEditText.error = getString(R.string.nameError)
                     }
                 })
-
-
-
             }
         }
 
     }
 
     private fun callTodos(userId: Int) {
-        compositeDisposable.add(observData(retrofitService.getTodos(userId)) {
+        compositeDisposable.add(retrofitService.getTodos(userId).onObservData {
             user.todosNumber = it.size
             todoFinishFlage = true
             if (albumsFinishFlage) {
@@ -106,15 +96,13 @@ class LoginActivity : SocialMediaNetworkActivity(){
     }
 
     private fun callAlbums(userId: Int) {
-        compositeDisposable.add(observData(retrofitService.getAlbums(userId)) {
+        compositeDisposable.add(retrofitService.getAlbums(userId).onObservData {
             user.albumsNumber = it.size
             albumsFinishFlage = true
             if (albumsFinishFlage) {
                 saveUser(user)
             }
         })
-
-
     }
 
     private fun saveUser(user: User) {

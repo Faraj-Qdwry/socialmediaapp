@@ -14,8 +14,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.API.observData
+import com.icarasia.social.socialmediaapp.API.onObservData
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.DataModels.PostContainer
@@ -24,19 +23,16 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
-import io.reactivex.disposables.CompositeDisposable
 
 class PostsFragment : SocialMediaNetworkFragment() {
 
     override fun onInternetConnected() {
-
-        showDialog()
-
+        //hideDialog()
+        callpost(1, 20)
     }
 
     override fun onInternetDisconnected() {
-
-        hideDialog()
+        //showDialog()
     }
 
     val postsAdapter: PostsRecyclerViewAdapter by lazy {
@@ -50,10 +46,8 @@ class PostsFragment : SocialMediaNetworkFragment() {
                 selectionCounterTextView)}
 
     private var logedinFlag = false
-  //  private lateinit var postCall: Call<ArrayList<Post>>
-  //  private lateinit var deletePostCall: Call<Post>
-  //  private lateinit var postCreateCall: Call<Post>
-    private lateinit var retrofitService : RetrofitSectviceAPI
+
+
 
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
@@ -76,10 +70,6 @@ class PostsFragment : SocialMediaNetworkFragment() {
                 logedinFlag = true
             }
         }
-
-        retrofitService = RetrofitSectviceAPI.create()
-        compositeDisposable = CompositeDisposable()
-
 
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             addNewPostb = findViewById(R.id.addNewPost)
@@ -143,25 +133,20 @@ class PostsFragment : SocialMediaNetworkFragment() {
     }
 
     fun deletePost(post : Post){
-        compositeDisposable.add(observData(retrofitService.deletePosts(post.id)) {
+        compositeDisposable.add(retrofitSectviceAPI.deletePosts(post.id).onObservData {
             Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
         })
-
-        //compositeDisposable.clear()
     }
 
 
     private val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
 
-        compositeDisposable.add(observData(retrofitService.getPosts(page,pageCount)) {
+        compositeDisposable.add(retrofitSectviceAPI.getPosts(page,pageCount).onObservData {
             postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
             postsAdapter.notifyDataSetChanged()
             progressFragment.visibility = View.GONE
         })
-
-        //compositeDisposable.clear()
-
     }
 
     private val click: (Post, Int) -> Unit =
@@ -214,9 +199,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
     private fun sendApost(title: String, body: String, view: View) {
         var post = Post(user.id, 0, title, body)
 
-
-
-        compositeDisposable.add(observData(retrofitService.createPost(post)) {
+        compositeDisposable.add(retrofitSectviceAPI.createPost(post).onObservData {
             var newpost = ArrayList<PostContainer>()
             newpost.add(PostContainer(it, false))
             postsAdapter.addData(newpost)
@@ -224,12 +207,10 @@ class PostsFragment : SocialMediaNetworkFragment() {
             snakeMessage(it.toString(), view)
             snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
         })
-
-        //compositeDisposable.clear()
     }
 
     fun snakeMessage(msg: String, view: View) {
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show()
     }
+
 }

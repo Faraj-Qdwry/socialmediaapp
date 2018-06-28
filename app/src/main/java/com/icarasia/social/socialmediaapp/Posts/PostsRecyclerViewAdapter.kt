@@ -168,7 +168,7 @@ class PostsRecyclerViewAdapter(private val conext: Context,
                 selectionCounter: MutableList<Int>): Boolean {
 
             with(getUserlogedIn(conext)) {
-                if (this != null) {
+                this?.let {
                     activateDeletionMode()
                     thisUser = this
                     ifPostCanBeCheckedCheckit(postContainer, notify, selectionCounter)
@@ -176,6 +176,8 @@ class PostsRecyclerViewAdapter(private val conext: Context,
             }
             return true
         }
+
+
 
         private fun ifPostCanBeCheckedCheckit(postContainer: PostContainer,
                                               notify: () -> Unit,
