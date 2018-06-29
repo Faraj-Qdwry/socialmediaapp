@@ -17,12 +17,14 @@ class SplashScreeActivity : SocialMediaActivity() {
 
         this.supportActionBar!!.hide()
 
-        var arr = ArrayList<TextView>()
-        arr.add(textView2)
-        arr.add(textView3)
-        arr.add(textView4)
-        arr.add(textView5)
-        ToMainActivity(arr,0)
+        toMainScreen()
+
+//        var arr = ArrayList<TextView>()
+//        arr.add(textView2)
+//        arr.add(textView3)
+//        arr.add(textView4)
+//        arr.add(textView5)
+//        ToMainActivity(arr,0)
     }
 
     private fun ToMainActivity(arr: ArrayList<TextView>, j: Int) {
@@ -35,10 +37,14 @@ class SplashScreeActivity : SocialMediaActivity() {
             }
 
             override fun onFinish() {
-                LoginActivity.startMainActivity(this@SplashScreeActivity)
-                this@SplashScreeActivity.finish()
+                toMainScreen()
             }
         }.start()
 
     }
+
+    fun toMainScreen() {
+        LoginActivity.startMainActivity(this@SplashScreeActivity)
+        this@SplashScreeActivity.finish()    }
+
 }

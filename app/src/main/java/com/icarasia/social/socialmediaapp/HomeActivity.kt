@@ -13,7 +13,6 @@ import android.widget.TextView
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
-import com.icarasia.social.socialmediaapp.Posts.postRecyclercurruntPosition
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import kotlinx.android.synthetic.main.app_bar_navigation.*
@@ -119,8 +118,8 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)), Navigatio
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-                fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
-                        ?.itemView!!.performLongClick()
+//                fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
+//                        ?.itemView!!.performLongClick()
             }
         }
 

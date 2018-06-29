@@ -2,6 +2,7 @@ package com.icarasia.social.socialmediaapp.Posts
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.location.Criteria
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
@@ -23,31 +24,20 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 
 class PostsFragment : SocialMediaNetworkFragment() {
 
     override fun onInternetConnected() {
-        //hideDialog()
         callpost(1, 20)
     }
 
-    override fun onInternetDisconnected() {
-        //showDialog()
-    }
+    override fun onInternetDisconnected() {}
 
-    val postsAdapter: PostsRecyclerViewAdapter by lazy {
-        PostsRecyclerViewAdapter(this@PostsFragment.activity!!.baseContext,
-                postsToremove,
-                callpost,
-                click,
-                hidActionbar,
-                showActionbar,
-                deletionGroupRelativeLayout,
-                selectionCounterTextView)}
+    val postsAdapter :PostAdapterOB by lazy {  PostAdapterOB()}
 
     private var logedinFlag = false
-
-
 
     private lateinit var progressFragment: ProgressBar
     private lateinit var user: User
@@ -59,6 +49,9 @@ class PostsFragment : SocialMediaNetworkFragment() {
     private lateinit var deletionGroupRelativeLayout: RelativeLayout
     private lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
+    private val totalCount = 500
+    private var page = 1
+    private var itemsPerPage = 20
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -82,6 +75,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
             recyclerView = findViewById(R.id.postsFragmentRecyclerView)
 
             recyclerView.setUp()
+
             callpost(1, 20)
             addNewPostb.setAddNewPost()
             return this
@@ -89,16 +83,31 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     }
 
-    private fun setUpdeletConfirmation(postsAdapter: PostsRecyclerViewAdapter) {
+    private fun setUpdeletCancelation() {
+        cancleDelete.setOnClickListener {
+            postsAdapter.disableSelectionMode()
+            dismissDeletionGroup()
+        }
+    }
+    private fun setUpdeletConfirmation(){
         confirmDelete.setOnClickListener {
-            postsAdapter.clearSelected()
+            postsAdapter.remove(postsToremove(postsAdapter.getSelectedData()))
+            postsAdapter.disableSelectionMode()
+            dismissDeletionGroup()
         }
     }
 
-    private fun setUpdeletCancelation(postsAdapter: PostsRecyclerViewAdapter) {
-        cancleDelete.setOnClickListener {
-            postsAdapter.cancelSelection()
-        }
+    fun setUpDeletionGroup(){
+        hidActionbar()
+        setUpdeletConfirmation()
+        setUpdeletCancelation()
+        deletionGroupRelativeLayout.visibility = View.VISIBLE
+        selectionCounterTextView.text = "${postsAdapter.selections.size()}"
+    }
+
+    fun dismissDeletionGroup(){
+        showActionbar()
+        deletionGroupRelativeLayout.visibility = View.INVISIBLE
     }
 
 
@@ -112,24 +121,40 @@ class PostsFragment : SocialMediaNetworkFragment() {
         layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
         this.adapter = postsAdapter
 
-
-        if (deletionMod){
-            hidActionbar()
-            deletionGroupRelativeLayout.visibility = View.VISIBLE
+        if (postsAdapter.isEnableSelectionMode){
+            setUpDeletionGroup()
+        }else{
+            dismissDeletionGroup()
         }
 
-        postsAdapter.setUpDeletionGroup(deletionGroupRelativeLayout,selectionCounterTextView)
+        postsAdapter.getPaginationObservable().subscribe { object : Observer<Int>{
+                override fun onNext(position: Int) {
+                    if (position == postsAdapter.itemCount - 1 && postsAdapter.itemCount < totalCount){
+                        callpost(++page, itemsPerPage)
+                    }
+                }
+                override fun onError(e: Throwable) {}
+                override fun onComplete() {}
+                override fun onSubscribe(d: Disposable) {}
+            }
+        }
 
-        setUpdeletConfirmation(postsAdapter)
-        setUpdeletCancelation(postsAdapter)
+
+        postsAdapter.getClickObservable().subscribe(object : Observer<Pair<Post,Int>>{
+            override fun onNext(t: Pair<Post, Int>) {
+                click(t.first,t.second)
+            }
+            override fun onComplete() {}
+            override fun onSubscribe(d: Disposable) {}
+            override fun onError(e: Throwable) {}
+        })
 
     }
 
 
-    private val postsToremove: (ArrayList<PostContainer>) -> Unit = { listOfPostContainers ->
-        var listofPosts = ArrayList<Post>()
-        listOfPostContainers.forEach {listofPosts.add(it.post) }
-        listofPosts.forEach { deletePost(it) }
+    private val postsToremove: (ArrayList<Post>) -> ArrayList<Post> = { listOfPosts ->
+        listOfPosts.forEach { deletePost(it) }
+        listOfPosts
     }
 
     fun deletePost(post : Post){
@@ -143,22 +168,36 @@ class PostsFragment : SocialMediaNetworkFragment() {
         progressFragment.visibility = View.VISIBLE
 
         compositeDisposable.add(retrofitSectviceAPI.getPosts(page,pageCount).onObservData {
-            postsAdapter.addData(it.map { PostContainer(it, false) } as ArrayList<PostContainer>)
+            postsAdapter.add(it)
             postsAdapter.notifyDataSetChanged()
             progressFragment.visibility = View.GONE
         })
     }
 
     private val click: (Post, Int) -> Unit =
-            { post, position ->
-                with(post) {
-                    startActivity(
-                            with(Intent(this@PostsFragment.context, PostCommintsActivity::class.java)) {
-                                putExtra("id", post.id.toString())
-                                putExtra("userId", post.userId.toString())
-                                putExtra("title", post.title)
-                                putExtra("body", post.body)
+            { post, clickType ->
+
+                if (clickType== shortClik) {
+                        with(post) {
+                            startActivity(
+                                    with(Intent(this@PostsFragment.context, PostCommintsActivity::class.java)) {
+                                        putExtra("id", post.id.toString())
+                                        putExtra("userId", post.userId.toString())
+                                        putExtra("title", post.title)
+                                        putExtra("body", post.body)
+                                    })
+                        }
+                }else if (clickType == longClick){
+                    with(getUserlogedIn(this@PostsFragment.activity!!.baseContext)){
+                        this?.let {
+                            postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
+                                override fun isOK(data: Post): Boolean {
+                                    return id == data.userId
+                                }
                             })
+                        }
+                    }
+                    setUpDeletionGroup()
                 }
             }
 
@@ -200,10 +239,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
         var post = Post(user.id, 0, title, body)
 
         compositeDisposable.add(retrofitSectviceAPI.createPost(post).onObservData {
-            var newpost = ArrayList<PostContainer>()
-            newpost.add(PostContainer(it, false))
-            postsAdapter.addData(newpost)
-            postsAdapter.notifyDataSetChanged()
+            postsAdapter.insert(it,0)
             snakeMessage(it.toString(), view)
             snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
         })
