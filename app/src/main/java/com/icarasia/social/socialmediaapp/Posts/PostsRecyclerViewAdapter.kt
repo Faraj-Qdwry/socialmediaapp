@@ -35,6 +35,8 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     private val paginationSubject = PublishSubject.create<Int>()
     private val clickSubject = PublishSubject.create<Pair<Post, Int>>()
 
+    private val counterSubject = PublishSubject.create<Int>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = PostViewHolder(parent.inflate(viewType))
@@ -48,10 +50,11 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
             paginationSubject.onNext(position)
 
-        viewHolder.bind(data[position], position, selections, isEnableSelectionMode, clickSubject, criteria)
+        viewHolder.bind(data[position], position, selections, isEnableSelectionMode, clickSubject, criteria,counterSubject)
     }
 
 
+    fun getCounterObservable(): Observable<Int> = counterSubject as Observable<Int>
     fun getPaginationObservable(): Observable<Int> = paginationSubject as Observable<Int>
     fun getClickObservable(): Observable<Pair<Post, Int>> = clickSubject as Observable<Pair<Post, Int>>
 
@@ -117,6 +120,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     }
 
 
+
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val postTitle: TextView = itemView.findViewById(R.id.itemTitle)
@@ -128,7 +132,9 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                  selections: SparseBooleanArray,
                  enableSelectionMode: Boolean,
                  clickSubject: PublishSubject<Pair<Post, Int>>?,
-                 criteria: Criteria) {
+                 criteria: Criteria,
+                 counterSubject: PublishSubject<Int>
+        ) {
 
             postTitle.text = "${post.userId}  ${post.title}"
             postBody.text = post.body
@@ -140,7 +146,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
             itemView.setOnClickListener{
                 if (enableSelectionMode)
-                    handelSelection(selections,position,criteria,post)
+                    handelSelection(selections,position,criteria,post,counterSubject)
                 else {
                     clickSubject!!.onNext(Pair(post,shortClik))
                 }
@@ -156,16 +162,18 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
         private fun handelSelection(selections: SparseBooleanArray,
                                     position: Int,
                                     criteria: Criteria,
-                                    post: Post) {
+                                    post: Post,
+                                    counterSubject: PublishSubject<Int>) {
 
             if (criteria.isOK(post)){
                 if (selections.get(position) != null){
                     checkBox.isChecked = true
                     selections.put(position,true)
-                 }else{
+                 }else if(selections.get(position)){
+                    selections.delete(position)
                     checkBox.isChecked = false
-                    selections.put(position,false)
                }
+                counterSubject.onNext(selections.size())
             }
         }
 

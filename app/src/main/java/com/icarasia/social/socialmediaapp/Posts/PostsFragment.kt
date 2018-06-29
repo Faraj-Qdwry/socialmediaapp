@@ -102,12 +102,13 @@ class PostsFragment : SocialMediaNetworkFragment() {
         setUpdeletConfirmation()
         setUpdeletCancelation()
         deletionGroupRelativeLayout.visibility = View.VISIBLE
-        selectionCounterTextView.text = "${postsAdapter.selections.size()}"
+        postsAdapter.getCounterObservable().subscribe {selectionCounterTextView.text = it.toString()}
     }
 
     fun dismissDeletionGroup(){
         showActionbar()
         deletionGroupRelativeLayout.visibility = View.INVISIBLE
+        selectionCounterTextView.text = "0"
     }
 
 
