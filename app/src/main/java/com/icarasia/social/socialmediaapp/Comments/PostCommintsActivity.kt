@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.icarasia.social.socialmediaapp.API.onObservData
+import com.icarasia.social.socialmediaapp.API.RepoDataSource
+import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
+import com.icarasia.social.socialmediaapp.extensions.onObservData
 import kotlinx.android.synthetic.main.activity_post_commints.*
 
 class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
@@ -23,6 +25,8 @@ class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
     private val commentadapter by lazy { CommentsRecyclerViewAdapter() }
     private lateinit var postId : String
 
+    private val dataSource = RepoDataSource()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,19 +42,26 @@ class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
 
         commentRecyclerView.setup()
 
-        callComments(postId)
+        callComments(Integer.parseInt(postId))
     }
 
-    private fun callComments(postId: String) {
+    private fun callComments(postId: Int) {
         commentProgressBar.visibility = View.VISIBLE
 
-        compositeDisposable.add(retrofitService.getCommetsForPost(postId).onObservData {
-            commentadapter.addData(it)
-            commentadapter.notifyDataSetChanged()
-            commentProgressBar.visibility = View.GONE
-        })
+//        compositeDisposable.add(retrofitService.getCommetsForPost(postId).onObservData {
+//            commentadapter.addData(it)
+//            commentadapter.notifyDataSetChanged()
+//            commentProgressBar.visibility = View.GONE
+//        })
 
+        dataSource.getCommentREPO(postId,whenCommentsReceved)
 
+    }
+
+    private val whenCommentsReceved : (arrayList: ArrayList<Comment>) -> Unit = {
+        commentadapter.addData(it)
+        commentadapter.notifyDataSetChanged()
+        commentProgressBar.visibility = View.GONE
     }
 
 

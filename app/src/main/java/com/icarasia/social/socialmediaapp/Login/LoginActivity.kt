@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.API.onObservData
+import com.icarasia.social.socialmediaapp.API.RepoDataSource
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.HomeActivity
 import com.icarasia.social.socialmediaapp.R
@@ -28,6 +28,8 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
     private lateinit var user : User
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
+
+    private val dataSourece = RepoDataSource()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +58,9 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
     }
 
     fun login() {
-
-        retrofitService = DataSourece.create()
-        compositeDisposable = CompositeDisposable()
+//
+//        retrofitService = DataSourece.create()
+//        compositeDisposable = CompositeDisposable()
 
 
         loginButton.setOnClickListener {
@@ -68,41 +70,77 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
             } else {
                 showDialog()
 
-                compositeDisposable.add(retrofitService.getUser(name.toString()).onObservData {
-                    if (it.isNotEmpty()) {
-                        this.user = it[0]
-                        callTodos(this.user.id)
-                        callAlbums(this.user.id)
-                        toPostsActivity()
-                    } else {
-                        hideDialog()
-                        nameEditText.error = getString(R.string.nameError)
-                    }
-                })
+//                compositeDisposable.add(retrofitService.getUser(name.toString()).onObservData {
+//                    if (it.isNotEmpty()) {
+//                        this.user = it[0]
+//                        callTodos(this.user.id)
+//                        callAlbums(this.user.id)
+//                        toPostsActivity()
+//                    } else {
+//                        hideDialog()
+//                        nameEditText.error = getString(R.string.nameError)
+//                    }
+//                })
+
+                dataSourece.getUserREPO(name.toString(),whenUserReceived)
+
+
             }
         }
 
     }
 
+    private val whenUserReceived : (users : List<User>) -> Unit = {
+        if (it.isNotEmpty()) {
+            this.user = it[0]
+            callTodos(this.user.id)
+            callAlbums(this.user.id)
+            toPostsActivity()
+        } else {
+            hideDialog()
+            nameEditText.error = getString(R.string.nameError)
+        }
+    }
+
     private fun callTodos(userId: Int) {
-        compositeDisposable.add(retrofitService.getTodos(userId).onObservData {
-            user.todosNumber = it.size
-            todoFinishFlage = true
-            if (albumsFinishFlage) {
-                saveUser(user)
-            }
-        })
+//        compositeDisposable.add(retrofitService.getTodos(userId).onObservData {
+//            user.todosNumber = it.size
+//            todoFinishFlage = true
+//            if (albumsFinishFlage) {
+//                saveUser(user)
+//            }
+//        })
+
+        dataSourece.getToDosREPO(userId,whenTodosReceived)
 
     }
 
+    private val whenTodosReceived : (todos : ArrayList<Any>)->Unit = {
+        user.todosNumber = it.size
+        todoFinishFlage = true
+        if (albumsFinishFlage) {
+            saveUser(user)
+        }
+    }
+
     private fun callAlbums(userId: Int) {
-        compositeDisposable.add(retrofitService.getAlbums(userId).onObservData {
-            user.albumsNumber = it.size
-            albumsFinishFlage = true
-            if (albumsFinishFlage) {
-                saveUser(user)
-            }
-        })
+//        compositeDisposable.add(retrofitService.getAlbums(userId).onObservData {
+//            user.albumsNumber = it.size
+//            albumsFinishFlage = true
+//            if (albumsFinishFlage) {
+//                saveUser(user)
+//            }
+//        })
+
+        dataSourece.getAlbumsREPO(userId,whenAlbumsReceived)
+    }
+
+    private val whenAlbumsReceived : (ArrayList<Any>)->Unit={
+        user.albumsNumber = it.size
+        albumsFinishFlage = true
+        if (albumsFinishFlage) {
+            saveUser(user)
+        }
     }
 
     private fun saveUser(user: User) {

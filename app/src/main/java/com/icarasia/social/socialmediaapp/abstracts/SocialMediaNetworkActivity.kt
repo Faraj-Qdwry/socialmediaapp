@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import com.icarasia.social.socialmediaapp.API.DataSourece
+import com.icarasia.social.socialmediaapp.API.RemoteDataSource
 import com.icarasia.social.socialmediaapp.extensions.isNetworkAvailable
 import io.reactivex.disposables.CompositeDisposable
 
@@ -32,8 +33,8 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-        compositeDisposable = CompositeDisposable()
-        retrofitService = DataSourece.create()
+//        compositeDisposable = CompositeDisposable()
+//        retrofitService = RemoteDataSource.create()
     }
 
 
@@ -41,7 +42,7 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(networkReceiver)
-        compositeDisposable.clear()
+//        compositeDisposable.clear()
     }
 
 
