@@ -7,8 +7,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
-import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.extensions.isNetworkAvailable
 import io.reactivex.disposables.CompositeDisposable
 
@@ -26,7 +25,7 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
         Snackbar.make(findViewById(view), "Not Connected", Snackbar.LENGTH_INDEFINITE) }
 
     protected lateinit var compositeDisposable: CompositeDisposable
-    protected lateinit var retrofitService : RetrofitSectviceAPI
+    protected lateinit var retrofitService : DataSourece
 
 
 
@@ -34,7 +33,7 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
         super.onCreate(savedInstanceState)
         registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         compositeDisposable = CompositeDisposable()
-        retrofitService = RetrofitSectviceAPI.create()
+        retrofitService = DataSourece.create()
     }
 
 

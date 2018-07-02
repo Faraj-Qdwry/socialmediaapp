@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,8 @@ class PostsFragment : SocialMediaNetworkFragment() {
     override fun onInternetDisconnected() {}
 
     val postsAdapter :PostAdapterOB by lazy {  PostAdapterOB()}
+
+    var curruntAdapterPosition = 0
 
     private var logedinFlag = false
 
@@ -128,18 +131,20 @@ class PostsFragment : SocialMediaNetworkFragment() {
             dismissDeletionGroup()
         }
 
-        postsAdapter.getPaginationObservable().subscribe { object : Observer<Int>{
+        postsAdapter.getPaginationObservable().subscribe(object : Observer<Int>{
                 override fun onNext(position: Int) {
-                    if (position == postsAdapter.itemCount - 1 && postsAdapter.itemCount < totalCount){
+                    if (postsAdapter.itemCount < totalCount){
+                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
                         callpost(++page, itemsPerPage)
                     }
                 }
-                override fun onError(e: Throwable) {}
+                override fun onError(e: Throwable) {
+                }
                 override fun onComplete() {}
                 override fun onSubscribe(d: Disposable) {}
-            }
-        }
+            })
 
+        postsAdapter.getPositionObservable().subscribe { curruntAdapterPosition = it }
 
         postsAdapter.getClickObservable().subscribe(object : Observer<Pair<Post,Int>>{
             override fun onNext(t: Pair<Post, Int>) {

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.Gson
-import com.icarasia.social.socialmediaapp.API.RetrofitSectviceAPI
+import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.API.onObservData
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.HomeActivity
@@ -57,7 +57,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
 
     fun login() {
 
-        retrofitService = RetrofitSectviceAPI.create()
+        retrofitService = DataSourece.create()
         compositeDisposable = CompositeDisposable()
 
 

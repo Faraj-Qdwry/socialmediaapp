@@ -1,6 +1,7 @@
 package com.icarasia.social.socialmediaapp.Posts
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
     private val counterSubject = PublishSubject.create<Int>()
 
+    private val positionSubject = PublishSubject.create<Int>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = PostViewHolder(parent.inflate(viewType))
@@ -46,22 +49,32 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     override fun getItemViewType(position: Int): Int = R.layout.recycler_item_view
 
     override fun onBindViewHolder(viewHolder: PostViewHolder, position: Int) {
-        if (position == itemCount - 1)
-
+        if (position == itemCount - 1) {
+            Log.d(position.toString(), itemCount.toString())
             paginationSubject.onNext(position)
+        }
+        viewHolder.bind(data[position], position,
+                selections, isEnableSelectionMode, clickSubject, criteria,
+                counterSubject,notify)
 
-        viewHolder.bind(data[position], position, selections, isEnableSelectionMode, clickSubject, criteria,counterSubject)
+        positionSubject.onNext(position)
     }
 
 
     fun getCounterObservable(): Observable<Int> = counterSubject as Observable<Int>
     fun getPaginationObservable(): Observable<Int> = paginationSubject as Observable<Int>
     fun getClickObservable(): Observable<Pair<Post, Int>> = clickSubject as Observable<Pair<Post, Int>>
+    fun getPositionObservable(): Observable<Int> = positionSubject as Observable<Int>
 
 
     fun enableSelectionMode(criteria: Criteria) {
         isEnableSelectionMode = true
+        selections.clear()
         this.criteria = criteria
+        notifyDataSetChanged()
+    }
+
+    private val notify : ()-> Unit ={
         notifyDataSetChanged()
     }
 
@@ -102,10 +115,8 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
         val list = ArrayList<Post>(selections.size())
         for (i in 0 until selections.size()) {
             val key = selections.keyAt(i)
-            if (selections[key])
-                list.add(data[key])
+            list.add(data[key])
         }
-
         return list
     }
 
@@ -133,14 +144,16 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                  enableSelectionMode: Boolean,
                  clickSubject: PublishSubject<Pair<Post, Int>>?,
                  criteria: Criteria,
-                 counterSubject: PublishSubject<Int>
+                 counterSubject: PublishSubject<Int>,
+                 notify: () -> Unit
         ) {
 
             postTitle.text = "${post.userId}  ${post.title}"
             postBody.text = post.body
 
-            if (enableSelectionMode)
-                showOrhidCheckBox(criteria,post)
+            if (enableSelectionMode) {
+                showOrhidCheckBox(position, selections, criteria, post)
+            }
             else
                 checkBox.visibility = View.GONE
 
@@ -154,6 +167,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
             itemView.setOnLongClickListener {
                 clickSubject!!.onNext(Pair(post, longClick))
+                notify()
                 true
             }
 
@@ -166,22 +180,29 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                                     counterSubject: PublishSubject<Int>) {
 
             if (criteria.isOK(post)){
-                if (selections.get(position) != null){
+                if (!selections.get(position)){
                     checkBox.isChecked = true
                     selections.put(position,true)
-                 }else if(selections.get(position)){
+                 }
+                else {
                     selections.delete(position)
                     checkBox.isChecked = false
-               }
+                }
                 counterSubject.onNext(selections.size())
             }
         }
 
-        fun showOrhidCheckBox(criteria: Criteria,
+        fun showOrhidCheckBox(position: Int,
+                              selections: SparseBooleanArray,
+                              criteria: Criteria,
                               post: Post){
 
-            if (criteria.isOK(post))
-                    checkBox.visibility = View.VISIBLE
+            if (criteria.isOK(post)) {
+                checkBox.visibility = View.VISIBLE
+                (selections.get(position)).let {
+                    checkBox.isChecked = it
+                }
+            }
             else
                 checkBox.visibility = View.GONE
         }

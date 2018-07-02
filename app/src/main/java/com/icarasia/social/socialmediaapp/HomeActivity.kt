@@ -8,13 +8,17 @@ import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import com.icarasia.social.socialmediaapp.DataModels.User
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
 import kotlinx.android.synthetic.main.home_navigation_avtivity.*
@@ -118,8 +122,12 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)), Navigatio
                 fragmentPost.postsAdapter.sortDec()
             }
             R.id.delete -> {
-//                fragmentPost.recyclerView.findViewHolderForAdapterPosition(postRecyclercurruntPosition)
-//                        ?.itemView!!.performLongClick()
+                Log.d("position At $$$$$  ",fragmentPost.curruntAdapterPosition.toString())
+
+                with(fragmentPost){
+                    recyclerView.findViewHolderForAdapterPosition(curruntAdapterPosition)
+                            ?.itemView!!.performLongClick()
+                }
             }
         }
 
