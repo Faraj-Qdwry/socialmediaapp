@@ -29,7 +29,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
 
-    private val dataSourece = RepoDataSource()
+    //private val dataSourece = RepoDataSource()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +82,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
 //                    }
 //                })
 
-                dataSourece.getUserREPO(name.toString(),whenUserReceived)
+                RepoDataSource.getUserREPO(name.toString(),whenUserReceived)
 
 
             }
@@ -111,7 +111,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
 //            }
 //        })
 
-        dataSourece.getToDosREPO(userId,whenTodosReceived)
+        RepoDataSource.getToDosREPO(userId,whenTodosReceived)
 
     }
 
@@ -132,7 +132,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
 //            }
 //        })
 
-        dataSourece.getAlbumsREPO(userId,whenAlbumsReceived)
+        RepoDataSource.getAlbumsREPO(userId,whenAlbumsReceived)
     }
 
     private val whenAlbumsReceived : (ArrayList<Any>)->Unit={
@@ -149,7 +149,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
                 .putString("User", Gson()
                         .toJson(user))
                 .apply()
-        compositeDisposable.clear()
+ //       compositeDisposable.clear()
         toPostsActivity()
     }
 

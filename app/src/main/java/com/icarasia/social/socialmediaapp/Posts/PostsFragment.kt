@@ -35,9 +35,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
     override fun onInternetDisconnected() {}
 
     val postsAdapter :PostAdapterOB by lazy {  PostAdapterOB()}
-
     var curruntAdapterPosition = 0
-
     private var logedinFlag = false
 
     private lateinit var progressFragment: ProgressBar
@@ -53,9 +51,6 @@ class PostsFragment : SocialMediaNetworkFragment() {
     private val totalCount = 500
     private var page = 1
     private var itemsPerPage = 20
-
-    val dataSource = RepoDataSource()
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -74,12 +69,8 @@ class PostsFragment : SocialMediaNetworkFragment() {
             progressFragment = findViewById(R.id.progressBarFragment)
             deletionGroupRelativeLayout = findViewById(R.id.deletionGroup)
             selectionCounterTextView = findViewById(R.id.selectionCounter)
-
             recyclerView = findViewById(R.id.postsFragmentRecyclerView)
-
             recyclerView.setUp()
-
-            callpost(1, 20)
             addNewPostb.setAddNewPost()
             return this
         }
@@ -133,13 +124,21 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
         postsAdapter.getPaginationObservable().subscribe(object : Observer<Int>{
                 override fun onNext(position: Int) {
-                    if (postsAdapter.itemCount < totalCount){
-                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
+//                    if (postsAdapter.itemCount < totalCount){
+//                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
+//                        callpost(++page, itemsPerPage)
+//                    }
+
+                    if (page < 5) {
                         callpost(++page, itemsPerPage)
                     }
+
+//                    if(page>1 && postsAdapter.goingUp){
+//                        callpost(--page,itemsPerPage)
+//                    }
+
                 }
-                override fun onError(e: Throwable) {
-                }
+                override fun onError(e: Throwable) {}
                 override fun onComplete() {}
                 override fun onSubscribe(d: Disposable) {}
             })
@@ -164,35 +163,26 @@ class PostsFragment : SocialMediaNetworkFragment() {
     }
 
     fun deletePost(post : Post){
-//        compositeDisposable.add(retrofitSectviceAPI.deletePosts(post.id).onObservData {
-//            Toast.makeText(this.context,"Posts #${post.id} was deleted",Toast.LENGTH_LONG).show()
-//        })
-
-        dataSource.deletePostREPO(post.id) {
+        RepoDataSource.deletePostREPO(post.id) {
             Toast.makeText(this.context,"Posts #${it.id} was deleted",Toast.LENGTH_LONG).show()
         }
 
     }
 
 
-    private val callpost: (Int, Int) -> Unit = { page, pageCount ->
+    val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
-
-//        compositeDisposable.add(retrofitSectviceAPI.getPosts(page,pageCount).onObservData {
-//            postsAdapter.add(it)
-//            postsAdapter.notifyDataSetChanged()
-//            progressFragment.visibility = View.GONE
-//        })
-
-        dataSource.getPostsREPO(page,pageCount,whePostsReceived)
-
-
+        RepoDataSource.getPostsREPO(page,pageCount,whePostsReceived)
     }
 
-    private val whePostsReceived : ( posts : ArrayList<Post>) -> Unit = {
+    private val whePostsReceived : ( posts : ArrayList<Post>) -> ArrayList<Post> = {
+
+        postsAdapter.clear()
+        postsAdapter.positiontracker = 0
+
         postsAdapter.add(it)
-        postsAdapter.notifyDataSetChanged()
         progressFragment.visibility = View.GONE
+        it
     }
 
 
@@ -260,15 +250,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     private fun sendApost(title: String, body: String, view: View) {
         var post = Post(user.id, 0, title, body)
-
-//        compositeDisposable.add(retrofitSectviceAPI.createPost(post).onObservData {
-//            postsAdapter.insert(it,0)
-//            snakeMessage(it.toString(), view)
-//            snakeMessage("Your post was added Successfully with the ID : ${it.id}", view)
-//        })
-
-        dataSource.addPostREPO(post, whenPostAdded)
-
+        RepoDataSource.addPostREPO(post, whenPostAdded)
     }
 
     private val whenPostAdded : (post : Post)->Unit = {

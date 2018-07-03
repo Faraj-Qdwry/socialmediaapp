@@ -25,8 +25,8 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
     val snakBar by lazy {
         Snackbar.make(findViewById(view), "Not Connected", Snackbar.LENGTH_INDEFINITE) }
 
-    protected lateinit var compositeDisposable: CompositeDisposable
-    protected lateinit var retrofitService : DataSourece
+ //   protected lateinit var compositeDisposable: CompositeDisposable
+ //   protected lateinit var retrofitService : DataSourece
 
 
 

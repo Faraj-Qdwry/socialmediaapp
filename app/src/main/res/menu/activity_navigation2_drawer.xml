@@ -16,6 +16,11 @@
             android:id="@+id/delete"
             android:icon="@drawable/ic_launcher_background"
             android:title="@string/delete" />
+        <item
+            android:id="@+id/clearRecyclerData"
+            android:icon="@drawable/ic_launcher_background"
+            android:title="clearRecyclerData" />
+
     </group>
 
 </menu>

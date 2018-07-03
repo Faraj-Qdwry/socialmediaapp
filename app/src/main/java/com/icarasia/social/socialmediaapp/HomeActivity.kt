@@ -129,6 +129,10 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)), Navigatio
                             ?.itemView!!.performLongClick()
                 }
             }
+            R.id.clearRecyclerData ->{
+                fragmentPost.postsAdapter.clear()
+                fragmentPost.callpost(1,20)
+            }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)

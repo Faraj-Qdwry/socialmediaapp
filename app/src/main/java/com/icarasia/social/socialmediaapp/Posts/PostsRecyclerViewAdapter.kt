@@ -35,11 +35,10 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
     private val paginationSubject = PublishSubject.create<Int>()
     private val clickSubject = PublishSubject.create<Pair<Post, Int>>()
-
     private val counterSubject = PublishSubject.create<Int>()
-
     private val positionSubject = PublishSubject.create<Int>()
-
+    var goingUp = false
+    var positiontracker = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = PostViewHolder(parent.inflate(viewType))
@@ -49,10 +48,21 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     override fun getItemViewType(position: Int): Int = R.layout.recycler_item_view
 
     override fun onBindViewHolder(viewHolder: PostViewHolder, position: Int) {
-        if (position == itemCount - 1) {
+        //reached Bottom
+        Log.d("position is ", position.toString())
+        if (position == itemCount - 1 && positiontracker > 0) {
             Log.d(position.toString(), itemCount.toString())
             paginationSubject.onNext(position)
         }
+
+        // went back to TOP
+        goingUp = position < positiontracker
+        positiontracker = position
+
+        if (goingUp && position == 0){
+            paginationSubject.onNext(position)
+        }
+
         viewHolder.bind(data[position], position,
                 selections, isEnableSelectionMode, clickSubject, criteria,
                 counterSubject,notify)

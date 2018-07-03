@@ -25,9 +25,6 @@ class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
     private val commentadapter by lazy { CommentsRecyclerViewAdapter() }
     private lateinit var postId : String
 
-    private val dataSource = RepoDataSource()
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_commints)
@@ -41,27 +38,19 @@ class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
         }
 
         commentRecyclerView.setup()
-
         callComments(Integer.parseInt(postId))
     }
 
     private fun callComments(postId: Int) {
         commentProgressBar.visibility = View.VISIBLE
-
-//        compositeDisposable.add(retrofitService.getCommetsForPost(postId).onObservData {
-//            commentadapter.addData(it)
-//            commentadapter.notifyDataSetChanged()
-//            commentProgressBar.visibility = View.GONE
-//        })
-
-        dataSource.getCommentREPO(postId,whenCommentsReceved)
-
+        RepoDataSource.getCommentREPO(postId,whenCommentsReceved)
     }
 
-    private val whenCommentsReceved : (arrayList: ArrayList<Comment>) -> Unit = {
+    private val whenCommentsReceved : (arrayList: ArrayList<Comment>) -> ArrayList<Comment> = {
         commentadapter.addData(it)
         commentadapter.notifyDataSetChanged()
         commentProgressBar.visibility = View.GONE
+        it
     }
 
 
