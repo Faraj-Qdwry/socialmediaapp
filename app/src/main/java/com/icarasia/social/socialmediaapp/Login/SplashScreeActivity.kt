@@ -17,14 +17,16 @@ class SplashScreeActivity : SocialMediaActivity() {
 
         this.supportActionBar!!.hide()
 
-        toMainScreen()
 
-//        var arr = ArrayList<TextView>()
-//        arr.add(textView2)
-//        arr.add(textView3)
-//        arr.add(textView4)
-//        arr.add(textView5)
-//        ToMainActivity(arr,0)
+        var arr = ArrayList<TextView>()
+        arr.add(textView2)
+        arr.add(textView3)
+        arr.add(textView4)
+        arr.add(textView5)
+        ToMainActivity(arr,0)
+
+
+//        showDialog()
     }
 
     private fun ToMainActivity(arr: ArrayList<TextView>, j: Int) {

@@ -26,7 +26,7 @@ fun Context.isNetworkAvailable(): Boolean =
 fun ViewGroup.inflate(@LayoutRes id: Int): View =
         LayoutInflater.from(context).inflate(id, this, false)
 
-fun <T> Observable<T>.onObservData(onSuccessOperation: (T) -> Unit): Unit {
+fun <T> Observable<T>.onObservData(onSuccessOperation: (T) -> Unit) {
 
 
         subscribeOn(Schedulers.io())

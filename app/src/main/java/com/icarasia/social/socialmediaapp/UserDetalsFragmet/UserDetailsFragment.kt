@@ -45,21 +45,23 @@ class UserDetailsFragment : Fragment() {
     private fun SetUpListView(listview: ListView?,user: User) {
         var arr = ArrayList<UserDetails>()
 
-        arr.add(UserDetails("Id",user.id.toString()))
-        arr.add(UserDetails("User Name",user.username))
-        arr.add(UserDetails("Name",user.name))
-        arr.add(UserDetails("Email",user.email))
-        arr.add(UserDetails("Phone",user.phone))
-        arr.add(UserDetails("Website",user.website))
-        arr.add(UserDetails("Albums",user.albumsNumber.toString()))
-        arr.add(UserDetails("Todos",user.todosNumber.toString()))
-        arr.add(UserDetails("Company",user.company.toString()))
-        arr.add(UserDetails("Address",user.address.toString()))
+        with(arr){
+            with(user){
+                add(UserDetails("Id",id.toString()))
+                add(UserDetails("Id",id.toString()))
+                add(UserDetails("User Name",username))
+                add(UserDetails("Name",name))
+                add(UserDetails("Email",email))
+                add(UserDetails("Phone",phone))
+                add(UserDetails("Website",website))
+                add(UserDetails("Albums",albumsNumber.toString()))
+                add(UserDetails("Todos",todosNumber.toString()))
+                add(UserDetails("Company",company.toString()))
+                add(UserDetails("Address",address.toString()))
+            }
+        }
 
-
-        var adapt = UserListAdapter(activity!!, arr)
-
-        listview!!.adapter = adapt
+        listview!!.adapter = UserListAdapter(activity!!, arr)
     }
 
     private fun Button.setUp(pref: SharedPreferences) {

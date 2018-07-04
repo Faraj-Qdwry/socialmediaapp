@@ -1,5 +1,6 @@
 package com.icarasia.social.socialmediaapp.Posts
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.SparseBooleanArray
@@ -37,8 +38,6 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     private val clickSubject = PublishSubject.create<Pair<Post, Int>>()
     private val counterSubject = PublishSubject.create<Int>()
     private val positionSubject = PublishSubject.create<Int>()
-    var goingUp = false
-    var positiontracker = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = PostViewHolder(parent.inflate(viewType))
@@ -49,17 +48,8 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
     override fun onBindViewHolder(viewHolder: PostViewHolder, position: Int) {
         //reached Bottom
-        Log.d("position is ", position.toString())
-        if (position == itemCount - 1 && positiontracker > 0) {
-            Log.d(position.toString(), itemCount.toString())
-            paginationSubject.onNext(position)
-        }
-
-        // went back to TOP
-        goingUp = position < positiontracker
-        positiontracker = position
-
-        if (goingUp && position == 0){
+        if (position == itemCount - 1) {
+            Log.d("IN HERE", "IN HERE *****************")
             paginationSubject.onNext(position)
         }
 
@@ -148,6 +138,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
         private val postBody: TextView = itemView.findViewById(R.id.itemBody)
         private val checkBox: CheckBox = itemView.findViewById(R.id.checkboxSelection)
 
+        @SuppressLint("SetTextI18n")
         fun bind(post: Post,
                  position: Int,
                  selections: SparseBooleanArray,
@@ -171,7 +162,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                 if (enableSelectionMode)
                     handelSelection(selections,position,criteria,post,counterSubject)
                 else {
-                    clickSubject!!.onNext(Pair(post,shortClik))
+                    clickSubject!!.onNext(Pair(post,shortClik))  // comment : understand !! and ?
                 }
             }
 

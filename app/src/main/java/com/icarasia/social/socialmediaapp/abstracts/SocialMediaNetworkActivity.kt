@@ -25,16 +25,9 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
     val snakBar by lazy {
         Snackbar.make(findViewById(view), "Not Connected", Snackbar.LENGTH_INDEFINITE) }
 
- //   protected lateinit var compositeDisposable: CompositeDisposable
- //   protected lateinit var retrofitService : DataSourece
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-//        compositeDisposable = CompositeDisposable()
-//        retrofitService = RemoteDataSource.create()
     }
 
 
@@ -42,7 +35,6 @@ abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaAc
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(networkReceiver)
-//        compositeDisposable.clear()
     }
 
 

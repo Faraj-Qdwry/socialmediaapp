@@ -29,27 +29,14 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
     private var todoFinishFlage = false
     private var albumsFinishFlage = false
 
-    //private val dataSourece = RepoDataSource()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        this.supportActionBar!!.hide()
-
+        this.supportActionBar?.hide()
         skipText.setOnClickListener { toPostsActivity() }
-
-
-        with(getUserlogedIn(this)){
-            if (this==null)
-                login()
-            else
-                toPostsActivity()
-        }
-
+        getUserlogedIn(this)?.let { toPostsActivity() }
+        login()
     }
-
-
 
     companion object {
         fun startMainActivity(context: Context){
@@ -58,98 +45,51 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
     }
 
     fun login() {
-//
-//        retrofitService = DataSourece.create()
-//        compositeDisposable = CompositeDisposable()
-
-
         loginButton.setOnClickListener {
-            var name = nameEditText.text
-            if (name.isNullOrEmpty()) {
-                nameEditText.error = getString(R.string.nameError)
-            } else {
-                showDialog()
-
-//                compositeDisposable.add(retrofitService.getUser(name.toString()).onObservData {
-//                    if (it.isNotEmpty()) {
-//                        this.user = it[0]
-//                        callTodos(this.user.id)
-//                        callAlbums(this.user.id)
-//                        toPostsActivity()
-//                    } else {
-//                        hideDialog()
-//                        nameEditText.error = getString(R.string.nameError)
-//                    }
-//                })
-
-                RepoDataSource.getUserREPO(name.toString(),whenUserReceived)
-
-
+            with(nameEditText.text){
+                if (this.isNullOrEmpty()) {
+                    nameEditText.error = getString(R.string.nameError)
+                } else {
+                    showDialog()
+                    RepoDataSource.getUserREPO(this.toString(),whenUserReceived)
+                }
             }
         }
-
     }
 
     private val whenUserReceived : (users : List<User>) -> Unit = {
         if (it.isNotEmpty()) {
             this.user = it[0]
-            callTodos(this.user.id)
-            callAlbums(this.user.id)
-            toPostsActivity()
+            callTodosAndAlbums(user.id)
         } else {
             hideDialog()
             nameEditText.error = getString(R.string.nameError)
         }
     }
 
-    private fun callTodos(userId: Int) {
-//        compositeDisposable.add(retrofitService.getTodos(userId).onObservData {
-//            user.todosNumber = it.size
-//            todoFinishFlage = true
-//            if (albumsFinishFlage) {
-//                saveUser(user)
-//            }
-//        })
-
-        RepoDataSource.getToDosREPO(userId,whenTodosReceived)
-
-    }
-
-    private val whenTodosReceived : (todos : ArrayList<Any>)->Unit = {
-        user.todosNumber = it.size
-        todoFinishFlage = true
-        if (albumsFinishFlage) {
-            saveUser(user)
+    private fun callTodosAndAlbums(id: Int) {
+        RepoDataSource.getToDosREPO(id){
+            run {
+                user.todosNumber = it.size
+                todoFinishFlage = true
+                if (albumsFinishFlage) {
+                    saveUser(user)
+                }
+            }
         }
-    }
-
-    private fun callAlbums(userId: Int) {
-//        compositeDisposable.add(retrofitService.getAlbums(userId).onObservData {
-//            user.albumsNumber = it.size
-//            albumsFinishFlage = true
-//            if (albumsFinishFlage) {
-//                saveUser(user)
-//            }
-//        })
-
-        RepoDataSource.getAlbumsREPO(userId,whenAlbumsReceived)
-    }
-
-    private val whenAlbumsReceived : (ArrayList<Any>)->Unit={
-        user.albumsNumber = it.size
-        albumsFinishFlage = true
-        if (albumsFinishFlage) {
-            saveUser(user)
+        RepoDataSource.getAlbumsREPO(id){
+            run {
+                user.albumsNumber = it.size
+                albumsFinishFlage = true
+                if (albumsFinishFlage) {
+                    saveUser(user)
+                }
+            }
         }
     }
 
     private fun saveUser(user: User) {
-        getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
-                .edit()
-                .putString("User", Gson()
-                        .toJson(user))
-                .apply()
- //       compositeDisposable.clear()
+        getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE).edit().putString("User", Gson().toJson(user)).apply()
         toPostsActivity()
     }
 
@@ -157,20 +97,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) {
         HomeActivity.StartActivity(this@LoginActivity)
         this.finish()
     }
-
 }
 
-fun getUserlogedIn(context: Context): User? {
-    var pref = context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
-    var userJs = pref.getString("User","")
-    var user = Gson().fromJson<User>(userJs,User::class.java)
-
-    return if (user!=null){
-        user
-    }else{
-        //Toast.makeText(context, "you are LogedOut", Toast.LENGTH_LONG).show()
-        null
-    }
-}
-
+fun getUserlogedIn(context: Context): User? = Gson().fromJson<User>(context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE).getString("User",""),User::class.java)
 

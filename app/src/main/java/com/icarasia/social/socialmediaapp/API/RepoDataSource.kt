@@ -44,10 +44,12 @@ object RepoDataSource : DataSourece by RemoteDataSource(){
     }
 
     fun deletePostREPO(postsId: Int, whenDeleted: (post : Post) -> Unit){
+        map.clear()
         deletePosts(postsId).onObservData { whenDeleted(it) }
     }
 
     fun addPostREPO(post: Post, whenPostAdded: (post: Post) -> Unit){
+        map.clear()
         createPost(post).onObservData { whenPostAdded(it) }
     }
 

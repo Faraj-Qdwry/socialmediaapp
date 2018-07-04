@@ -2,11 +2,15 @@ package com.icarasia.social.socialmediaapp.Posts
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.OnScrollListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +53,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
     private lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
     private val totalCount = 500
-    private var page = 1
+    var page = 1
     private var itemsPerPage = 20
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -122,21 +126,16 @@ class PostsFragment : SocialMediaNetworkFragment() {
             dismissDeletionGroup()
         }
 
+        progressFragment.visibility = View.GONE
+
         postsAdapter.getPaginationObservable().subscribe(object : Observer<Int>{
                 override fun onNext(position: Int) {
-//                    if (postsAdapter.itemCount < totalCount){
-//                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
-//                        callpost(++page, itemsPerPage)
-//                    }
 
-                    if (page < 5) {
-                        callpost(++page, itemsPerPage)
+                    if (postsAdapter.itemCount < totalCount){
+                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
+                        page++
+                        callpost(page, itemsPerPage)
                     }
-
-//                    if(page>1 && postsAdapter.goingUp){
-//                        callpost(--page,itemsPerPage)
-//                    }
-
                 }
                 override fun onError(e: Throwable) {}
                 override fun onComplete() {}
@@ -156,6 +155,17 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     }
 
+    val callpost: (Int, Int) -> Unit = { page, pageCount ->
+        progressFragment.visibility = View.VISIBLE
+        RepoDataSource.getPostsREPO(page,pageCount,whePostsReceived)
+    }
+
+
+    private val whePostsReceived : ( posts : ArrayList<Post>) -> ArrayList<Post> = {
+        postsAdapter.add(it)
+        progressFragment.visibility = View.GONE
+        it
+    }
 
     private val postsToremove: (ArrayList<Post>) -> ArrayList<Post> = { listOfPosts ->
         listOfPosts.forEach { deletePost(it) }
@@ -168,24 +178,6 @@ class PostsFragment : SocialMediaNetworkFragment() {
         }
 
     }
-
-
-    val callpost: (Int, Int) -> Unit = { page, pageCount ->
-        progressFragment.visibility = View.VISIBLE
-        RepoDataSource.getPostsREPO(page,pageCount,whePostsReceived)
-    }
-
-    private val whePostsReceived : ( posts : ArrayList<Post>) -> ArrayList<Post> = {
-
-        postsAdapter.clear()
-        postsAdapter.positiontracker = 0
-
-        postsAdapter.add(it)
-        progressFragment.visibility = View.GONE
-        it
-    }
-
-
 
     private val click: (Post, Int) -> Unit =
             { post, clickType ->

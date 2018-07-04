@@ -8,7 +8,7 @@ import io.reactivex.Observable
 
 class RemoteDataSource :  DataSourece{
 
-    val retrofit = RetrofitAPI.create()
+    private val retrofit = RetrofitAPI.create()
 
     override fun deletePosts(postsId: Int): Observable<Post> {
         return retrofit.deletePosts(postsId)
