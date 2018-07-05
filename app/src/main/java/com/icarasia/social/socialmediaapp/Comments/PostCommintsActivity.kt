@@ -43,7 +43,7 @@ class PostCommintsActivity : SocialMediaNetworkActivity(R.id.commentsActivity) {
 
     private fun callComments(postId: Int) {
         commentProgressBar.visibility = View.VISIBLE
-        RepoDataSource.getCommentREPO(postId,whenCommentsReceved)
+        RepoDataSource.getCommetsForPost(postId).onObservData{whenCommentsReceved(it)}
     }
 
     private val whenCommentsReceved : (arrayList: ArrayList<Comment>) -> ArrayList<Comment> = {

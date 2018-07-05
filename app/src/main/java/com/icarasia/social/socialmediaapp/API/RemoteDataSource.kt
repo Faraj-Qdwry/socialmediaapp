@@ -4,11 +4,18 @@ import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.Login.User
 import io.reactivex.Observable
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 
-class RemoteDataSource :  DataSourece{
+class RemoteDataSource : DataSourece {
 
-    private val retrofit = RetrofitAPI.create()
+    private val retrofit = Retrofit.Builder().apply {
+        baseUrl("https://jsonplaceholder.typicode.com")
+        addConverterFactory(GsonConverterFactory.create())
+        addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+    }.build().create(DataSourece::class.java)
 
     override fun deletePosts(postsId: Int): Observable<Post> {
         return retrofit.deletePosts(postsId)
@@ -23,7 +30,7 @@ class RemoteDataSource :  DataSourece{
     }
 
     override fun getPosts(page: Int, pageCount: Int): Observable<ArrayList<Post>> {
-        return retrofit.getPosts(page,pageCount)
+        return retrofit.getPosts(page, pageCount)
     }
 
     override fun getUser(username: String): Observable<List<User>> {

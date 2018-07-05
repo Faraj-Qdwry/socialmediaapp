@@ -23,6 +23,7 @@ import com.icarasia.social.socialmediaapp.Login.LoginPresenter
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
+import com.icarasia.social.socialmediaapp.extensions.onObservData
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
@@ -153,7 +154,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     val callpost: (Int, Int) -> Unit = { page, pageCount ->
         progressFragment.visibility = View.VISIBLE
-        RepoDataSource.getPostsREPO(page,pageCount,whePostsReceived)
+        RepoDataSource.getPosts(page,pageCount).onObservData { whePostsReceived(it) }
     }
 
 
@@ -169,7 +170,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
     }
 
     fun deletePost(post : Post){
-        RepoDataSource.deletePostREPO(post.id) {
+        RepoDataSource.deletePosts(post.id).onObservData{
             Toast.makeText(this.context,"Posts #${it.id} was deleted",Toast.LENGTH_LONG).show()
         }
 
@@ -215,7 +216,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
                 val body = poster.findViewById<TextView>(R.id.postBody)
                 AlertDialog.Builder(this@PostsFragment.context)
                         .setView(poster)
-                        .setPositiveButton("Post") { dialog, p1 ->
+                        .setPositiveButton("Post") { _, _ ->
                             if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
                                 sendApost(title.text.toString(), body.text.toString(), view)
                             } else {
@@ -227,11 +228,8 @@ class PostsFragment : SocialMediaNetworkFragment() {
             } else {
                 AlertDialog.Builder(this@PostsFragment.context)
                         .setTitle("you are not Loged In")
-                        .setPositiveButton("Login") { dialog, _ ->
-                            //LoginActivity.startMainActivity(this@PostsFragment.context!!)
-                            //var intent = Intent(this@PostsFragment,LoginActivity::class.java)
-                            LoginPresenter(LoginActivity())
-                                    .toLoginActivity(this@PostsFragment.networkActivity)
+                        .setPositiveButton("Login") { _ , _ ->
+                            this@PostsFragment.context?.let { LoginActivity.start(it) }
                         }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                         .show()
@@ -241,7 +239,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     private fun sendApost(title: String, body: String, view: View) {
         var post = Post(user.id, 0, title, body)
-        RepoDataSource.addPostREPO(post, whenPostAdded)
+        RepoDataSource.createPost(post).onObservData{whenPostAdded(it)}
     }
 
     private val whenPostAdded : (post : Post)->Unit = {

@@ -10,4 +10,5 @@ interface viewContract {
     fun loginButtunSetUp(process: (name: String) -> Unit)
     fun showErrorMessage()
     fun getContext(): Context
+    fun toPostsActivity()
 }

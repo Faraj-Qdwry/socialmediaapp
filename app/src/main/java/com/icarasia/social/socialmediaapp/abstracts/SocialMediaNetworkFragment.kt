@@ -2,9 +2,6 @@ package com.icarasia.social.socialmediaapp.abstracts
 
 import android.content.Context
 import android.os.Bundle
-import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.API.RemoteDataSource
-import com.icarasia.social.socialmediaapp.API.RetrofitAPI
 import io.reactivex.disposables.CompositeDisposable
 
 interface NetworkInformer {
@@ -15,8 +12,6 @@ interface NetworkInformer {
 abstract class SocialMediaNetworkFragment : SocialMediaFragment(), NetworkInformer {
 
 
-    protected lateinit var compositeDisposable: CompositeDisposable
-    protected lateinit var retrofitSectviceAPI: RetrofitAPI
 
     protected lateinit var networkActivity: SocialMediaNetworkActivity
 
@@ -29,14 +24,11 @@ abstract class SocialMediaNetworkFragment : SocialMediaFragment(), NetworkInform
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         networkActivity.register(this)
-        compositeDisposable = CompositeDisposable()
-        retrofitSectviceAPI = RetrofitAPI.create()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         networkActivity.unregister(this)
-        compositeDisposable.clear()
     }
 
     abstract fun onInternetConnected()

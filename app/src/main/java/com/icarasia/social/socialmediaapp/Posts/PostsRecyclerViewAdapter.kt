@@ -49,7 +49,6 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     override fun onBindViewHolder(viewHolder: PostViewHolder, position: Int) {
         //reached Bottom
         if (position == itemCount - 1) {
-            Log.d("IN HERE", "IN HERE *****************")
             paginationSubject.onNext(position)
         }
 

@@ -71,9 +71,8 @@ class UserDetailsFragment : Fragment() {
     private fun setUPLogin(bt : Button) {
         bt.setOnClickListener {
             //LoginActivity.startMainActivity(this.context!!)
-            LoginPresenter(LoginActivity())
-                    .toLoginActivity(this@UserDetailsFragment.activity!!
-                    )
+
+            this.context?.let { it1 -> LoginActivity.start(it1) }
         }
     }
 

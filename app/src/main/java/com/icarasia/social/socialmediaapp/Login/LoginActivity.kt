@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.RepoDataSource
+import com.icarasia.social.socialmediaapp.HomeActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -65,4 +66,16 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
     override fun onInternetConnected() {
         snakBar.dismiss()
     }
+
+    override fun toPostsActivity() {
+        HomeActivity.StartActivity(getContext())
+    }
+
+    companion object {
+        fun start( context : Context){
+            context.startActivity(Intent(context,LoginActivity::class.java))
+        }
+    }
+
+
 }
