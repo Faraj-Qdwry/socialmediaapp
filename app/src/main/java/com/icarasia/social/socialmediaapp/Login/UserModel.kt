@@ -1,4 +1,9 @@
-package com.icarasia.social.socialmediaapp.DataModels
+package com.icarasia.social.socialmediaapp.Login
+
+class UserDetails(attr: String, valu: String) {
+    var attribute : String = attr
+    var value : String =valu
+}
 
 data class User(
         val id: Int = 0,

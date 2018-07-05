@@ -18,7 +18,7 @@ abstract class SocialMediaNetworkFragment : SocialMediaFragment(), NetworkInform
     protected lateinit var compositeDisposable: CompositeDisposable
     protected lateinit var retrofitSectviceAPI: RetrofitAPI
 
-    private lateinit var networkActivity: SocialMediaNetworkActivity
+    protected lateinit var networkActivity: SocialMediaNetworkActivity
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

@@ -2,15 +2,11 @@ package com.icarasia.social.socialmediaapp.Posts
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.OnScrollListener
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,12 +17,12 @@ import android.widget.Toast
 import com.icarasia.social.socialmediaapp.API.RepoDataSource
 import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
-import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
+import com.icarasia.social.socialmediaapp.Login.LoginPresenter
 import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
-import com.icarasia.social.socialmediaapp.extensions.onObservData
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
@@ -232,7 +228,10 @@ class PostsFragment : SocialMediaNetworkFragment() {
                 AlertDialog.Builder(this@PostsFragment.context)
                         .setTitle("you are not Loged In")
                         .setPositiveButton("Login") { dialog, _ ->
-                            LoginActivity.startMainActivity(this@PostsFragment.context!!)
+                            //LoginActivity.startMainActivity(this@PostsFragment.context!!)
+                            //var intent = Intent(this@PostsFragment,LoginActivity::class.java)
+                            LoginPresenter(LoginActivity())
+                                    .toLoginActivity(this@PostsFragment.networkActivity)
                         }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                         .show()

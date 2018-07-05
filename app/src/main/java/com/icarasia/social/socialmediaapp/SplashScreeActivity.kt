@@ -1,10 +1,11 @@
-package com.icarasia.social.socialmediaapp.Login
+package com.icarasia.social.socialmediaapp
 
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
+import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
 import kotlinx.android.synthetic.main.activity_splash_scree.*
@@ -46,7 +47,8 @@ class SplashScreeActivity : SocialMediaActivity() {
     }
 
     fun toMainScreen() {
-        LoginActivity.startMainActivity(this@SplashScreeActivity)
+        startActivity(Intent(this@SplashScreeActivity,LoginActivity::class.java))
+        //LoginActivity.startMainActivity(this@SplashScreeActivity)
         this@SplashScreeActivity.finish()    }
 
 }

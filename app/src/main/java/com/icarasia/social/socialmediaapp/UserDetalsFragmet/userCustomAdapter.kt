@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.icarasia.social.socialmediaapp.DataModels.UserDetails
+import com.icarasia.social.socialmediaapp.Login.UserDetails
 import com.icarasia.social.socialmediaapp.R
 
 class UserListAdapter(private var activity: FragmentActivity, private var items: ArrayList<UserDetails>): BaseAdapter() {

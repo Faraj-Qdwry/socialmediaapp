@@ -2,7 +2,7 @@ package com.icarasia.social.socialmediaapp.API
 
 import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.DataModels.Post
-import com.icarasia.social.socialmediaapp.DataModels.User
+import com.icarasia.social.socialmediaapp.Login.User
 import io.reactivex.Observable
 
 

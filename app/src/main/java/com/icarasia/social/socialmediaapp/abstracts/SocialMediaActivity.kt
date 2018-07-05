@@ -16,5 +16,7 @@ abstract class SocialMediaActivity : AppCompatActivity() {
     fun showDialog() = dialog.show()
 
     fun hideDialog() = dialog.hide()
+
+
 }
 

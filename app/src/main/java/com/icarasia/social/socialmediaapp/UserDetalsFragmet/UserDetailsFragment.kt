@@ -9,14 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.icarasia.social.socialmediaapp.DataModels.User
-import com.icarasia.social.socialmediaapp.DataModels.UserDetails
-import com.icarasia.social.socialmediaapp.Login.LoginActivity
-import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
-import com.icarasia.social.socialmediaapp.Login.sharedPreferencesName
 
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.HomeActivity
+import com.icarasia.social.socialmediaapp.Login.*
 
 class UserDetailsFragment : Fragment() {
 
@@ -47,17 +43,17 @@ class UserDetailsFragment : Fragment() {
 
         with(arr){
             with(user){
-                add(UserDetails("Id",id.toString()))
-                add(UserDetails("Id",id.toString()))
-                add(UserDetails("User Name",username))
-                add(UserDetails("Name",name))
-                add(UserDetails("Email",email))
-                add(UserDetails("Phone",phone))
-                add(UserDetails("Website",website))
-                add(UserDetails("Albums",albumsNumber.toString()))
-                add(UserDetails("Todos",todosNumber.toString()))
-                add(UserDetails("Company",company.toString()))
-                add(UserDetails("Address",address.toString()))
+                add(UserDetails("Id", id.toString()))
+                add(UserDetails("Id", id.toString()))
+                add(UserDetails("User Name", username))
+                add(UserDetails("Name", name))
+                add(UserDetails("Email", email))
+                add(UserDetails("Phone", phone))
+                add(UserDetails("Website", website))
+                add(UserDetails("Albums", albumsNumber.toString()))
+                add(UserDetails("Todos", todosNumber.toString()))
+                add(UserDetails("Company", company.toString()))
+                add(UserDetails("Address", address.toString()))
             }
         }
 
@@ -74,7 +70,10 @@ class UserDetailsFragment : Fragment() {
 
     private fun setUPLogin(bt : Button) {
         bt.setOnClickListener {
-            LoginActivity.startMainActivity(this.context!!)
+            //LoginActivity.startMainActivity(this.context!!)
+            LoginPresenter(LoginActivity())
+                    .toLoginActivity(this@UserDetailsFragment.activity!!
+                    )
         }
     }
 
