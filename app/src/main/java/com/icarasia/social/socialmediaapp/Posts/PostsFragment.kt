@@ -19,8 +19,6 @@ import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
 import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
-import com.icarasia.social.socialmediaapp.Login.LoginPresenter
-import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 import com.icarasia.social.socialmediaapp.extensions.onObservData
@@ -56,7 +54,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        with(getUserlogedIn(this.activity!!.baseContext)){
+        with(LoginActivity.getUserlogedIn(this.activity!!.baseContext)){
             if (this!=null){
                 user = this
                 logedinFlag = true
@@ -129,7 +127,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
                 override fun onNext(position: Int) {
 
                     if (postsAdapter.itemCount < totalCount){
-                        Toast.makeText(activity!!.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(networkActivity.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
                         page++
                         callpost(page, itemsPerPage)
                     }
@@ -190,7 +188,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
                                     })
                         }
                 }else if (clickType == longClick){
-                    with(getUserlogedIn(this@PostsFragment.activity!!.baseContext)){
+                    with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
                         this?.let {
                             postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
                                 override fun isOK(data: Post): Boolean {

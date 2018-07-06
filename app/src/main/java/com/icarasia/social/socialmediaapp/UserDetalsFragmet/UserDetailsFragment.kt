@@ -21,7 +21,7 @@ class UserDetailsFragment : Fragment() {
 
         with(inflater.inflate(R.layout.fragment_user_details, container, false)){
 
-            with(getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)){
+            with(LoginActivity.getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)){
                 if (this==null){
                     findViewById<ConstraintLayout>(R.id.containerOfAllViews).visibility = View.GONE
                     findViewById<LinearLayout>(R.id.logedoutView).visibility = View.VISIBLE

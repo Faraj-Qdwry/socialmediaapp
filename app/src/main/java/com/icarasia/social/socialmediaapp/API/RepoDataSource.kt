@@ -28,7 +28,7 @@ object RepoDataSource : DataSourece {
                 localDS.getCommetsForPost(postId)
             } else {
                 with(remoteDS.getCommetsForPost(postId)) {
-                    onObservData { localDS.cashThis("$postId", it ,2) }
+                    onObservData { localDS.cashThis("$postId", it ) }
                     Log.d("API", "*****************")
                     this
                 }
@@ -40,7 +40,7 @@ object RepoDataSource : DataSourece {
                 localDS.getPosts(page, pageCount)
             } else {
                 with(remoteDS.getPosts(page, pageCount)) {
-                    onObservData { localDS.cashThis("$page$pageCount", it ,1) }
+                    onObservData { localDS.cashThis("$page$pageCount", it ) }
                     Log.d("API", "*****************")
                     this
                 }
@@ -57,8 +57,5 @@ object RepoDataSource : DataSourece {
     override fun getTodos(id: Int): Observable<ArrayList<Any>> {
         return remoteDS.getTodos(id)
     }
-
-
-
 }
 

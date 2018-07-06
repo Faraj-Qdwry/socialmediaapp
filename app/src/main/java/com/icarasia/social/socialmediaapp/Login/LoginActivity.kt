@@ -75,6 +75,9 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
         fun start( context : Context){
             context.startActivity(Intent(context,LoginActivity::class.java))
         }
+
+        fun getUserlogedIn(context: Context): User? =
+                Gson().fromJson<User>(context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE).getString("User",""), User::class.java)
     }
 
 

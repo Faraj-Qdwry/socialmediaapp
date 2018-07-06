@@ -64,18 +64,12 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
     private fun saveUser(user: User) {
         viewInstance.getContext().getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
                 .edit().putString("User", Gson().toJson(user)).apply()
-
         viewInstance.toPostsActivity()
     }
 
     fun checkUserLogedIn() {
-        getUserlogedIn(viewInstance.getContext())?.let { viewInstance.toPostsActivity() }
+        LoginActivity.getUserlogedIn(viewInstance.getContext())?.let { viewInstance.toPostsActivity() }
         loginProcess()
     }
 
-
-
 }
-
-fun getUserlogedIn(context: Context): User? =
-        Gson().fromJson<User>(context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE).getString("User",""), User::class.java)
