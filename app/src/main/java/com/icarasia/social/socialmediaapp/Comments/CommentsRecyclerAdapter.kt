@@ -13,7 +13,7 @@ import com.icarasia.social.socialmediaapp.R
 fun ViewGroup.inflate(@LayoutRes id: Int): View = LayoutInflater.from(context).inflate(id, this, false)
 
 
-class CommentsRecyclerViewAdapter() : RecyclerView.Adapter<CommentsRecyclerViewAdapter.RecyclerViewHolder>() {
+class CommentsRecyclerViewAdapter : RecyclerView.Adapter<CommentsRecyclerViewAdapter.RecyclerViewHolder>() {
 
     private val commentsList: ArrayList<Comment> = ArrayList()
 

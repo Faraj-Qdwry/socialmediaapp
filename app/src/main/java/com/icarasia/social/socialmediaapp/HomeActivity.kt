@@ -11,8 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
+import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.User
-import com.icarasia.social.socialmediaapp.Login.getUserlogedIn
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
@@ -45,7 +45,7 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)), Navigatio
         nav_view.setNavigationItemSelectedListener(this)
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        with(getUserlogedIn(this)) {
+        with(LoginActivity.getUserlogedIn(this)) {
             this?.let {
                 setUpheader(this)
             }

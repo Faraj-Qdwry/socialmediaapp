@@ -25,7 +25,7 @@ import com.icarasia.social.socialmediaapp.extensions.onObservData
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
-class PostsFragment : SocialMediaNetworkFragment() {
+class  PostsFragment : SocialMediaNetworkFragment() {
 
     override fun onInternetConnected() {
         callpost(1, 20)
@@ -174,8 +174,7 @@ class PostsFragment : SocialMediaNetworkFragment() {
 
     }
 
-    private val click: (Post, Int) -> Unit =
-            { post, clickType ->
+    private val click: (Post, Int) -> Unit = { post, clickType ->
 
                 if (clickType== shortClik) {
                         with(post) {

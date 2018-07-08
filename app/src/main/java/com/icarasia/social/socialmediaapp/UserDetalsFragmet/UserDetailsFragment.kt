@@ -57,7 +57,7 @@ class UserDetailsFragment : Fragment() {
             }
         }
 
-        listview!!.adapter = UserListAdapter(activity!!, arr)
+        listview?.adapter = UserListAdapter(activity!!, arr)
     }
 
     private fun Button.setUp(pref: SharedPreferences) {
@@ -70,8 +70,6 @@ class UserDetailsFragment : Fragment() {
 
     private fun setUPLogin(bt : Button) {
         bt.setOnClickListener {
-            //LoginActivity.startMainActivity(this.context!!)
-
             this.context?.let { it1 -> LoginActivity.start(it1) }
         }
     }

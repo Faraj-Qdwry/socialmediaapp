@@ -11,4 +11,6 @@ interface viewContract {
     fun showErrorMessage()
     fun getContext(): Context
     fun toPostsActivity()
+    fun saveUser(user: User)
+    fun userLogedIn(): Boolean
 }

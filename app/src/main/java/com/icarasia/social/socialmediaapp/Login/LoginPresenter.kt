@@ -1,19 +1,18 @@
 package com.icarasia.social.socialmediaapp.Login
 
-import android.content.Context
-import android.content.Intent
-import android.util.Log
-import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.API.RepoDataSource
-import com.icarasia.social.socialmediaapp.HomeActivity
+import com.icarasia.social.socialmediaapp.abstracts.ValusesInjector
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 class LoginPresenter(private val viewInstance: viewContract, private val repo : DataSourece){
 
     private lateinit var user : User
-    private var todoFinishFlage = false
-    private var albumsFinishFlage = false
+    var todoFinishFlage : Boolean = false
+    var albumsFinishFlage : Boolean = false
+
+    init {
+        ValusesInjector.inject(this)
+    }
 
     fun loginProcess() {
         viewInstance.hidActionBar()
@@ -29,10 +28,9 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
         }
     }
 
-    private val whenUserReceived : (users : List<User>) -> Unit = {
+    val whenUserReceived : (users : List<User>) -> Unit = {
         if (it.isNotEmpty()) {
             this.user = it[0]
-            Log.d("User Received ", "  ***********      ${user.email}")
             callTodosAndAlbums(user.id)
         } else {
             viewInstance.hidLoadingDialoge()
@@ -62,14 +60,15 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
     }
 
     private fun saveUser(user: User) {
-        viewInstance.getContext().getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
-                .edit().putString("User", Gson().toJson(user)).apply()
+        viewInstance.saveUser(user)
         viewInstance.toPostsActivity()
     }
 
     fun checkUserLogedIn() {
-        LoginActivity.getUserlogedIn(viewInstance.getContext())?.let { viewInstance.toPostsActivity() }
-        loginProcess()
+        if (!viewInstance.userLogedIn())
+            loginProcess()
+        else
+            viewInstance.toPostsActivity()
     }
 
 }

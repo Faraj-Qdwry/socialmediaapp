@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment
 
 abstract class SocialMediaFragment : Fragment() {
 
-    private lateinit var activity: SocialMediaActivity
+    lateinit var activity: SocialMediaActivity
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        activity = context as SocialMediaActivity
+        ValusesInjector.inject(this)
     }
 
     fun showDialog() {
