@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.Gson
-import com.icarasia.social.socialmediaapp.HomeActivity
+import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
-import com.icarasia.social.socialmediaapp.abstracts.ValusesInjector
+import com.icarasia.social.socialmediaapp.ValusesInjector
 import kotlinx.android.synthetic.main.activity_main.*
 
 const val sharedPreferencesName : String = "UserDetails"

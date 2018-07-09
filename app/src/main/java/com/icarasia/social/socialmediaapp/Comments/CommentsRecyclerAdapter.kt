@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.icarasia.social.socialmediaapp.DataModels.Comment
 import com.icarasia.social.socialmediaapp.R
 
 

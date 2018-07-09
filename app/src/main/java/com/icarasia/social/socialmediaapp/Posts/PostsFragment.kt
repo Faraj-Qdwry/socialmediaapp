@@ -15,8 +15,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.icarasia.social.socialmediaapp.API.RepoDataSource
-import com.icarasia.social.socialmediaapp.Comments.PostCommintsActivity
-import com.icarasia.social.socialmediaapp.DataModels.Post
+import com.icarasia.social.socialmediaapp.Comments.CommintsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
@@ -179,7 +178,7 @@ class  PostsFragment : SocialMediaNetworkFragment() {
         if (clickType== shortClik) {
                         with(post) {
                             startActivity(
-                                    with(Intent(this@PostsFragment.context, PostCommintsActivity::class.java)) {
+                                    with(Intent(this@PostsFragment.context, CommintsActivityView::class.java)) {
                                         putExtra("id", post.id.toString())
                                         putExtra("userId", post.userId.toString())
                                         putExtra("title", post.title)

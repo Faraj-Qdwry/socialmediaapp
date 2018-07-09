@@ -1,8 +1,9 @@
 package com.icarasia.social.socialmediaapp.API
 
 import android.util.Log
-import com.icarasia.social.socialmediaapp.DataModels.*
+import com.icarasia.social.socialmediaapp.Comments.Comment
 import com.icarasia.social.socialmediaapp.Login.User
+import com.icarasia.social.socialmediaapp.Posts.Post
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 import io.reactivex.Observable
 

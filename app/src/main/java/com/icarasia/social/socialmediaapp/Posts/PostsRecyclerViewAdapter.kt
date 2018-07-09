@@ -2,13 +2,11 @@ package com.icarasia.social.socialmediaapp.Posts
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import com.icarasia.social.socialmediaapp.DataModels.Post
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.extensions.inflate
 import io.reactivex.Observable
@@ -102,12 +100,11 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun remove(data: Post) {
-        this.data.remove(data)
-    }
-
     fun remove(data: ArrayList<Post>) {
-        this.data.removeAll(data)
+        if (data.size>1)
+            this.data.removeAll(data)
+        else
+            this.data.remove(data[0])
     }
 
     fun getSelectedData(): ArrayList<Post> {

@@ -1,4 +1,4 @@
-package com.icarasia.social.socialmediaapp.DataModels
+package com.icarasia.social.socialmediaapp.Posts
 
 
 data class Post(

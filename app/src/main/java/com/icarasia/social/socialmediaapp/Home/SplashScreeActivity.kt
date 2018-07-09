@@ -1,17 +1,17 @@
-package com.icarasia.social.socialmediaapp
+package com.icarasia.social.socialmediaapp.Home
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
-import com.icarasia.social.socialmediaapp.abstracts.ValusesInjector
-import kotlinx.android.synthetic.main.activity_splash_scree.*
 
 class SplashScreeActivity : SocialMediaActivity() {
+
+    lateinit var arrayOfTextView: ArrayList<TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,13 +19,9 @@ class SplashScreeActivity : SocialMediaActivity() {
 
         this.supportActionBar?.hide()
 
+        ValusesInjector.inject(this)
 
-        var arr = ArrayList<TextView>()
-        arr.add(textView2)
-        arr.add(textView3)
-        arr.add(textView4)
-        arr.add(textView5)
-        ToMainActivity(arr,0)
+        ToMainActivity(arrayOfTextView,0)
 
     }
 
@@ -46,8 +42,8 @@ class SplashScreeActivity : SocialMediaActivity() {
     }
 
     fun toMainScreen() {
-        startActivity(Intent(this@SplashScreeActivity,LoginActivity::class.java))
-        //LoginActivity.startMainActivity(this@SplashScreeActivity)
-        this@SplashScreeActivity.finish()    }
+        LoginActivity.start(this@SplashScreeActivity)
+        this@SplashScreeActivity.finish()
+    }
 
 }

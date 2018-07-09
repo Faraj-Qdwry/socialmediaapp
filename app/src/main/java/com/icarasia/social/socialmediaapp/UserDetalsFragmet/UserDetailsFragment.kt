@@ -11,59 +11,68 @@ import android.view.ViewGroup
 import android.widget.*
 
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.HomeActivity
+import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.Login.*
 
 class UserDetailsFragment : Fragment() {
 
+    lateinit var logout : Button
+    lateinit var login : Button
+    lateinit var ListView : ListView
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         with(inflater.inflate(R.layout.fragment_user_details, container, false)){
 
-            with(LoginActivity.getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)){
+            with(getUser()){
+                this?.let {
+                    SetUpListView(findViewById(R.id.userListView) , this)
+                    logout = findViewById(R.id.logout)
+                    logoutSetUp(this@UserDetailsFragment.activity!!.baseContext.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE))
+                }
                 if (this==null){
                     findViewById<ConstraintLayout>(R.id.containerOfAllViews).visibility = View.GONE
                     findViewById<LinearLayout>(R.id.logedoutView).visibility = View.VISIBLE
                     setUPLogin(findViewById(R.id.loginButtonFragment))
-                }else{
-                    var listview = findViewById<ListView>(R.id.userListView)
-                    SetUpListView(listview , this)
-                    findViewById<Button>(R.id.logout).setUp(this@UserDetailsFragment.activity
-                    !!.baseContext.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE))
                 }
             }
+
             return this
         }
 
     }
 
-    private fun SetUpListView(listview: ListView?,user: User) {
-        var arr = ArrayList<UserDetails>()
-
-        with(arr){
-            with(user){
-                add(UserDetails("Id", id.toString()))
-                add(UserDetails("Id", id.toString()))
-                add(UserDetails("User Name", username))
-                add(UserDetails("Name", name))
-                add(UserDetails("Email", email))
-                add(UserDetails("Phone", phone))
-                add(UserDetails("Website", website))
-                add(UserDetails("Albums", albumsNumber.toString()))
-                add(UserDetails("Todos", todosNumber.toString()))
-                add(UserDetails("Company", company.toString()))
-                add(UserDetails("Address", address.toString()))
-            }
-        }
-
-        listview?.adapter = UserListAdapter(activity!!, arr)
+    private fun getUser(): User? {
+       return LoginActivity.getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)
     }
 
-    private fun Button.setUp(pref: SharedPreferences) {
-        setOnClickListener {
+    //TODO ,,, joking , nothing to do ,,, just look at my piece of art bellow
+
+    private fun SetUpListView(listview: ListView?,user: User) {
+        with(ArrayList<UserDetails>()){
+            with(this){
+                with(user){
+                    add(UserDetails("Id", id.toString()))
+                    add(UserDetails("Id", id.toString()))
+                    add(UserDetails("User Name", username))
+                    add(UserDetails("Name", name))
+                    add(UserDetails("Email", email))
+                    add(UserDetails("Phone", phone))
+                    add(UserDetails("Website", website))
+                    add(UserDetails("Albums", albumsNumber.toString()))
+                    add(UserDetails("Todos", todosNumber.toString()))
+                    add(UserDetails("Company", company.toString()))
+                    add(UserDetails("Address", address.toString()))
+                }
+                listview?.adapter = UserListAdapter(activity!!, this)
+            }
+        }
+    }
+
+    private fun logoutSetUp(pref: SharedPreferences) {
+        logout.setOnClickListener {
             pref.edit().putString("User","").apply()
-            HomeActivity.StartActivity(this.context)
+            HomeActivity.StartActivity(this@UserDetailsFragment.activity!!.baseContext)
         }
     }
 

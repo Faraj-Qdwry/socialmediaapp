@@ -3,7 +3,6 @@ package com.icarasia.social.socialmediaapp.Login
 import com.icarasia.social.socialmediaapp.API.DataSourece
 import org.junit.Before
 import org.junit.Test
-
 import org.mockito.Mockito.*
 
 class LoginPresenterTest {
@@ -12,6 +11,7 @@ class LoginPresenterTest {
     lateinit var repo : DataSourece
     lateinit var view: viewContract
     lateinit var loginPresenter: LoginPresenter
+
 
     @Before
     fun setUp() {

@@ -1,7 +1,7 @@
 package com.icarasia.social.socialmediaapp.API
 
-import com.icarasia.social.socialmediaapp.DataModels.Comment
-import com.icarasia.social.socialmediaapp.DataModels.Post
+import com.icarasia.social.socialmediaapp.Comments.Comment
+import com.icarasia.social.socialmediaapp.Posts.Post
 import com.icarasia.social.socialmediaapp.Login.User
 import io.reactivex.Observable
 import retrofit2.Retrofit
