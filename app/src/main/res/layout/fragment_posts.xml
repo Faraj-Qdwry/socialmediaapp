@@ -61,7 +61,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/deletionGroup"
             android:visibility="gone"
-            android:background="#ab000000"
+            android:background="@color/colorAccent"
             android:layout_height="wrap_content">
 
         <android.support.design.widget.FloatingActionButton
@@ -70,7 +70,7 @@
             android:layout_height="59dp"
             android:layout_marginRight="50dp"
             android:layout_alignParentEnd="true"
-            android:background="@color/colorPrimary"
+            android:background="@color/red"
             app:srcCompat="@android:drawable/ic_delete"
             app:layout_constraintHorizontal_bias=".80"
             app:layout_constraintVertical_bias=".10"/>
@@ -92,7 +92,7 @@
             android:id="@+id/deleteCancelation"
             android:layout_width="73dp"
             android:layout_height="59dp"
-            android:background="@color/colorAccent"
+            android:background="@color/blue"
             app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
             android:layout_marginLeft="50dp"
             app:layout_constraintHorizontal_bias=".20"

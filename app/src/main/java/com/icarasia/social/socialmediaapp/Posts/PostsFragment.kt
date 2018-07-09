@@ -169,14 +169,14 @@ class  PostsFragment : SocialMediaNetworkFragment() {
 
     fun deletePost(post : Post){
         RepoDataSource.deletePosts(post.id).onObservData{
-            Toast.makeText(this.context,"Posts #${it.id} was deleted",Toast.LENGTH_LONG).show()
+            Toast.makeText(this.context,"Post(s) deleted",Toast.LENGTH_LONG).show()
         }
 
     }
 
     private val click: (Post, Int) -> Unit = { post, clickType ->
 
-                if (clickType== shortClik) {
+        if (clickType== shortClik) {
                         with(post) {
                             startActivity(
                                     with(Intent(this@PostsFragment.context, PostCommintsActivity::class.java)) {
@@ -187,16 +187,19 @@ class  PostsFragment : SocialMediaNetworkFragment() {
                                     })
                         }
                 }else if (clickType == longClick){
-                    LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)?.let {
+                    with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
+                        this?.let {
                             postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
                                 override fun isOK(data: Post): Boolean {
                                     return id == data.userId
                                 }
                             })
+                        }
                         setUpDeletionGroup()
                     }
-                    }
+
                 }
+    }
 
     companion object {
         @JvmStatic
