@@ -187,18 +187,16 @@ class  PostsFragment : SocialMediaNetworkFragment() {
                                     })
                         }
                 }else if (clickType == longClick){
-                    with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
-                        this?.let {
+                    LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)?.let {
                             postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
                                 override fun isOK(data: Post): Boolean {
                                     return id == data.userId
                                 }
                             })
-                        }
+                        setUpDeletionGroup()
                     }
-                    setUpDeletionGroup()
+                    }
                 }
-            }
 
     companion object {
         @JvmStatic

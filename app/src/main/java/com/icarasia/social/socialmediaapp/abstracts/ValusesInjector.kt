@@ -15,15 +15,6 @@ object ValusesInjector {
         loginActivity.loginPresenter = LoginPresenter(loginActivity, RepoDataSource)
     }
 
-    fun inject(socialMediaActivity: SocialMediaActivity) {
-        socialMediaActivity.dialog =
-            ProgressDialog(socialMediaActivity).apply {
-                setCancelable(false)
-                setMessage("Loading please wait...")
-                setTitle("Loading")
-        }
-    }
-
     fun inject(socialMediaFragment: SocialMediaFragment) {
         socialMediaFragment.activity = socialMediaFragment.context as SocialMediaActivity
     }

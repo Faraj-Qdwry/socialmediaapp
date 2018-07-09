@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
+import com.icarasia.social.socialmediaapp.abstracts.ValusesInjector
 import kotlinx.android.synthetic.main.activity_splash_scree.*
 
 class SplashScreeActivity : SocialMediaActivity() {
@@ -16,7 +17,7 @@ class SplashScreeActivity : SocialMediaActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_scree)
 
-        this.supportActionBar!!.hide()
+        this.supportActionBar?.hide()
 
 
         var arr = ArrayList<TextView>()
@@ -26,8 +27,6 @@ class SplashScreeActivity : SocialMediaActivity() {
         arr.add(textView5)
         ToMainActivity(arr,0)
 
-
-//        showDialog()
     }
 
     private fun ToMainActivity(arr: ArrayList<TextView>, j: Int) {
