@@ -19,46 +19,39 @@ import com.icarasia.social.socialmediaapp.Comments.CommintsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
-class  PostsFragment : SocialMediaNetworkFragment() {
+class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
 
-    override fun onInternetConnected() {
-        callpost(1, 20)
-    }
 
-    override fun onInternetDisconnected() {}
 
-    val postsAdapter :PostAdapterOB by lazy {  PostAdapterOB()}
     var curruntAdapterPosition = 0
-    private var logedinFlag = false
-
-    private lateinit var progressFragment: ProgressBar
-    private lateinit var user: User
-    private lateinit var showActionbar : ()-> Unit
-    private lateinit var hidActionbar: () -> Unit
-    private lateinit var confirmDelete : FloatingActionButton
-    private lateinit var cancleDelete : FloatingActionButton
-    private lateinit var addNewPostb : FloatingActionButton
-    private lateinit var deletionGroupRelativeLayout: RelativeLayout
-    private lateinit var selectionCounterTextView: TextView
+    var logedinFlag = false
+    lateinit var user: User
+    lateinit var progressFragment: ProgressBar
+    lateinit var showActionbar : ()-> Unit
+    lateinit var hidActionbar: () -> Unit
+    lateinit var confirmDelete : FloatingActionButton
+    lateinit var cancleDelete : FloatingActionButton
+    lateinit var addNewPostb : FloatingActionButton
+    lateinit var deletionGroupRelativeLayout: RelativeLayout
+    lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
     private val totalCount = 500
     var page = 1
     private var itemsPerPage = 20
+    lateinit var postsPresenter : PostsPresenter
+    val postsAdapter = PostAdapterOB()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        with(LoginActivity.getUserlogedIn(this.activity!!.baseContext)){
-            if (this!=null){
-                user = this
-                logedinFlag = true
-            }
-        }
+        ValusesInjector.inject(this@PostsFragment)
 
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             addNewPostb = findViewById(R.id.addNewPost)
@@ -75,6 +68,37 @@ class  PostsFragment : SocialMediaNetworkFragment() {
 
     }
 
+    override fun addSinglePostToAddapter(post: Post) {
+        postsAdapter.insert(post,0)
+        snakeMessage(post.toString(), this.view)
+        snakeMessage("Your post was added Successfully with the ID : ${post.id}", this.view!!)
+    }
+
+    override fun addPostsToAddapter(posts: ArrayList<Post>) {
+        postsAdapter.add(posts)
+    }
+
+    override fun confirmDeletionMessage() {
+        Toast.makeText(this.context,"Post(s) deleted", Toast.LENGTH_LONG).show()
+    }
+
+    override fun showProgress() {
+        progressFragment.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress(){
+        progressFragment.visibility = View.GONE
+    }
+
+    override fun onInternetConnected() {
+        snakBar.dismiss()
+        postsPresenter.callpost(1, 20)
+    }
+
+    override fun onInternetDisconnected() {
+        snakBar.show()
+    }
+
     private fun setUpdeletCancelation() {
         cancleDelete.setOnClickListener {
             postsAdapter.disableSelectionMode()
@@ -83,7 +107,7 @@ class  PostsFragment : SocialMediaNetworkFragment() {
     }
     private fun setUpdeletConfirmation(){
         confirmDelete.setOnClickListener {
-            postsAdapter.remove(postsToremove(postsAdapter.getSelectedData()))
+            postsAdapter.remove(postsPresenter.postsToremove(postsAdapter.getSelectedData()))
             postsAdapter.disableSelectionMode()
             dismissDeletionGroup()
         }
@@ -103,7 +127,6 @@ class  PostsFragment : SocialMediaNetworkFragment() {
         selectionCounterTextView.text = "0"
     }
 
-
     fun setShowHidActionBar(show : ()-> Unit,hid:()->Unit){
         showActionbar = show
         hidActionbar = hid
@@ -120,7 +143,7 @@ class  PostsFragment : SocialMediaNetworkFragment() {
             dismissDeletionGroup()
         }
 
-        progressFragment.visibility = View.GONE
+        hideProgress()
 
         postsAdapter.getPaginationObservable().subscribe(object : Observer<Int>{
                 override fun onNext(position: Int) {
@@ -128,13 +151,13 @@ class  PostsFragment : SocialMediaNetworkFragment() {
                     if (postsAdapter.itemCount < totalCount){
                         Toast.makeText(networkActivity.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
                         page++
-                        callpost(page, itemsPerPage)
+                        postsPresenter.callpost(page, itemsPerPage)
                     }
                 }
                 override fun onError(e: Throwable) {}
                 override fun onComplete() {}
                 override fun onSubscribe(d: Disposable) {}
-            })
+        })
 
         postsAdapter.getPositionObservable().subscribe { curruntAdapterPosition = it }
 
@@ -149,55 +172,30 @@ class  PostsFragment : SocialMediaNetworkFragment() {
 
     }
 
-    val callpost: (Int, Int) -> Unit = { page, pageCount ->
-        progressFragment.visibility = View.VISIBLE
-        RepoDataSource.getPosts(page,pageCount).onObservData { whePostsReceived(it) }
-    }
-
-
-    private val whePostsReceived : ( posts : ArrayList<Post>) -> ArrayList<Post> = {
-        postsAdapter.add(it)
-        progressFragment.visibility = View.GONE
-        it
-    }
-
-    private val postsToremove: (ArrayList<Post>) -> ArrayList<Post> = { listOfPosts ->
-        listOfPosts.forEach { deletePost(it) }
-        listOfPosts
-    }
-
-    fun deletePost(post : Post){
-        RepoDataSource.deletePosts(post.id).onObservData{
-            Toast.makeText(this.context,"Post(s) deleted",Toast.LENGTH_LONG).show()
-        }
-
-    }
-
     private val click: (Post, Int) -> Unit = { post, clickType ->
 
         if (clickType== shortClik) {
-                        with(post) {
-                            startActivity(
-                                    with(Intent(this@PostsFragment.context, CommintsActivityView::class.java)) {
-                                        putExtra("id", post.id.toString())
-                                        putExtra("userId", post.userId.toString())
-                                        putExtra("title", post.title)
-                                        putExtra("body", post.body)
-                                    })
+            with(post) {
+                startActivity(
+                        with(Intent(this@PostsFragment.context, CommintsActivityView::class.java)) {
+                            putExtra("id", post.id.toString())
+                            putExtra("userId", post.userId.toString())
+                            putExtra("title", post.title)
+                            putExtra("body", post.body)
+                        })
+            }
+        }else if (clickType == longClick){
+            with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
+                this?.let {
+                    postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
+                        override fun isOK(data: Post): Boolean {
+                            return id == data.userId
                         }
-                }else if (clickType == longClick){
-                    with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
-                        this?.let {
-                            postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
-                                override fun isOK(data: Post): Boolean {
-                                    return id == data.userId
-                                }
-                            })
-                        }
-                        setUpDeletionGroup()
-                    }
-
+                    })
                 }
+                setUpDeletionGroup()
+            }
+        }
     }
 
     companion object {
@@ -215,7 +213,7 @@ class  PostsFragment : SocialMediaNetworkFragment() {
                         .setView(poster)
                         .setPositiveButton("Post") { _, _ ->
                             if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
-                                sendApost(title.text.toString(), body.text.toString(), view)
+                                postsPresenter.sendApost(title.text.toString(), body.text.toString(),user)
                             } else {
                                 snakeMessage("Empty Post", view)
                             }
@@ -234,19 +232,8 @@ class  PostsFragment : SocialMediaNetworkFragment() {
         }
     }
 
-    private fun sendApost(title: String, body: String, view: View) {
-        var post = Post(user.id, 0, title, body)
-        RepoDataSource.createPost(post).onObservData{whenPostAdded(it)}
-    }
-
-    private val whenPostAdded : (post : Post)->Unit = {
-        postsAdapter.insert(it,0)
-        snakeMessage(it.toString(), this.view!!)
-        snakeMessage("Your post was added Successfully with the ID : ${it.id}", this.view!!)
-    }
-
-    fun snakeMessage(msg: String, view: View) {
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show()
+    fun snakeMessage(msg: String, view: View?) {
+        view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_LONG).show() }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.icarasia.social.socialmediaapp.UserDetalsFragmet
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
@@ -72,7 +73,10 @@ class UserDetailsFragment : Fragment() {
     private fun logoutSetUp(pref: SharedPreferences) {
         logout.setOnClickListener {
             pref.edit().putString("User","").apply()
-            HomeActivity.StartActivity(this@UserDetailsFragment.activity!!.baseContext)
+
+            context?.startActivity(
+                    Intent(context,HomeActivity::class.java))
+            //HomeActivity.StartActivity(this@UserDetailsFragment.activity!!.baseContext)
         }
     }
 

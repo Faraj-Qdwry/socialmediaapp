@@ -128,7 +128,7 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
             R.id.clearRecyclerData ->{
                 fragmentPost.postsAdapter.clear()
                 fragmentPost.page = 1
-                fragmentPost.callpost(fragmentPost.page++,20)
+                fragmentPost.postsPresenter.callpost(fragmentPost.page++,20)
             }
         }
 

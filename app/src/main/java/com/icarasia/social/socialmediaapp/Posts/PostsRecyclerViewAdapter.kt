@@ -158,12 +158,12 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                 if (enableSelectionMode)
                     handelSelection(selections,position,criteria,post,counterSubject)
                 else {
-                    clickSubject!!.onNext(Pair(post,shortClik))  // comment : understand !! and ?
+                    clickSubject?.onNext(Pair(post,shortClik))  // comment : understand !! and ?
                 }
             }
 
             itemView.setOnLongClickListener {
-                clickSubject!!.onNext(Pair(post, longClick))
+                clickSubject?.onNext(Pair(post, longClick))
                 notify()
                 true
             }

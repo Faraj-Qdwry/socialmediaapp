@@ -70,7 +70,7 @@
             android:layout_height="59dp"
             android:layout_marginRight="50dp"
             android:layout_alignParentEnd="true"
-            android:background="@color/red"
+            android:backgroundTint="@color/red"
             app:srcCompat="@android:drawable/ic_delete"
             app:layout_constraintHorizontal_bias=".80"
             app:layout_constraintVertical_bias=".10"/>
@@ -92,7 +92,7 @@
             android:id="@+id/deleteCancelation"
             android:layout_width="73dp"
             android:layout_height="59dp"
-            android:background="@color/blue"
+            android:backgroundTint="@color/blue"
             app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
             android:layout_marginLeft="50dp"
             app:layout_constraintHorizontal_bias=".20"

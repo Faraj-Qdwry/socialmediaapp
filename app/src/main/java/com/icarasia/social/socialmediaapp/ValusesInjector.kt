@@ -1,6 +1,8 @@
 package com.icarasia.social.socialmediaapp
 
+import android.content.Context
 import android.support.v7.app.ActionBarDrawerToggle
+import android.view.View
 import com.icarasia.social.socialmediaapp.API.RepoDataSource
 import com.icarasia.social.socialmediaapp.Comments.CommentsPresenter
 import com.icarasia.social.socialmediaapp.Comments.CommentsRecyclerViewAdapter
@@ -9,7 +11,9 @@ import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.Home.SplashScreeActivity
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.LoginPresenter
+import com.icarasia.social.socialmediaapp.Posts.PostAdapterOB
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
+import com.icarasia.social.socialmediaapp.Posts.PostsPresenter
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaFragment
@@ -69,4 +73,16 @@ object ValusesInjector {
 
         }
     }
+
+    fun inject(pFragment: PostsFragment) {
+        with(pFragment){
+            postsPresenter = PostsPresenter(this, RepoDataSource)
+            LoginActivity.getUserlogedIn(this.activity.baseContext)?.let {
+                        user = it
+                        logedinFlag = true
+            }
+        }
+    }
+
 }
+
