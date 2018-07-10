@@ -1,10 +1,8 @@
 package com.icarasia.social.socialmediaapp.Comments
 
 import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.API.RepoDataSource
-import com.icarasia.social.socialmediaapp.extensions.onObservData
+import com.icarasia.social.socialmediaapp.RxUnitTestingSetup
 import io.reactivex.Observable
-import io.reactivex.internal.operators.observable.ObservableFromArray
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -23,7 +21,9 @@ class CommentsPresenterTest {
     @Before
     fun setUp() {
 
-         listofCommetns = ArrayList()
+        RxUnitTestingSetup.run()
+
+        listofCommetns = ArrayList()
 
         for (i in 1..10){
             this.listofCommetns.add(Comment())
@@ -37,6 +37,7 @@ class CommentsPresenterTest {
     @Test
     fun whenUserReceivedTest(){
         commentsPresenter.whenCommentsReceved(listofCommetns)
+        verify(view).addDataToAddapter(listofCommetns)
         verify(view).hidProgressBar()
     }
 

@@ -1,6 +1,7 @@
 package com.icarasia.social.socialmediaapp.Login
 
 import com.icarasia.social.socialmediaapp.API.DataSourece
+import com.icarasia.social.socialmediaapp.Comments.Comment
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 class LoginPresenter(private val viewInstance: viewContract, private val repo : DataSourece){
@@ -8,6 +9,7 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
     private lateinit var user : User
     var todoFinishFlage : Boolean = false
     var albumsFinishFlage : Boolean = false
+
 
     fun loginProcess() {
         viewInstance.hidActionBar()
