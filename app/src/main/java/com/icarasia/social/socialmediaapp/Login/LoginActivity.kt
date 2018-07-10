@@ -15,6 +15,7 @@ const val sharedPreferencesName : String = "UserDetails"
 
 class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewContract {
 
+    override var internetStatuse: Boolean = false
 
     lateinit var loginPresenter : LoginPresenter
 
@@ -24,23 +25,27 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
         ValusesInjector.inject(this)
 
-        with(loginPresenter){
-            skipText.setOnClickListener { toPostsActivity() }
-            checkUserLogedIn()
-        }
+        skipText.setOnClickListener { toPostsActivity() }
+
+        loginPresenter.checkUserLogedIn()
     }
 
     override fun userLogedIn(): Boolean {
         getUserlogedIn(this)?.let { return true }
         return false
     }
-    override fun getContext(): Context {
-        return this
-    }
 
-    override fun loginButtunSetUp(process : (name : String)->Unit) {
+    override fun loginButtunSetUp() {
         loginButton.setOnClickListener {
-            process(getUserNameFromEditText())
+            hidActionBar()
+            with(getUserNameFromEditText()){
+                if (this@with.isEmpty()) {
+                    showErrorMessage()
+                } else {
+                    showLoadingDialoge()
+                    loginPresenter.CallForUser(this)
+                }
+            }
         }
     }
 
@@ -57,7 +62,11 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
     }
 
     override fun showErrorMessage() {
-        nameEditText.error = getString(R.string.nameError)
+        if(internetStatuse){
+            nameEditText.error = getString(R.string.nameError)
+        }else{
+            nameEditText.error = "No Internet Connection"
+        }
     }
 
     override fun hidActionBar() {
@@ -66,14 +75,16 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
     override fun onInternetDisconnected() {
         snakBar.show()
+        internetStatuse = false
     }
 
     override fun onInternetConnected() {
         snakBar.dismiss()
+        internetStatuse = true
     }
 
     override fun toPostsActivity() {
-        HomeActivity.StartActivity(getContext())
+        HomeActivity.StartActivity(this)
     }
 
     override fun saveUser(user: User){

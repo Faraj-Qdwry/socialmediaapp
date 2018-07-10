@@ -1,16 +1,14 @@
 package com.icarasia.social.socialmediaapp.Login
 
-import android.content.Context
-
 interface viewContract {
+    var internetStatuse : Boolean
     fun getUserNameFromEditText(): String
     fun showLoadingDialoge()
     fun hidLoadingDialoge()
     fun hidActionBar()
-    fun loginButtunSetUp(process: (name: String) -> Unit)
-    fun showErrorMessage()
-    fun getContext(): Context
     fun toPostsActivity()
     fun saveUser(user: User)
     fun userLogedIn(): Boolean
+    fun loginButtunSetUp()
+    fun showErrorMessage()
 }

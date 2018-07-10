@@ -1,7 +1,6 @@
 package com.icarasia.social.socialmediaapp.Login
 
 import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.Comments.Comment
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 class LoginPresenter(private val viewInstance: viewContract, private val repo : DataSourece){
@@ -11,23 +10,18 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
     var albumsFinishFlage : Boolean = false
 
 
-    fun loginProcess() {
-        viewInstance.hidActionBar()
-        viewInstance.loginButtunSetUp {name ->
-            with(name){
-                if (this@with.isEmpty()) {
-                    viewInstance.showErrorMessage()
-                } else {
-                    viewInstance.showLoadingDialoge()
-                    repo.getUser(this).onObservData { whenUserReceived(it) }
-                }
-            }
+    fun CallForUser(userName : String) {
+        if (!userName.isEmpty()){
+            if (viewInstance.internetStatuse)
+                repo.getUser(userName).onObservData { whenUserReceived(it) }
+            else
+                viewInstance.showErrorMessage()
         }
     }
 
-    val whenUserReceived : (users : List<User>) -> Unit = {
-        if (it.isNotEmpty()) {
-            this.user = it[0]
+    fun whenUserReceived(users : List<User>){
+        if (users.isNotEmpty()) {
+            this.user = users[0]
             callTodosAndAlbums(user.id)
         } else {
             viewInstance.hidLoadingDialoge()
@@ -39,31 +33,37 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
         repo.getTodos(id).onObservData{
             run {
                 user.todosNumber = it.size
+
                 todoFinishFlage = true
                 if (albumsFinishFlage) {
                     saveUser(user)
                 }
+
             }
         }
         repo.getAlbums(id).onObservData{
             run {
                 user.albumsNumber = it.size
+
                 albumsFinishFlage = true
-                if (albumsFinishFlage) {
+                if (todoFinishFlage) {
                     saveUser(user)
                 }
+
             }
         }
     }
 
-    private fun saveUser(user: User) {
-        viewInstance.saveUser(user)
-        viewInstance.toPostsActivity()
+    fun saveUser(user: User?) {
+        user?.let {
+            viewInstance.saveUser(user)
+            viewInstance.toPostsActivity()
+        }
     }
 
     fun checkUserLogedIn() {
         if (!viewInstance.userLogedIn())
-            loginProcess()
+            viewInstance.loginButtunSetUp()
         else
             viewInstance.toPostsActivity()
     }
