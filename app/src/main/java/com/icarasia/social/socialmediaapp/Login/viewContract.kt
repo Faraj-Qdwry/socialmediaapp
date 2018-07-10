@@ -11,4 +11,5 @@ interface viewContract {
     fun userLogedIn(): Boolean
     fun loginButtunSetUp()
     fun showErrorMessage()
+    //fun getInternetStatuse(): Boolean
 }

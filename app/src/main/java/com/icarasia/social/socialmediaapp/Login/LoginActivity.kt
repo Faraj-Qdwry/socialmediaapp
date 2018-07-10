@@ -17,6 +17,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
     override var internetStatuse: Boolean = false
 
+
     lateinit var loginPresenter : LoginPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {

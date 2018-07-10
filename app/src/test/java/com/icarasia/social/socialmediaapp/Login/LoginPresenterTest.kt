@@ -12,34 +12,33 @@ import kotlin.math.log
 class LoginPresenterTest {
 
 
-    lateinit var repo : DataSourece
+    lateinit var repo: DataSourece
     lateinit var view: viewContract
     lateinit var loginPresenter: LoginPresenter
-    lateinit var listofPosts :ArrayList<Any>
-    lateinit var listofUsers : ArrayList<User>
+    lateinit var listofAny: ArrayList<Any>
+    lateinit var listofUsers: ArrayList<User>
 
     @Before
     fun setUp() {
 
         RxUnitTestingSetup.run()
 
-        listofPosts = ArrayList()
+        listofAny = ArrayList()
         listofUsers = ArrayList()
 
-        for (i in 1..10){
-            this.listofPosts.add(Post())
+        for (i in 1..10) {
+            this.listofAny.add(Any())
             listofUsers.add(User())
         }
 
         repo = mock(DataSourece::class.java)
         view = mock(viewContract::class.java)
-        loginPresenter = LoginPresenter(view,repo)
+        loginPresenter = LoginPresenter(view, repo)
     }
 
 
-
     @Test
-    fun whenUserReceivedEmpty(){
+    fun whenUserReceivedEmpty() {
         loginPresenter.whenUserReceived(ArrayList())
 
         verify(view).showErrorMessage()
@@ -47,12 +46,12 @@ class LoginPresenterTest {
     }
 
     @Test
-    fun whenUserReceivedNotEmpty(){
+    fun whenUserReceivedNotEmpty() {
 
-        `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofPosts))
-        `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofPosts))
+        `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofAny))
+        `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofAny))
 
-        with(ArrayList<User>()){
+        with(ArrayList<User>()) {
             add(User(1))
             loginPresenter.whenUserReceived(this)
         }
@@ -83,7 +82,7 @@ class LoginPresenterTest {
     }
 
     @Test
-    fun saveUserEmpty(){
+    fun saveUserEmpty() {
         loginPresenter.saveUser(null)
 
         verify(view, never()).saveUser(User())
@@ -91,7 +90,7 @@ class LoginPresenterTest {
     }
 
     @Test
-    fun saveUserNOTEmpty(){
+    fun saveUserNOTEmpty() {
         loginPresenter.saveUser(User())
 
         verify(view).saveUser(User())
@@ -99,8 +98,14 @@ class LoginPresenterTest {
     }
 
     @Test
-    fun CallForUserNotEmpty(){
+    fun CallForUserNotEmptyWithInternet() {
+
         `when`(repo.getUser("Bret")).thenReturn(Observable.fromArray(listofUsers))
+//
+//        `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofAny))
+//        `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofAny))
+
+        `when`(view.internetStatuse).thenReturn(true)
 
         loginPresenter.CallForUser("Bret")
 
@@ -108,12 +113,21 @@ class LoginPresenterTest {
     }
 
     @Test
-    fun CallForUserEmpty(){
-        `when`(repo.getUser("")).thenReturn(Observable.fromArray(listofUsers))
+    fun CallForUserNotEmptyWithNoInternet() {
+        `when`(view.internetStatuse).thenReturn(false)
+
+        loginPresenter.CallForUser("Bret")
+
+        verify(view).showErrorMessage()
+    }
+
+    @Test
+    fun CallForUserEmpty() {
+        //(repo.getUser("")).thenReturn(Observable.fromArray(listofUsers))
 
         loginPresenter.CallForUser("")
 
-        verify(view).showErrorMessage()
+        verify(view, never()).showErrorMessage()
     }
 
 }
