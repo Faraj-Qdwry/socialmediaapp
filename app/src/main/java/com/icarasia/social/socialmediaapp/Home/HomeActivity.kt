@@ -38,6 +38,10 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
         setContentView(R.layout.home_navigation_avtivity)
         setSupportActionBar(toolbar)
 
+
+        showActionbar = { (supportActionBar)?.let { it.show(); it.title = "Posts" } }
+        hidActionbar = { (supportActionBar)?.hide() }
+
         ValusesInjector.inject(this)
 
         drawer_layout.addDrawerListener(toggle)
@@ -127,8 +131,8 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
             }
             R.id.clearRecyclerData ->{
                 fragmentPost.postsAdapter.clear()
-                fragmentPost.page = 1
-                fragmentPost.postsPresenter.callpost(fragmentPost.page++,20)
+                fragmentPost.postsPresenter.callpost(fragmentPost.postsPresenter.getCurrentPage()
+                        ,fragmentPost.postsPresenter.getItemsPerPageCount())
             }
         }
 

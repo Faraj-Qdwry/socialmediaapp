@@ -8,6 +8,7 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
+import kotlinx.android.synthetic.main.activity_splash_scree.*
 
 class SplashScreeActivity : SocialMediaActivity() {
 
@@ -19,7 +20,15 @@ class SplashScreeActivity : SocialMediaActivity() {
 
         this.supportActionBar?.hide()
 
-        ValusesInjector.inject(this)
+        with(this){
+            this.arrayOfTextView = ArrayList()
+            with(arrayOfTextView) {
+                    add(textView2)
+                    add(textView3)
+                    add(textView4)
+                add(textView5)
+            }
+        }
 
         ToMainActivity(arrayOfTextView,0)
 

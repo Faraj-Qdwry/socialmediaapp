@@ -35,10 +35,18 @@ class CommentsPresenterTest {
     }
 
     @Test
-    fun whenUserReceivedTest(){
+    fun whenUserReceivedFull(){
         commentsPresenter.whenCommentsReceved(listofCommetns)
         verify(view).addDataToAddapter(listofCommetns)
         verify(view).hidProgressBar()
+    }
+
+    @Test
+    fun whenUserReceivedEmpty(){
+        listofCommetns.clear()
+        commentsPresenter.whenCommentsReceved(listofCommetns)
+        verify(view, never()).addDataToAddapter(listofCommetns)
+        verify(view, never()).hidProgressBar()
     }
 
     @Test

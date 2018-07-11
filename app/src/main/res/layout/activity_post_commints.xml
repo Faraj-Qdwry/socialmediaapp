@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/commentsActivity"
-    tools:context=".Comments.CommintsActivityView">
+    tools:context=".Comments.CommentsActivityView">
 
     <android.support.design.circularreveal.cardview.CircularRevealCardView
         android:layout_width="match_parent"

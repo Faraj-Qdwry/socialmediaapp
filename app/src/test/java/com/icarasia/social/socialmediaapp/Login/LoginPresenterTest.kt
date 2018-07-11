@@ -6,6 +6,7 @@ import com.icarasia.social.socialmediaapp.RxUnitTestingSetup
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import kotlin.math.log
 
@@ -28,13 +29,14 @@ class LoginPresenterTest {
 
         for (i in 1..10) {
             this.listofAny.add(Any())
-            listofUsers.add(User())
+            this.listofUsers.add(User(1))
         }
 
         repo = mock(DataSourece::class.java)
         view = mock(viewContract::class.java)
         loginPresenter = LoginPresenter(view, repo)
     }
+
 
 
     @Test
@@ -51,10 +53,7 @@ class LoginPresenterTest {
         `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofAny))
         `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofAny))
 
-        with(ArrayList<User>()) {
-            add(User(1))
-            loginPresenter.whenUserReceived(this)
-        }
+        loginPresenter.whenUserReceived(listofUsers)
 
         verify(repo).getAlbums(1)
         verify(repo).getTodos(1)
@@ -64,6 +63,25 @@ class LoginPresenterTest {
 
         verify(view).toPostsActivity()
     }
+
+    @Test
+    fun callForAlbumsAndTodos(){
+        `when`(repo.getAlbums(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
+        `when`(repo.getTodos(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
+
+        loginPresenter.user = User(1)
+        loginPresenter.callTodosAndAlbums(1)
+
+        assert(loginPresenter.todoFinishFlage)
+        assert(loginPresenter.albumsFinishFlage)
+        assert(loginPresenter.user.todosNumber != 0 )
+        assert(loginPresenter.user.albumsNumber != 0 )
+
+        verify(repo).getAlbums(ArgumentMatchers.anyInt())
+        verify(repo).getTodos(ArgumentMatchers.anyInt())
+        verify(view).toPostsActivity()
+    }
+
 
     @Test
     fun checkUserLogedInWhenISlogedIn() {
@@ -81,6 +99,8 @@ class LoginPresenterTest {
         verify(view).loginButtunSetUp()
     }
 
+
+
     @Test
     fun saveUserEmpty() {
         loginPresenter.saveUser(null)
@@ -97,15 +117,16 @@ class LoginPresenterTest {
         verify(view).toPostsActivity()
     }
 
+
+
     @Test
     fun CallForUserNotEmptyWithInternet() {
 
-        `when`(repo.getUser("Bret")).thenReturn(Observable.fromArray(listofUsers))
-//
-//        `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofAny))
-//        `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofAny))
+        `when`(repo.getAlbums(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
+        `when`(repo.getTodos(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
 
         `when`(view.internetStatuse).thenReturn(true)
+        `when`(repo.getUser("Bret")).thenReturn(Observable.fromArray(listofUsers))
 
         loginPresenter.CallForUser("Bret")
 
@@ -123,11 +144,10 @@ class LoginPresenterTest {
 
     @Test
     fun CallForUserEmpty() {
-        //(repo.getUser("")).thenReturn(Observable.fromArray(listofUsers))
-
         loginPresenter.CallForUser("")
 
         verify(view, never()).showErrorMessage()
+        verify(repo, never()).getUser(ArgumentMatchers.anyString())
     }
 
 }

@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Login.LoginActivity"/>
-        <activity android:name=".Comments.CommintsActivityView" />
+        <activity android:name=".Comments.CommentsActivityView" />
         <activity
             android:name=".Home.HomeActivity"
             android:label="@string/title_activity_navigation"

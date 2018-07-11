@@ -1,5 +1,6 @@
 package com.icarasia.social.socialmediaapp.Posts
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,22 +16,20 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.icarasia.social.socialmediaapp.API.RepoDataSource
-import com.icarasia.social.socialmediaapp.Comments.CommintsActivityView
+import com.icarasia.social.socialmediaapp.Comments.CommentsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
-import com.icarasia.social.socialmediaapp.extensions.onObservData
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
+import io.reactivex.Observable
 
 class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
 
+    override fun AddapterItemCount(): Int {
+        return postsAdapter.itemCount
+    }
 
-
-    var curruntAdapterPosition = 0
     var logedinFlag = false
     lateinit var user: User
     lateinit var progressFragment: ProgressBar
@@ -41,15 +41,17 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     lateinit var deletionGroupRelativeLayout: RelativeLayout
     lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
-    private val totalCount = 500
-    var page = 1
-    private var itemsPerPage = 20
     lateinit var postsPresenter : PostsPresenter
     val postsAdapter = PostAdapterOB()
-
+    var curruntAdapterPosition = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        LoginActivity.getUserlogedIn(this.activity.baseContext)?.let {
+            user = it
+            logedinFlag = true
+        }
 
         ValusesInjector.inject(this@PostsFragment)
 
@@ -68,6 +70,31 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
     }
 
+    private fun RecyclerView.setUp() {
+        setHasFixedSize(true)
+        layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
+        this.adapter = postsAdapter
+
+        if (postsAdapter.isEnableSelectionMode){
+            shouwUpDeletionGroup()
+        }else{
+            dismissDeletionGroup()
+        }
+
+        hideProgress()
+
+        postsAdapter.getPaginationObservable().subscribe {
+            if (AddapterItemCount() < postsPresenter.totalCount){
+            postsPresenter.page++
+            postsPresenter.callpost(postsPresenter.getCurrentPage(), postsPresenter.getItemsPerPageCount())
+        } }
+
+        postsAdapter.getClickObservable().subscribe { postsPresenter.clickHandle(it.first,it.second) }
+
+        postsAdapter.getPositionObservable().subscribe { curruntAdapterPosition = it }
+
+    }
+
     override fun addSinglePostToAddapter(post: Post) {
         postsAdapter.insert(post,0)
         snakeMessage(post.toString(), this.view)
@@ -78,7 +105,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         postsAdapter.add(posts)
     }
 
-    override fun confirmDeletionMessage() {
+    override fun deletionConfirmingMessage() {
         Toast.makeText(this.context,"Post(s) deleted", Toast.LENGTH_LONG).show()
     }
 
@@ -92,10 +119,12 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
     override fun onInternetConnected() {
         snakBar.dismiss()
-        postsPresenter.callpost(1, 20)
+        Log.d("PostsFragment", "TRUE******************************************************")
+        postsPresenter.callpost(postsPresenter.getCurrentPage(), postsPresenter.getItemsPerPageCount())
     }
 
     override fun onInternetDisconnected() {
+        Log.d("PostsFragment", "FALSE******************************************************")
         snakBar.show()
     }
 
@@ -113,7 +142,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         }
     }
 
-    fun setUpDeletionGroup(){
+    fun shouwUpDeletionGroup(){
         hidActionbar()
         setUpdeletConfirmation()
         setUpdeletCancelation()
@@ -132,70 +161,27 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         hidActionbar = hid
     }
 
-    private fun RecyclerView.setUp() {
-        setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this@PostsFragment.context, LinearLayoutManager.VERTICAL, false)
-        this.adapter = postsAdapter
-
-        if (postsAdapter.isEnableSelectionMode){
-            setUpDeletionGroup()
-        }else{
-            dismissDeletionGroup()
-        }
-
-        hideProgress()
-
-        postsAdapter.getPaginationObservable().subscribe(object : Observer<Int>{
-                override fun onNext(position: Int) {
-
-                    if (postsAdapter.itemCount < totalCount){
-                        Toast.makeText(networkActivity.baseContext, page.toString(), Toast.LENGTH_SHORT).show()
-                        page++
-                        postsPresenter.callpost(page, itemsPerPage)
-                    }
-                }
-                override fun onError(e: Throwable) {}
-                override fun onComplete() {}
-                override fun onSubscribe(d: Disposable) {}
-        })
-
-        postsAdapter.getPositionObservable().subscribe { curruntAdapterPosition = it }
-
-        postsAdapter.getClickObservable().subscribe(object : Observer<Pair<Post,Int>>{
-            override fun onNext(t: Pair<Post, Int>) {
-                click(t.first,t.second)
+    override fun trigerDeletionMode() {
+        with(getCurrentUser()){
+            this?.let {
+                postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria by postsPresenter{})
             }
-            override fun onComplete() {}
-            override fun onSubscribe(d: Disposable) {}
-            override fun onError(e: Throwable) {}
-        })
-
+            shouwUpDeletionGroup()
+        }
     }
 
-    private val click: (Post, Int) -> Unit = { post, clickType ->
+    override fun toCommentsActivity(post: Post) {
+        startActivity(
+                with(Intent(this@PostsFragment.context, CommentsActivityView::class.java)) {
+                    putExtra("id", post.id.toString())
+                    putExtra("userId", post.userId.toString())
+                    putExtra("title", post.title)
+                    putExtra("body", post.body)
+                })
+    }
 
-        if (clickType== shortClik) {
-            with(post) {
-                startActivity(
-                        with(Intent(this@PostsFragment.context, CommintsActivityView::class.java)) {
-                            putExtra("id", post.id.toString())
-                            putExtra("userId", post.userId.toString())
-                            putExtra("title", post.title)
-                            putExtra("body", post.body)
-                        })
-            }
-        }else if (clickType == longClick){
-            with(LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)){
-                this?.let {
-                    postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria{
-                        override fun isOK(data: Post): Boolean {
-                            return id == data.userId
-                        }
-                    })
-                }
-                setUpDeletionGroup()
-            }
-        }
+    override fun getCurrentUser() : User?{
+       return LoginActivity.getUserlogedIn(this@PostsFragment.networkActivity.baseContext)
     }
 
     companion object {
@@ -204,32 +190,42 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
 
     private fun FloatingActionButton.setAddNewPost() {
-        setOnClickListener { view ->
+        setOnClickListener {
             if (logedinFlag) {
-                val poster = layoutInflater.inflate(R.layout.post_lyout, null)
-                val title = poster.findViewById<TextView>(R.id.postTitle)
-                val body = poster.findViewById<TextView>(R.id.postBody)
-                AlertDialog.Builder(this@PostsFragment.context)
-                        .setView(poster)
-                        .setPositiveButton("Post") { _, _ ->
-                            if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
-                                postsPresenter.sendApost(title.text.toString(), body.text.toString(),user)
-                            } else {
-                                snakeMessage("Empty Post", view)
-                            }
-                        }
-                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                        .show()
+                showNewPostAlertDialoge()
             } else {
-                AlertDialog.Builder(this@PostsFragment.context)
-                        .setTitle("you are not Loged In")
-                        .setPositiveButton("Login") { _ , _ ->
-                            this@PostsFragment.context?.let { LoginActivity.start(it) }
-                        }
-                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                        .show()
+                showLoginAlertDialoge()
             }
         }
+    }
+
+    private fun showLoginAlertDialoge() {
+        AlertDialog.Builder(this@PostsFragment.context)
+                .setTitle("you are not Loged In")
+                .setPositiveButton("Login") { _ , _ ->
+                    this@PostsFragment.context?.let { LoginActivity.start(it) }
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .show()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showNewPostAlertDialoge() {
+        val poster = layoutInflater.inflate(R.layout.post_lyout, null)
+        val title = poster.findViewById<TextView>(R.id.postTitle)
+        val body = poster.findViewById<TextView>(R.id.postBody)
+        AlertDialog.Builder(this@PostsFragment.context)
+                .setView(poster)
+                .setPositiveButton("Post") { _, _ ->
+                    if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
+                        postsPresenter.sendApost(Post(userId = user.id,title = title.text.toString(),
+                                body = body.text.toString()))
+                    } else {
+                        snakeMessage("Empty Post", view)
+                    }
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .show()
     }
 
     fun snakeMessage(msg: String, view: View?) {

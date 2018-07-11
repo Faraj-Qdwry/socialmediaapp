@@ -10,7 +10,7 @@ abstract class SocialMediaFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        ValusesInjector.inject(this)
+        this.activity = this.context as SocialMediaActivity
     }
 
     fun showDialog() {

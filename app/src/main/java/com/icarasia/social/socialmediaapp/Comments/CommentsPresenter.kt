@@ -11,9 +11,11 @@ class CommentsPresenter(val view: CommentsViewCotract,val repo : DataSourece){
         repo.getCommetsForPost(postId).onObservData{whenCommentsReceved(it)}
     }
 
-    fun whenCommentsReceved(arrayList: ArrayList<Comment>): ArrayList<Comment> {
-        view.addDataToAddapter(arrayList)
-        view.hidProgressBar()
-        return arrayList
+    fun whenCommentsReceved(commentsList: ArrayList<Comment>): ArrayList<Comment> {
+        if (commentsList.isNotEmpty()){
+            view.addDataToAddapter(commentsList)
+            view.hidProgressBar()
+        }
+        return commentsList
     }
 }

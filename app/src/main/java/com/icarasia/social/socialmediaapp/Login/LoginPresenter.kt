@@ -5,7 +5,7 @@ import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 class LoginPresenter(private val viewInstance: viewContract, private val repo : DataSourece){
 
-    private lateinit var user : User
+    lateinit var user : User
     var todoFinishFlage : Boolean = false
     var albumsFinishFlage : Boolean = false
 
@@ -29,7 +29,7 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
         }
     }
 
-    private fun callTodosAndAlbums(id: Int) {
+    fun callTodosAndAlbums(id: Int) {
         repo.getTodos(id).onObservData{
             run {
                 user.todosNumber = it.size

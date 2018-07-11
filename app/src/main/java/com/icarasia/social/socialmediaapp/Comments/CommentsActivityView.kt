@@ -9,7 +9,7 @@ import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import kotlinx.android.synthetic.main.activity_post_commints.*
 
-class CommintsActivityView : SocialMediaNetworkActivity(R.id.commentsActivity), CommentsViewCotract {
+class CommentsActivityView : SocialMediaNetworkActivity(R.id.commentsActivity), CommentsViewCotract {
 
 
     lateinit var commentRecyclerView : RecyclerView
@@ -22,6 +22,12 @@ class CommintsActivityView : SocialMediaNetworkActivity(R.id.commentsActivity), 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_commints)
         this.supportActionBar?.title = "Comments"
+
+        with(intent){
+            postTitleComment.text = getStringExtra("title")
+            postBodyComment.text = getStringExtra("body")
+            postId = getStringExtra("id")
+        }
 
         ValusesInjector.inject(this)
         commentRecyclerView.setup()
@@ -38,7 +44,7 @@ class CommintsActivityView : SocialMediaNetworkActivity(R.id.commentsActivity), 
     }
 
     private fun RecyclerView.setup() {
-        layoutManager = LinearLayoutManager(this@CommintsActivityView,LinearLayoutManager.VERTICAL,false)
+        layoutManager = LinearLayoutManager(this@CommentsActivityView,LinearLayoutManager.VERTICAL,false)
         this.adapter = commentadapter
     }
 
