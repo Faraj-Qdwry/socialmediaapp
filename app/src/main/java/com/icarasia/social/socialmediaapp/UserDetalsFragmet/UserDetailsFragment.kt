@@ -72,13 +72,15 @@ class UserDetailsFragment : Fragment() {
 
     private fun logoutSetUp(pref: SharedPreferences) {
         logout.setOnClickListener {
-            pref.edit().putString("User","").apply()
+            erraseUserDetails(pref)
 
             context?.startActivity(
                     Intent(context,HomeActivity::class.java))
             //HomeActivity.StartActivity(this@UserDetailsFragment.activity!!.baseContext)
         }
     }
+
+
 
 
     private fun setUPLogin(bt : Button) {
@@ -92,6 +94,10 @@ class UserDetailsFragment : Fragment() {
         @JvmStatic
         fun newInstance()= UserDetailsFragment()
     }
+}
+
+fun erraseUserDetails(pref: SharedPreferences) {
+    pref.edit().putString("User","").apply()
 }
 
 

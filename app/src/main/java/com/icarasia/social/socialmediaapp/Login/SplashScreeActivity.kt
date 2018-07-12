@@ -1,11 +1,13 @@
-package com.icarasia.social.socialmediaapp.Home
+package com.icarasia.social.socialmediaapp.Login
 
+import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.UserDetalsFragmet.erraseUserDetails
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
 import kotlinx.android.synthetic.main.activity_splash_scree.*
@@ -19,6 +21,8 @@ class SplashScreeActivity : SocialMediaActivity() {
         setContentView(R.layout.activity_splash_scree)
 
         this.supportActionBar?.hide()
+
+        erraseUserDetails(getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE))
 
         with(this){
             this.arrayOfTextView = ArrayList()

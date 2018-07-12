@@ -22,7 +22,6 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
-import io.reactivex.Observable
 
 class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
 

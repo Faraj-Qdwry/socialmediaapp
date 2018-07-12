@@ -120,7 +120,7 @@ class LoginPresenterTest {
 
 
     @Test
-    fun CallForUserNotEmptyWithInternet() {
+    fun `Call For User Not Empty With Internet`() {
 
         `when`(repo.getAlbums(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
         `when`(repo.getTodos(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
