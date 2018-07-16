@@ -164,8 +164,8 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         with(getCurrentUser()){
             this?.let {
                 postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria by postsPresenter{})
+                shouwUpDeletionGroup()
             }
-            shouwUpDeletionGroup()
         }
     }
 

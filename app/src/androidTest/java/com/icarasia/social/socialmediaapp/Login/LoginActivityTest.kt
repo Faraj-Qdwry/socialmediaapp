@@ -1,31 +1,26 @@
 package com.icarasia.social.socialmediaapp.Login
 
-import android.app.Instrumentation
-import android.content.Context
-import android.os.SystemClock
-import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.*
-import android.support.test.espresso.ViewAction
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.matcher.RootMatchers
+import android.support.test.espresso.matcher.RootMatchers.withDecorView
 import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.hasErrorText
-import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
-import android.widget.TextView
-import com.icarasia.social.socialmediaapp.Home.HomeActivity
+import android.support.v7.app.WindowDecorActionBar
+import android.view.Window
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.R.id.*
-import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
-import com.icarasia.social.socialmediaapp.UserDetalsFragmet.erraseUserDetails
-import kotlinx.android.synthetic.main.activity_main.view.*
-import org.hamcrest.Matcher
+import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.regex.Matcher
 
 
+@Suppress("DEPRECATION")
 class LoginActivityTest {
 
 
@@ -40,26 +35,26 @@ class LoginActivityTest {
 
     @Test
     fun espressoClikesOnSkip() {
-        Espresso.onView(withId(skipText)).perform(click())
+        onView(withId(skipText)).perform(click())
     }
 
     @Test
     fun logginwithemptyusername(){
         onView(withId(nameEditText)).perform(typeText(""))
-
         onView(withId(loginButton)).perform(click())
-
         onView(withId(nameEditText)).check(matches(ViewMatchers.hasErrorText(activityTestRule.activity.getString(R.string.nameError))))
     }
 
     @Test
-    fun logginwithFullusername(){
+    fun logginwithFullusername() {
+        registerIdlingResources(activityTestRule.activity.countingIdlingResource)
 
         onView(withId(nameEditText)).perform(typeText("Bret"))
-
-        onView(withId(loginButton)).perform(ViewActions.pressBack())
-
+        onView(withId(mainLoginActivity)).perform(ViewActions.closeSoftKeyboard())
         onView(withId(loginButton)).perform(click())
+
+        onView(withId(R.id.addNewPost))
+                .check(matches(isDisplayed()))
     }
 
 }

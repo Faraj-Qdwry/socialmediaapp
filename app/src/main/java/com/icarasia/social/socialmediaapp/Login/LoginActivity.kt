@@ -1,11 +1,17 @@
 package com.icarasia.social.socialmediaapp.Login
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.support.test.espresso.idling.CountingIdlingResource
+import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.UserDetalsFragmet.erraseUserDetails
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import com.icarasia.social.socialmediaapp.ValusesInjector
 import kotlinx.android.synthetic.main.activity_main.*
@@ -16,9 +22,10 @@ const val sharedPreferencesName : String = "UserDetails"
 class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewContract {
 
     override var internetStatuse: Boolean = false
-
-
+    
     lateinit var loginPresenter : LoginPresenter
+
+    var countingIdlingResource = CountingIdlingResource("LOGINIDIL")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +35,10 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
         skipText.setOnClickListener { toPostsActivity() }
 
+        //erraseUserDetails(getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE))
+
         loginPresenter.checkUserLogedIn()
+
     }
 
     override fun userLogedIn(): Boolean {
@@ -44,6 +54,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
                     showErrorMessage()
                 } else {
                     showLoadingDialoge()
+                    countingIdlingResource.increment()
                     loginPresenter.CallForUser(this)
                 }
             }
@@ -85,9 +96,11 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
     }
 
     override fun toPostsActivity() {
+        if (!countingIdlingResource.isIdleNow){ countingIdlingResource.decrement()}
         HomeActivity.StartActivity(this)
     }
 
+    @SuppressLint("ShowToast")
     override fun saveUser(user: User){
         this.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
                 .edit().putString("User", Gson().toJson(user)).apply()
