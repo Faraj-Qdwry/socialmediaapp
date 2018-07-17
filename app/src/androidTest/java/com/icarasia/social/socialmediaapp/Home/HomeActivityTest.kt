@@ -59,7 +59,7 @@ class HomeActivityTest {
         onView(withId(drawer_layout)).perform(DrawerActions.open())
         onView(withId(nav_view)).perform(NavigationViewActions.navigateTo(orderAce))
         onView(withId(drawer_layout)).perform(DrawerActions.close())
-        Thread.sleep(3000)
+        Thread.sleep(1000)
     }
 
     @Test
@@ -67,7 +67,7 @@ class HomeActivityTest {
         onView(withId(drawer_layout)).perform(DrawerActions.open())
         onView(withId(nav_view)).perform(NavigationViewActions.navigateTo(orderDec))
         onView(withId(drawer_layout)).perform(DrawerActions.close())
-        Thread.sleep(3000)
+        Thread.sleep(1000)
     }
 
     @Test
@@ -106,13 +106,5 @@ class HomeActivityTest {
         Thread.sleep(1000)
         onView(withId(deletionGroup)).check(matches(not(isDisplayed())))
     }
-
-
-    fun swipupRecyclerViewAndSelect(){
-        onView(withId(postsFragmentRecyclerView)).perform(swipeUp())
-        onView(withId(postsFragmentRecyclerView)).perform(ViewActions.longClick())
-        Thread.sleep(3000)
-    }
-
 
 }
