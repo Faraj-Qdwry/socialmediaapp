@@ -1,21 +1,52 @@
 package com.icarasia.social.socialmediaapp.Login
 
+import android.databinding.BaseObservable
+import android.databinding.Bindable
+import android.util.Log
 import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.extensions.onObservData
+import com.icarasia.social.socialmediaapp.BR
 
-class LoginPresenter(private val viewInstance: viewContract, private val repo : DataSourece){
+class LoginViewModel(private val viewInstance: viewContract, private val repo : DataSourece) : BaseObservable(){
+
+    var userName : String = String()
+        @Bindable
+        get() = field
+        set(value){
+            field = value
+            Log.d("value : ",field)
+            notifyPropertyChanged(BR.loginViewModel)
+        }
 
     lateinit var user : User
     var todoFinishFlage : Boolean = false
     var albumsFinishFlage : Boolean = false
 
+    fun checkUserLogedIn() {
+        if (viewInstance.userLogedIn())
+            moveToPostActivity()
+        else{
+            viewInstance.hidActionBar()
+        }
+    }
+
+    fun moveToPostActivity(){
+        viewInstance.toPostsActivity()
+    }
 
     fun CallForUser(userName : String) {
-        if (!userName.isEmpty()){
-            if (viewInstance.internetStatuse)
-                repo.getUser(userName).onObservData { whenUserReceived(it) }
-            else
-                viewInstance.showErrorMessage()
+        with(viewInstance){
+            with(userName){
+                if (isEmpty()) {
+                    showErrorMessage()
+                } else {
+                    showLoadingDialoge()
+                    if (internetStatuse)
+                        repo.getUser(userName).onObservData { whenUserReceived(it) }
+                    else
+                        showErrorMessage()
+                }
+            }
         }
     }
 
@@ -33,23 +64,19 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
         repo.getTodos(id).onObservData{
             run {
                 user.todosNumber = it.size
-
                 todoFinishFlage = true
                 if (albumsFinishFlage) {
                     saveUser(user)
                 }
-
             }
         }
         repo.getAlbums(id).onObservData{
             run {
                 user.albumsNumber = it.size
-
                 albumsFinishFlage = true
                 if (todoFinishFlage) {
                     saveUser(user)
                 }
-
             }
         }
     }
@@ -57,15 +84,7 @@ class LoginPresenter(private val viewInstance: viewContract, private val repo : 
     fun saveUser(user: User?) {
         user?.let {
             viewInstance.saveUser(user)
-            viewInstance.toPostsActivity()
+            moveToPostActivity()
         }
     }
-
-    fun checkUserLogedIn() {
-        if (!viewInstance.userLogedIn())
-            viewInstance.loginButtunSetUp()
-        else
-            viewInstance.toPostsActivity()
-    }
-
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -17,7 +18,7 @@ import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
-import com.icarasia.social.socialmediaapp.ValusesInjector
+import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
@@ -29,36 +30,35 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
     lateinit var fragmentPost: PostsFragment
     lateinit var fragmentUserDetails: UserDetailsFragment
     lateinit var toggle : ActionBarDrawerToggle
-    lateinit var showActionbar: () -> Unit
-    lateinit var hidActionbar: () -> Unit
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_navigation_avtivity)
         setSupportActionBar(toolbar)
 
-
-        showActionbar = { (supportActionBar)?.let { it.show(); it.title = "Posts" } }
-        hidActionbar = { (supportActionBar)?.hide() }
-
         ValusesInjector.inject(this)
+
+        toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
 
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        showActionbar()
 
+        injectPostfragment()
         openFragment(fragmentPost)
 
         nav_view.setNavigationItemSelectedListener(this)
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        with(LoginActivity.getUserlogedIn(this)) {
-            this?.let {
-                setUpheader(this)
+        LoginActivity.getUserlogedIn(this)?.let {
+                setUpheader(it)
             }
-        }
+
+    }
+
+    fun injectPostfragment(){
+        fragmentPost.injectDeletionGroup(deletionGroup, deleteCancelation, selectionCounter, deleteConfirmation)
     }
 
     @SuppressLint("SetTextI18n")
@@ -68,8 +68,6 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
             findViewById<TextView>(R.id.userEmail).text = user.email
         }
     }
-
-
 
 
     fun openFragment(fragment: Fragment) {
@@ -82,13 +80,12 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
-                showActionbar()
+                injectPostfragment()
                 openFragment(fragmentPost)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
                 openFragment(fragmentUserDetails)
-                hidActionbar()
                 return@OnNavigationItemSelectedListener true
             }
         }

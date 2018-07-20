@@ -1,21 +1,19 @@
 package com.icarasia.social.socialmediaapp.Login
 
 import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.Posts.Post
 import com.icarasia.social.socialmediaapp.RxUnitTestingSetup
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
-import kotlin.math.log
 
 class LoginPresenterTest {
 
 
     lateinit var repo: DataSourece
     lateinit var view: viewContract
-    lateinit var loginPresenter: LoginPresenter
+    lateinit var loginPresenter: LoginViewModel
     lateinit var listofAny: ArrayList<Any>
     lateinit var listofUsers: ArrayList<User>
 
@@ -34,7 +32,7 @@ class LoginPresenterTest {
 
         repo = mock(DataSourece::class.java)
         view = mock(viewContract::class.java)
-        loginPresenter = LoginPresenter(view, repo)
+        loginPresenter = LoginViewModel(view, repo)
     }
 
 

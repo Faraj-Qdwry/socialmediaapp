@@ -2,7 +2,6 @@ package com.icarasia.social.socialmediaapp.abstracts
 
 import android.content.Context
 import android.support.v4.app.Fragment
-import com.icarasia.social.socialmediaapp.ValusesInjector
 
 abstract class SocialMediaFragment : Fragment() {
 

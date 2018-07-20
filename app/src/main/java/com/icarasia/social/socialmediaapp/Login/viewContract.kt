@@ -9,6 +9,5 @@ interface viewContract {
     fun toPostsActivity()
     fun saveUser(user: User)
     fun userLogedIn(): Boolean
-    fun loginButtunSetUp()
     fun showErrorMessage()
 }

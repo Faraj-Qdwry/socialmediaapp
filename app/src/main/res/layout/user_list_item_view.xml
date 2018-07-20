@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="userD"
+            type="com.icarasia.social.socialmediaapp.Login.UserDetails"/>
+    </data>
 <LinearLayout
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
@@ -7,14 +13,17 @@
         android:textColor="@color/black"
         android:textSize="26dp"
         android:id="@+id/attribute"
+        android:text="@{userD.attribute}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
     <TextView
         android:id="@+id/value"
         android:textSize="20dp"
+        android:text="@{userD.value}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
 
 </LinearLayout>
+</layout>

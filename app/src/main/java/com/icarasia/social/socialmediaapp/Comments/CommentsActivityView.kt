@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
-import com.icarasia.social.socialmediaapp.ValusesInjector
+import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
 import kotlinx.android.synthetic.main.activity_post_commints.*
 
 class CommentsActivityView : SocialMediaNetworkActivity(R.id.commentsActivity), CommentsViewCotract {

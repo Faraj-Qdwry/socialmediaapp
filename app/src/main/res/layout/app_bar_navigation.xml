@@ -16,7 +16,56 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:id="@+id/deletionGroup"
+                android:visibility="visible"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/deleteConfirmation"
+                    android:layout_width="73dp"
+                    android:layout_height="59dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:backgroundTint="@color/red"
+                    app:srcCompat="@android:drawable/ic_delete"
+                    app:layout_constraintHorizontal_bias=".80"
+                    app:layout_constraintVertical_bias=".10"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/selectionCounter"
+                    android:text="0"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"
+                    android:textSize="26dp"
+                    android:textColor="#fff"
+                    android:layout_alignRight="@+id/deleteConfirmation"
+                    android:layout_alignLeft="@+id/deleteCancelation"
+                    />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/deleteCancelation"
+                    android:layout_width="73dp"
+                    android:layout_height="59dp"
+                    android:backgroundTint="#fff"
+                    app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+                    android:layout_marginLeft="50dp"
+                    app:layout_constraintHorizontal_bias=".20"
+                    app:layout_constraintVertical_bias=".10"/>
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 

@@ -1,15 +1,11 @@
-package com.icarasia.social.socialmediaapp.Login
+package com.icarasia.social.socialmediaapp.Splash
 
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.test.espresso.idling.CountingIdlingResource
 import android.view.View
-import android.widget.TextView
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.UserDetalsFragmet.erraseUserDetails
-import com.icarasia.social.socialmediaapp.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaActivity
 import kotlinx.android.synthetic.main.activity_splash_scree.*
 

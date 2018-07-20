@@ -20,7 +20,7 @@ import com.icarasia.social.socialmediaapp.Comments.CommentsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.ValusesInjector
+import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 
 class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
@@ -32,8 +32,6 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     var logedinFlag = false
     lateinit var user: User
     lateinit var progressFragment: ProgressBar
-    lateinit var showActionbar : ()-> Unit
-    lateinit var hidActionbar: () -> Unit
     lateinit var confirmDelete : FloatingActionButton
     lateinit var cancleDelete : FloatingActionButton
     lateinit var addNewPostb : FloatingActionButton
@@ -56,11 +54,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
         with(inflater.inflate(R.layout.fragment_posts, container, false)) {
             addNewPostb = findViewById(R.id.addNewPost)
-            cancleDelete = findViewById(R.id.deleteCancelation)
-            confirmDelete = findViewById(R.id.deleteConfirmation)
             progressFragment = findViewById(R.id.progressBarFragment)
-            deletionGroupRelativeLayout = findViewById(R.id.deletionGroup)
-            selectionCounterTextView = findViewById(R.id.selectionCounter)
             recyclerView = findViewById(R.id.postsFragmentRecyclerView)
             recyclerView.setUp()
             addNewPostb.setAddNewPost()
@@ -142,7 +136,6 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
 
     fun shouwUpDeletionGroup(){
-        hidActionbar()
         setUpdeletConfirmation()
         setUpdeletCancelation()
         deletionGroupRelativeLayout.visibility = View.VISIBLE
@@ -150,14 +143,8 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
 
     fun dismissDeletionGroup(){
-        showActionbar()
         deletionGroupRelativeLayout.visibility = View.INVISIBLE
         selectionCounterTextView.text = "0"
-    }
-
-    fun setShowHidActionBar(show : ()-> Unit,hid:()->Unit){
-        showActionbar = show
-        hidActionbar = hid
     }
 
     override fun trigerDeletionMode() {
@@ -229,6 +216,14 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
     fun snakeMessage(msg: String, view: View?) {
         view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_LONG).show() }
+    }
+
+    fun injectDeletionGroup(deletionGroup: RelativeLayout, deleteCancelation: FloatingActionButton,
+                            selectionCounter: TextView, deleteConfirmation: FloatingActionButton) {
+        deletionGroupRelativeLayout = deletionGroup
+        cancleDelete = deleteCancelation
+        selectionCounterTextView = selectionCounter
+        confirmDelete = deleteConfirmation
     }
 
 }
