@@ -3,12 +3,12 @@ package com.icarasia.social.socialmediaapp.Posts
 import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.extensions.inflate
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -37,8 +37,16 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     private val counterSubject = PublishSubject.create<Int>()
     private val positionSubject = PublishSubject.create<Int>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-            = PostViewHolder(parent.inflate(viewType))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view =  layoutInflater.inflate(viewType, parent, false)
+        return PostViewHolder(view)
+
+//        var mbinder = DataBindingUtil.inflate<ViewDataBinding>(layoutInflater,viewType,parent,false)
+//        return    PostViewHolder(mbinder)
+    }
+
 
     override fun getItemCount() = data.size
 
@@ -127,6 +135,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     }
 
 
+ //   class PostViewHolder(val mbinder: ViewDataBinding) : RecyclerView.ViewHolder(mbinder.root) {
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -144,6 +153,8 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                  counterSubject: PublishSubject<Int>,
                  notify: () -> Unit
         ) {
+
+            //mbinder.setVariable(BR.postView,post)
 
             postTitle.text = "${post.userId}  ${post.title}"
             postBody.text = post.body

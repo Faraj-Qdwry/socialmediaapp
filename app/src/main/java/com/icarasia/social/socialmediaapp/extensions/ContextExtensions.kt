@@ -23,8 +23,8 @@ fun Context.isNetworkAvailable(): Boolean =
     return@with false
 }
 
-fun ViewGroup.inflate(@LayoutRes id: Int): View =
-        LayoutInflater.from(context).inflate(id, this, false)
+//fun ViewGroup.inflate(@LayoutRes id: Int): View =
+//        LayoutInflater.from(context).inflate(id, this, false)
 
 fun <T> Observable<T>.onObservData(onSuccessOperation: (T) -> Unit) {
 
