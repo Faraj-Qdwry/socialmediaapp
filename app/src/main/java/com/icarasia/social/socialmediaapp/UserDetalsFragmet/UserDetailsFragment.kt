@@ -9,6 +9,7 @@ import android.os.Binder
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,6 @@ class UserDetailsFragment : Fragment() , UserDetailsContract {
     lateinit var login : Button
     lateinit var userDetailsViewModel: UserDetailsViewModel
     lateinit var mBinder : FragmentUserDetailsBinding
-    lateinit var addapter : UserListAdapter
     private val data: ObservableArrayList<UserDetails> = ObservableArrayList()
 
 
@@ -39,7 +39,7 @@ class UserDetailsFragment : Fragment() , UserDetailsContract {
 
             with(getUser()){
                 this?.let {
-                    SetUpListView(findViewById(R.id.userListView) , this)
+                    SetUpRecyclerView(findViewById(R.id.userListView) , this)
                     mBinder.userList = data
                 }
                 if (this==null){
@@ -49,27 +49,20 @@ class UserDetailsFragment : Fragment() , UserDetailsContract {
             }
             return this
         }
-
     }
 
     private fun getUser(): User? {
        return LoginActivity.getUserlogedIn(this@UserDetailsFragment.activity!!.baseContext)
     }
 
-    private fun SetUpListView(listview: ListView,user: User) {
-
-        var userList = userDetailsViewModel.getListFromUser(user)
-
-        addapter = UserListAdapter(activity!!)
-
-        //addapter.addData(userList)
-
-        data.addAll(userList)
-
-        listview.adapter = addapter
+    private fun SetUpRecyclerView(recyclerView : RecyclerView,user: User) {
+        with(recyclerView){
+            setHasFixedSize(true)
+            layoutManager = android.support.v7.widget.LinearLayoutManager(this@UserDetailsFragment.context)
+            adapter = UserCustomAdapter()
+        }
+        data.addAll(userDetailsViewModel.getListFromUser(user))
     }
-
-
 
     override fun logout() {
         LoginActivity.erraseUserDetails(getSharedPrefrences())

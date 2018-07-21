@@ -13,7 +13,7 @@ class PostsPresenterTest {
 
     private lateinit var view : PostViewContract
     private lateinit var repo : DataSourece
-    private lateinit var postsPresenter: PostsPresenter
+    private lateinit var postsPresenter: PostsViewModel
     private lateinit var listofPosts :ArrayList<Post>
     private lateinit var post : Post
 
@@ -29,7 +29,7 @@ class PostsPresenterTest {
 
         view = mock(PostViewContract::class.java)
         repo = mock(DataSourece::class.java)
-        postsPresenter = PostsPresenter(view,repo)
+        postsPresenter = PostsViewModel(view,repo)
     }
 
 

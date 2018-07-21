@@ -1,14 +1,16 @@
 package com.icarasia.social.socialmediaapp.Posts
 
 import android.annotation.SuppressLint
+import android.databinding.BindingAdapter
+import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.TextView
 import com.icarasia.social.socialmediaapp.R
+import com.icarasia.social.socialmediaapp.databinding.PostItemViewBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -16,7 +18,7 @@ import io.reactivex.subjects.PublishSubject
 const val shortClik = 1
 const val longClick = 2
 
-class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
+class PostsRecyclerViewAdapter : RecyclerView . Adapter <PostsRecyclerViewAdapter.PostViewHolder>() {
 
     interface Criteria {
         fun isOK(data: Post): Boolean
@@ -39,12 +41,15 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
 
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view =  layoutInflater.inflate(viewType, parent, false)
-        return PostViewHolder(view)
+//        val layoutInflater = LayoutInflater.from(parent.context)
+//        val view =  layoutInflater.inflate(viewType, parent, false)
+//        return PostViewHolder(view)
 
-//        var mbinder = DataBindingUtil.inflate<ViewDataBinding>(layoutInflater,viewType,parent,false)
-//        return    PostViewHolder(mbinder)
+        var mbinder = DataBindingUtil.inflate<PostItemViewBinding>(LayoutInflater.from(parent.context),
+                R.layout.post_item_view,
+                parent,
+                false)
+        return    PostViewHolder(mbinder)
     }
 
 
@@ -93,7 +98,7 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
     }
 
 
-    fun add(data: ArrayList<Post>) {
+    fun addData(data: ArrayList<Post>) {
         this.data.addAll(data)
         notifyDataSetChanged()
     }
@@ -137,11 +142,11 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
 
  //   class PostViewHolder(val mbinder: ViewDataBinding) : RecyclerView.ViewHolder(mbinder.root) {
 
-    class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class PostViewHolder(private val mBinder: PostItemViewBinding) : RecyclerView.ViewHolder(mBinder.root) {
 
-        private val postTitle: TextView = itemView.findViewById(R.id.itemTitle)
-        private val postBody: TextView = itemView.findViewById(R.id.itemBody)
-        private val checkBox: CheckBox = itemView.findViewById(R.id.checkboxSelection)
+//        private val postTitle: TextView = itemView.findViewById(R.id.itemTitle)
+//        private val postBody: TextView = itemView.findViewById(R.id.itemBody)
+        private val checkBox: CheckBox = mBinder.root.findViewById(R.id.checkboxSelection)
 
         @SuppressLint("SetTextI18n")
         fun bind(post: Post,
@@ -153,11 +158,9 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                  counterSubject: PublishSubject<Int>,
                  notify: () -> Unit
         ) {
-
-            //mbinder.setVariable(BR.postView,post)
-
-            postTitle.text = "${post.userId}  ${post.title}"
-            postBody.text = post.body
+            mBinder.postItemView = post
+//            postTitle.text = "${post.userId}  ${post.title}"
+//            postBody.text = post.body
 
             if (enableSelectionMode) {
                 showOrhidCheckBox(position, selections, criteria, post)
@@ -215,6 +218,9 @@ class PostAdapterOB : RecyclerView . Adapter <PostAdapterOB.PostViewHolder>() {
                 checkBox.visibility = View.GONE
         }
     }
+}
 
-
+@BindingAdapter("addPosts")
+fun RecyclerView.bindItem(posts : ArrayList<Post>){
+    (adapter as PostsRecyclerViewAdapter).addData(posts)
 }

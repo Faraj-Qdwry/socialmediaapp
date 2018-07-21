@@ -18,27 +18,23 @@ import com.icarasia.social.socialmediaapp.Login.UserDetails
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.databinding.UserListItemViewBinding
 
-class UserListAdapter(private var activity: FragmentActivity): BaseAdapter() {
+class UserCustomAdapter: RecyclerView.Adapter<ViewHolder>() {
 
     private var items = ArrayList<UserDetails>()
 
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View, parent: ViewGroup): ViewHolder {
-//        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//        view = inflater.inflate(R.layout.user_list_item_view, null)
-        var mBider = DataBindingUtil.inflate<UserListItemViewBinding>(
+    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): ViewHolder {
+        return ViewHolder(DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.user_list_item_view,
                 parent,
-                false)
-
-        val viewHolder = ViewHolder(mBider,parent.context)
-
-        viewHolder.bind(items[position])
-
-        return viewHolder
+                false))
     }
 
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        viewHolder.bind(items[position])
+    }
 
 
     fun addData(arr : ArrayList<UserDetails>){
@@ -46,20 +42,12 @@ class UserListAdapter(private var activity: FragmentActivity): BaseAdapter() {
         notifyDataSetChanged()
     }
 
-    override fun getItem(i: Int): UserDetails {
-        return items[i]
-    }
-
     override fun getItemId(i: Int): Long {
         return i.toLong()
     }
-
-    override fun getCount(): Int {
-        return items.size
-    }
 }
 
-class ViewHolder(private val mBinder: ViewDataBinding,context: Context) : View(context) {
+class ViewHolder(private val mBinder: ViewDataBinding) : RecyclerView.ViewHolder(mBinder.root) {
     fun bind(userDetails: UserDetails){
         mBinder.setVariable(BR.userD,userDetails)
         mBinder.executePendingBindings()
@@ -67,16 +55,6 @@ class ViewHolder(private val mBinder: ViewDataBinding,context: Context) : View(c
 }
 
 @BindingAdapter("dataUser")
-fun ListView.bindItem(data: ArrayList<UserDetails>){
-    (adapter as UserListAdapter).addData(data)
+fun RecyclerView.bindItem(data: ArrayList<UserDetails>){
+    (adapter as UserCustomAdapter).addData(data)
 }
-
-
-//    var txtName: TextView? = null
-//    var txtComment: TextView? = null
-//
-//    init {
-//        this.txtName = row?.findViewById(R.id.attribute)
-//        this.txtComment = row?.findViewById(R.id.value)
-//    }
-//}

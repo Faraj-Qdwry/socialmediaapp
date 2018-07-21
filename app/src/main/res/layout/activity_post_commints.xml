@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="comments"
+            type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.Comments.Comment&gt;"/>
+    </data>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -57,6 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/commentsRecyclerView"
+        app:dataComment = "@{comments}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -67,3 +74,4 @@
     </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>
+</layout>

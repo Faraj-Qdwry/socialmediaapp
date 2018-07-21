@@ -3,6 +3,8 @@ package com.icarasia.social.socialmediaapp.Posts
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.databinding.DataBindingUtil
+import android.databinding.ObservableArrayList
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
@@ -22,6 +24,7 @@ import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
+import com.icarasia.social.socialmediaapp.databinding.FragmentPostsBinding
 
 class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
 
@@ -29,18 +32,20 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         return postsAdapter.itemCount
     }
 
-    var logedinFlag = false
+    override var logedinFlag = false
     lateinit var user: User
     lateinit var progressFragment: ProgressBar
     lateinit var confirmDelete : FloatingActionButton
     lateinit var cancleDelete : FloatingActionButton
-    lateinit var addNewPostb : FloatingActionButton
     lateinit var deletionGroupRelativeLayout: RelativeLayout
     lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
-    lateinit var postsPresenter : PostsPresenter
-    val postsAdapter = PostAdapterOB()
+    lateinit var postsPresenter : PostsViewModel
+    val postsAdapter = PostsRecyclerViewAdapter()
     var curruntAdapterPosition = 0
+
+    var dataOBlist = ObservableArrayList<Post>()
+    lateinit var mBinder : FragmentPostsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,12 +57,15 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
         ValusesInjector.inject(this@PostsFragment)
 
-        with(inflater.inflate(R.layout.fragment_posts, container, false)) {
-            addNewPostb = findViewById(R.id.addNewPost)
+        mBinder = DataBindingUtil.inflate(inflater,R.layout.fragment_posts,container,false)
+
+        mBinder.posts = dataOBlist
+        //var view = inflater.inflate(R.layout.fragment_posts, container, false)
+
+        with(mBinder.root) {
             progressFragment = findViewById(R.id.progressBarFragment)
             recyclerView = findViewById(R.id.postsFragmentRecyclerView)
             recyclerView.setUp()
-            addNewPostb.setAddNewPost()
             return this
         }
 
@@ -89,13 +97,14 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
 
     override fun addSinglePostToAddapter(post: Post) {
-        postsAdapter.insert(post,0)
-        snakeMessage(post.toString(), this.view)
+        dataOBlist.add(post)
+        //postsAdapter.insert(post,0)
         snakeMessage("Your post was added Successfully with the ID : ${post.id}", this.view!!)
     }
 
     override fun addPostsToAddapter(posts: ArrayList<Post>) {
-        postsAdapter.add(posts)
+        //postsAdapter.addData(posts)
+        dataOBlist.addAll(posts)
     }
 
     override fun deletionConfirmingMessage() {
@@ -150,7 +159,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     override fun trigerDeletionMode() {
         with(getCurrentUser()){
             this?.let {
-                postsAdapter.enableSelectionMode(object : PostAdapterOB.Criteria by postsPresenter{})
+                postsAdapter.enableSelectionMode(object : PostsRecyclerViewAdapter.Criteria by postsPresenter{})
                 shouwUpDeletionGroup()
             }
         }
@@ -175,17 +184,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         fun newInstance() = PostsFragment()
     }
 
-    private fun FloatingActionButton.setAddNewPost() {
-        setOnClickListener {
-            if (logedinFlag) {
-                showNewPostAlertDialoge()
-            } else {
-                showLoginAlertDialoge()
-            }
-        }
-    }
-
-    private fun showLoginAlertDialoge() {
+    override fun showLoginAlertDialoge() {
         AlertDialog.Builder(this@PostsFragment.context)
                 .setTitle("you are not Loged In")
                 .setPositiveButton("Login") { _ , _ ->
@@ -196,7 +195,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
 
     @SuppressLint("InflateParams")
-    private fun showNewPostAlertDialoge() {
+    override fun showNewPostAlertDialoge() {
         val poster = layoutInflater.inflate(R.layout.post_lyout, null)
         val title = poster.findViewById<TextView>(R.id.postTitle)
         val body = poster.findViewById<TextView>(R.id.postBody)

@@ -4,7 +4,7 @@ import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 
-class CommentsPresenter(val view: CommentsViewCotract,val repo : DataSourece){
+class CommentsViewModel(val view: CommentsViewCotract, val repo : DataSourece){
 
     fun callComments(postId: Int) {
         view.showProgressBar()

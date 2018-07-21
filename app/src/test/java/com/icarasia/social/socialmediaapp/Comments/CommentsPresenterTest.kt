@@ -7,15 +7,13 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 
-import org.junit.Assert.*
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 
 class CommentsPresenterTest {
 
     lateinit var view : CommentsViewCotract
     lateinit var repo : DataSourece
-    lateinit var commentsPresenter: CommentsPresenter
+    lateinit var commentsPresenter: CommentsViewModel
     lateinit var listofCommetns :ArrayList<Comment>
 
     @Before
@@ -31,7 +29,7 @@ class CommentsPresenterTest {
 
         view = mock(CommentsViewCotract::class.java)
         repo = mock(DataSourece::class.java)
-        commentsPresenter = CommentsPresenter(view,repo)
+        commentsPresenter = CommentsViewModel(view,repo)
     }
 
     @Test

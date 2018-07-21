@@ -4,7 +4,7 @@ import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
-class PostsPresenter(val view: PostViewContract,val repo : DataSourece)  : PostAdapterOB.Criteria{
+class PostsViewModel(val view: PostViewContract, val repo : DataSourece)  : PostsRecyclerViewAdapter.Criteria{
 
     override fun isOK(data: Post): Boolean {
         (view.getCurrentUser())?.let {
@@ -46,6 +46,16 @@ class PostsPresenter(val view: PostViewContract,val repo : DataSourece)  : PostA
         if (post.isFull()){
             repo.deletePosts(post.id).onObservData{
                 view.deletionConfirmingMessage()
+            }
+        }
+    }
+
+    fun addPost(){
+        with(view){
+            if (view.logedinFlag) {
+                showNewPostAlertDialoge()
+            } else {
+                showLoginAlertDialoge()
             }
         }
     }
