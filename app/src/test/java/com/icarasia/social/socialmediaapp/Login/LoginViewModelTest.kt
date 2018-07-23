@@ -8,7 +8,7 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 
-class LoginPresenterTest {
+class LoginViewModelTest {
 
 
     lateinit var repo: DataSourece
@@ -56,9 +56,6 @@ class LoginPresenterTest {
         verify(repo).getAlbums(1)
         verify(repo).getTodos(1)
 
-        assert(loginPresenter.todoFinishFlage)
-        assert(loginPresenter.albumsFinishFlage)
-
         verify(view).toPostsActivity()
     }
 
@@ -70,8 +67,6 @@ class LoginPresenterTest {
         loginPresenter.user = User(1)
         loginPresenter.callTodosAndAlbums(1)
 
-        assert(loginPresenter.todoFinishFlage)
-        assert(loginPresenter.albumsFinishFlage)
         assert(loginPresenter.user.todosNumber != 0 )
         assert(loginPresenter.user.albumsNumber != 0 )
 
@@ -94,7 +89,7 @@ class LoginPresenterTest {
         `when`(view.userLogedIn()).thenReturn(false)
         loginPresenter.checkUserLogedIn()
 
-        verify(view).loginButtunSetUp()
+        //verify(view).loginButtunSetUp()
     }
 
 
@@ -114,7 +109,6 @@ class LoginPresenterTest {
         verify(view).saveUser(User())
         verify(view).toPostsActivity()
     }
-
 
 
     @Test
@@ -144,7 +138,7 @@ class LoginPresenterTest {
     fun CallForUserEmpty() {
         loginPresenter.CallForUser("")
 
-        verify(view, never()).showErrorMessage()
+        verify(view).showErrorMessage()
         verify(repo, never()).getUser(ArgumentMatchers.anyString())
     }
 

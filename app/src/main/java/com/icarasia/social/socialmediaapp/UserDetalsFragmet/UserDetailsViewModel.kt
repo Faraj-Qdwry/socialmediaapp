@@ -17,9 +17,9 @@ class UserDetailsViewModel(val view : UserDetailsContract)  {
     }
 
     fun getListFromUser(user: User): ArrayList<UserDetails> {
-        var userList = ArrayList<UserDetails>()
+
         with(user){
-            with(userList){
+            with(ArrayList<UserDetails>()){
                 with(user){
                     add(UserDetails("Id", id.toString()))
                     add(UserDetails("User Name", username))
@@ -32,9 +32,10 @@ class UserDetailsViewModel(val view : UserDetailsContract)  {
                     add(UserDetails("Company", company.toString()))
                     add(UserDetails("Address", address.toString()))
                 }
+                return this
             }
         }
-        return userList
+
     }
 
 }

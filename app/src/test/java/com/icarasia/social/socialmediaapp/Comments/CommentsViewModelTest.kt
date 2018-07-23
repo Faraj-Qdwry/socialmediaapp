@@ -9,7 +9,7 @@ import org.mockito.Mockito.*
 
 import org.mockito.Mockito
 
-class CommentsPresenterTest {
+class CommentsViewModelTest {
 
     lateinit var view : CommentsViewCotract
     lateinit var repo : DataSourece

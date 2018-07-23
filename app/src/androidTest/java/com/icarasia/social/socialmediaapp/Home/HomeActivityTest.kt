@@ -52,6 +52,7 @@ class HomeActivityTest {
     @Test
     fun testingNavigationDrawer(){
         onView(withId(drawer_layout)).perform(DrawerActions.open())
+        onView(withId(drawer_layout)).perform(DrawerActions.close())
     }
 
     @Test
@@ -70,6 +71,7 @@ class HomeActivityTest {
         Thread.sleep(1000)
     }
 
+
     @Test
     fun navigattionDrawerDeletionModeLOgedOutCancle(){
         var out = true
@@ -84,6 +86,7 @@ class HomeActivityTest {
             onView(withId(deletionGroup)).check(matches(not(isDisplayed())))
         }
     }
+
 
     @Test
     fun navigattionDrawerDeletionModeLOgedInConfirm(){

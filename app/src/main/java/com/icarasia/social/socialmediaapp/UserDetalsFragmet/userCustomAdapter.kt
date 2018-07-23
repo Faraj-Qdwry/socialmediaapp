@@ -22,7 +22,7 @@ class UserCustomAdapter: RecyclerView.Adapter<ViewHolder>() {
 
     private var items = ArrayList<UserDetails>()
 
-    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): ViewHolder{
         return ViewHolder(DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.user_list_item_view,
@@ -55,6 +55,8 @@ class ViewHolder(private val mBinder: ViewDataBinding) : RecyclerView.ViewHolder
 }
 
 @BindingAdapter("dataUser")
-fun RecyclerView.bindItem(data: ArrayList<UserDetails>){
-    (adapter as UserCustomAdapter).addData(data)
+fun RecyclerView.bindItem(data: ArrayList<UserDetails>?){
+    data?.let {
+        (adapter as UserCustomAdapter).addData(it)
+    }
 }

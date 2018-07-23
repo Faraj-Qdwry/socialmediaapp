@@ -6,37 +6,38 @@ import android.util.Log
 import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 import com.icarasia.social.socialmediaapp.BR
+import com.icarasia.social.socialmediaapp.Posts.Post
+import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function4
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
-class LoginViewModel(private val viewInstance: viewContract, private val repo : DataSourece) : BaseObservable(){
+class LoginViewModel(private val viewInstance: viewContract, private val repo: DataSourece) : BaseObservable() {
 
-    var userName : String = String()
-        @Bindable
-        get() = field
-        set(value){
-            field = value
-            Log.d("value : ",field)
-            notifyPropertyChanged(BR.loginViewModel)
-        }
 
-    lateinit var user : User
-    var todoFinishFlage : Boolean = false
-    var albumsFinishFlage : Boolean = false
+    @get:Bindable
+    var userName: String by Delegates.observable("") { _, _, _ -> notifyPropertyChanged(BR.loginViewModel) }
+
+
+    lateinit var user: User
+
 
     fun checkUserLogedIn() {
         if (viewInstance.userLogedIn())
             moveToPostActivity()
-        else{
+        else {
             viewInstance.hidActionBar()
         }
     }
 
-    fun moveToPostActivity(){
+    fun moveToPostActivity() {
         viewInstance.toPostsActivity()
     }
 
-    fun CallForUser(userName : String) {
-        with(viewInstance){
-            with(userName){
+    fun CallForUser(userName: String) {
+        with(viewInstance) {
+            with(userName) {
                 if (isEmpty()) {
                     showErrorMessage()
                 } else {
@@ -50,7 +51,7 @@ class LoginViewModel(private val viewInstance: viewContract, private val repo : 
         }
     }
 
-    fun whenUserReceived(users : List<User>){
+    fun whenUserReceived(users: List<User>) {
         if (users.isNotEmpty()) {
             this.user = users[0]
             callTodosAndAlbums(user.id)
@@ -61,24 +62,17 @@ class LoginViewModel(private val viewInstance: viewContract, private val repo : 
     }
 
     fun callTodosAndAlbums(id: Int) {
-        repo.getTodos(id).onObservData{
-            run {
-                user.todosNumber = it.size
-                todoFinishFlage = true
-                if (albumsFinishFlage) {
-                    saveUser(user)
+        Observable.zip(repo.getTodos(id), repo.getAlbums(id),
+                BiFunction< ArrayList<Any>, ArrayList<Any>, Pair< ArrayList<Any>, ArrayList<Any> > > () {
+                    t1, t2 -> Pair(t1, t2)
                 }
-            }
-        }
-        repo.getAlbums(id).onObservData{
-            run {
-                user.albumsNumber = it.size
-                albumsFinishFlage = true
-                if (todoFinishFlage) {
-                    saveUser(user)
+        ).onObservData {
+                    with(user) {
+                        todosNumber = it.first.size
+                        albumsNumber = it.second.size
+                        saveUser(this)
+                    }
                 }
-            }
-        }
     }
 
     fun saveUser(user: User?) {
