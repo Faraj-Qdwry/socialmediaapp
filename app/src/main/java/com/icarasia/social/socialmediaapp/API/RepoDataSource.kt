@@ -10,8 +10,8 @@ import io.reactivex.Observable
 
 object RepoDataSource : DataSourece {
 
-    private val remoteDS: RemoteDataSource = RemoteDataSource()
-    private val localDS: LocalDataSource = LocalDataSource()
+    var remoteDS: RemoteDataSource = RemoteDataSource()
+    var localDS: LocalDataSource = LocalDataSource()
 
     override fun deletePosts(postsId: Int): Observable<Post> {
         localDS.clearCash()
@@ -47,16 +47,11 @@ object RepoDataSource : DataSourece {
                 }
             }
 
-    override fun getUser(username: String): Observable<List<User>> {
-        return remoteDS.getUser(username)
-    }
+    override fun getUser(username: String): Observable<List<User>> = remoteDS.getUser(username)
 
-    override fun getAlbums(id: Int): Observable<ArrayList<Any>> {
-        return remoteDS.getAlbums(id)
-    }
+    override fun getAlbums(id: Int): Observable<ArrayList<Any>> = remoteDS.getAlbums(id)
 
-    override fun getTodos(id: Int): Observable<ArrayList<Any>> {
-        return remoteDS.getTodos(id)
-    }
+    override fun getTodos(id: Int): Observable<ArrayList<Any>> = remoteDS.getTodos(id)
+
 }
 

@@ -4,16 +4,18 @@ import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.RxUnitTestingSetup
 import io.reactivex.Observable
+import io.reactivex.Observer
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
+import java.lang.Exception
 
 class PostsPresenterTest {
 
     private lateinit var view : PostViewContract
     private lateinit var repo : DataSourece
-    private lateinit var postsPresenter: PostsViewModel
+    private lateinit var postsViewModel: PostsViewModel
     private lateinit var listofPosts :ArrayList<Post>
     private lateinit var post : Post
 
@@ -29,33 +31,33 @@ class PostsPresenterTest {
 
         view = mock(PostViewContract::class.java)
         repo = mock(DataSourece::class.java)
-        postsPresenter = PostsViewModel(view,repo)
+        postsViewModel = PostsViewModel(view,repo)
     }
 
 
     @Test
     fun isOKwhenUserSingedIN_DO_NOT_Own_ThePost(){
         `when`(view.getCurrentUser()).thenReturn(User(2))
-        assert(!postsPresenter.isOK(post))
+        assert(!postsViewModel.isOK(post))
     }
 
     @Test
     fun isOKwhenUserSingedIN_Own_ThePost(){
         `when`(view.getCurrentUser()).thenReturn(User())
-        assert(postsPresenter.isOK(post))
+        assert(postsViewModel.isOK(post))
     }
 
     @Test
     fun isOKwhenUserSingedIN(){
         `when`(view.getCurrentUser()).thenReturn(User())
 
-        assert(postsPresenter.isOK(post))
+        assert(postsViewModel.isOK(post))
     }
 
     @Test
     fun isOKwhenUserSingedOUT(){
         `when`(view.getCurrentUser()).thenReturn(null)
-        assert(!postsPresenter.isOK(Post()))
+        assert(!postsViewModel.isOK(Post()))
     }
 
     @Test
@@ -63,21 +65,21 @@ class PostsPresenterTest {
         `when`(repo.getPosts(ArgumentMatchers.anyInt(),
                 ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofPosts))
 
-        postsPresenter.callpost(1,20)
+        postsViewModel.callpost(1,20)
 
         verify(view).showProgress()
     }
 
     @Test
     fun callpostWithNegativePageNumber() {
-        postsPresenter.callpost(-1,20)
+        postsViewModel.callpost(-1,20)
 
         verify(view, never()).showProgress()
     }
 
     @Test
     fun whePostsReceivedFull() {
-        assert(postsPresenter.whePostsReceived(listofPosts) == listofPosts)
+        assert(postsViewModel.whePostsReceived(listofPosts) == listofPosts)
 
         verify(view).addPostsToAddapter(listofPosts)
         verify(view).hideProgress()
@@ -87,7 +89,7 @@ class PostsPresenterTest {
     fun whePostsReceivedEmpty() {
         listofPosts.clear()
 
-        assert(postsPresenter.whePostsReceived(listofPosts) == listofPosts)
+        assert(postsViewModel.whePostsReceived(listofPosts) == listofPosts)
 
         verify(view, never()).addPostsToAddapter(listofPosts)
         verify(view).hideProgress()
@@ -97,33 +99,106 @@ class PostsPresenterTest {
     fun postsToremoveWhenFull() {
         `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(Post()))
 
-        postsPresenter.postsToremove(listofPosts)
+        postsViewModel.postsToremove(listofPosts)
 
         verify(view, times(listofPosts.size)).deletionConfirmingMessage()
     }
 
     @Test
+    fun `postsToremoveWhenFull Test Observable`() {
+        `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(Post()))
+
+        var test = repo.deletePosts(ArgumentMatchers.anyInt()).test()
+
+        postsViewModel.postsToremove(listofPosts)
+
+        test.assertComplete()
+
+        test.assertNoErrors()
+    }
+
+    @Test
+    fun `postsToremoveWhen Empty Test Observable`() {
+        `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.empty())
+
+        var test = repo.deletePosts(ArgumentMatchers.anyInt()).test()
+
+        postsViewModel.postsToremove(listofPosts)
+
+        test.errors()
+    }
+
+
+    @Test
     fun postsToremoveWhenEmpty() {
         listofPosts.clear()
 
-        postsPresenter.postsToremove(listofPosts)
+        postsViewModel.postsToremove(listofPosts)
 
         verify(view, never()).deletionConfirmingMessage()
     }
 
 
+
     @Test
-    fun deletePostWitthHealthy() {
+    fun `delete Post Healthy User`() {
         `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofPosts.get(0)))
-        postsPresenter.deletePost(listofPosts.get(0))
+        postsViewModel.deletePost(listofPosts.get(0))
         verify(view).deletionConfirmingMessage()
+    }
+
+
+    @Test
+    fun `delete Post Healthy User Observer`() {
+        `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofPosts.get(0)))
+
+        var test = repo.deletePosts(ArgumentMatchers.anyInt()).test()
+
+        postsViewModel.deletePost(listofPosts.get(0))
+
+        test.assertComplete()
+
+        test.assertNoErrors()
+
     }
 
     @Test
     fun deletePostWithEmptyPost() {
-        postsPresenter.deletePost(Post())
+        postsViewModel.deletePost(Post())
         verify(view, never()).deletionConfirmingMessage()
     }
+
+    @Test
+    fun `deletePostWithPost Observer`() {
+        `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(Observable.empty())
+
+        postsViewModel.deletePost(Post())
+
+        var test = repo.deletePosts(ArgumentMatchers.anyInt()).test()
+
+        test.assertComplete()
+    }
+
+
+    @Test
+    fun `deletePostWithEmptyPost Observer`() {
+
+
+        `when`(repo.deletePosts(ArgumentMatchers.anyInt())).thenReturn(object :Observable<Post>(){
+            override fun subscribeActual(observer: Observer<in Post>?) {
+            }
+        })
+
+        postsViewModel.deletePost(Post())
+
+        var test = repo.deletePosts(ArgumentMatchers.anyInt()).test()
+
+        test.assertNotComplete()
+
+        test.assertNotSubscribed()
+
+    }
+
 
     @Test
     fun sendPostWhenIsFull() {
@@ -131,7 +206,7 @@ class PostsPresenterTest {
 
             `when`(repo.createPost(this)).thenReturn(Observable.fromArray(this))
 
-            postsPresenter.sendApost(this)
+            postsViewModel.sendApost(this)
 
             verify(view).addSinglePostToAddapter(this)
         }
@@ -141,51 +216,52 @@ class PostsPresenterTest {
     fun sendPostWhenIsEmpty() {
 
         with(Post()) {
-            postsPresenter.sendApost(this)
+            postsViewModel.sendApost(this)
 
             verify(view, never()).addSinglePostToAddapter(this)
         }
+
     }
 
     @Test
     fun whenPostAddedWhenIsFull(){
-        postsPresenter.whenPostAdded(listofPosts.get(0))
+        postsViewModel.whenPostAdded(listofPosts.get(0))
         verify(view).addSinglePostToAddapter(listofPosts.get(0))
     }
 
 
     @Test
     fun whenPostAddedWhenIsNOTFull(){
-        postsPresenter.whenPostAdded(Post())
+        postsViewModel.whenPostAdded(Post())
         verify(view, never()).addSinglePostToAddapter(listofPosts.get(0))
     }
 
     @Test
     fun clickHandleSingleClickedWithFullPost(){
-        postsPresenter.clickHandle(listofPosts.get(0),1)
+        postsViewModel.clickHandle(listofPosts.get(0),1)
         verify(view).toCommentsActivity(listofPosts.get(0))
     }
 
     @Test
     fun clickHandleSingleClickedWithEmptyPost(){
-        postsPresenter.clickHandle(Post(),2)
+        postsViewModel.clickHandle(Post(),2)
         verify(view, never()).toCommentsActivity(post)
     }
 
     @Test
     fun clickHandleLongClicked(){
-        postsPresenter.clickHandle(Post(),2)
+        postsViewModel.clickHandle(Post(),2)
         verify(view).trigerDeletionMode()
     }
 
     @Test
     fun getCurrentPage(){
-        assert(postsPresenter.getCurrentPage()>0)
+        assert(postsViewModel.getCurrentPage()>0)
     }
 
     @Test
     fun getItemsPerPageCount(){
-        assert(postsPresenter.getItemsPerPageCount()>0)
+        assert(postsViewModel.getItemsPerPageCount()>0)
     }
 
 }

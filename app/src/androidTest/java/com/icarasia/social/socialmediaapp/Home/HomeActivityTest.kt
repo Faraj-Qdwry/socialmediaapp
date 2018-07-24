@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.ThreadLocalRandom
 
 class HomeActivityTest {
 
@@ -102,6 +103,7 @@ class HomeActivityTest {
     @Test
     fun navigattionDrawerDeletionModeLOgedInCancle(){
         onView(withId(drawer_layout)).perform(DrawerActions.open())
+        Thread.sleep(1000)
         onView(withId(nav_view)).perform(NavigationViewActions.navigateTo(delete))
         onView(withId(drawer_layout)).perform(DrawerActions.close())
         Thread.sleep(1000)

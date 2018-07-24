@@ -4,9 +4,9 @@
         <variable
             name="postViewModel"
             type="com.icarasia.social.socialmediaapp.Posts.PostsViewModel"/>
-        <variable
-            name="posts"
-            type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.Posts.Post&gt;"/>
+        <!--<variable-->
+            <!--name="posts"-->
+            <!--type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.Posts.Post&gt;"/>-->
     </data>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,7 +29,7 @@
             android:id="@+id/postsFragmentRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:addPosts="@{posts}"
+            app:addPosts="@{postViewModel.posts}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"

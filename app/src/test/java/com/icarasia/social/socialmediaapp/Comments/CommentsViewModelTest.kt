@@ -13,7 +13,7 @@ class CommentsViewModelTest {
 
     lateinit var view : CommentsViewCotract
     lateinit var repo : DataSourece
-    lateinit var commentsPresenter: CommentsViewModel
+    lateinit var commentsViewModel: CommentsViewModel
     lateinit var listofCommetns :ArrayList<Comment>
 
     @Before
@@ -29,12 +29,12 @@ class CommentsViewModelTest {
 
         view = mock(CommentsViewCotract::class.java)
         repo = mock(DataSourece::class.java)
-        commentsPresenter = CommentsViewModel(view,repo)
+        commentsViewModel = CommentsViewModel(view,repo)
     }
 
     @Test
     fun whenUserReceivedFull(){
-        commentsPresenter.whenCommentsReceved(listofCommetns)
+        commentsViewModel.whenCommentsReceved(listofCommetns)
         verify(view).addDataToAddapter(listofCommetns)
         verify(view).hidProgressBar()
     }
@@ -42,7 +42,7 @@ class CommentsViewModelTest {
     @Test
     fun whenUserReceivedEmpty(){
         listofCommetns.clear()
-        commentsPresenter.whenCommentsReceved(listofCommetns)
+        commentsViewModel.whenCommentsReceved(listofCommetns)
         verify(view, never()).addDataToAddapter(listofCommetns)
         verify(view, never()).hidProgressBar()
     }
@@ -50,7 +50,34 @@ class CommentsViewModelTest {
     @Test
     fun callComments() {
         Mockito.`when`(repo.getCommetsForPost(1)).thenReturn(Observable.fromArray(listofCommetns))
-        commentsPresenter.callComments(1)
+        commentsViewModel.callComments(1)
         verify(view).showProgressBar()
     }
+
+
+
+    @Test
+    fun `call comments test Observable`(){
+        `when`(repo.getCommetsForPost(1)).thenReturn(Observable.fromArray(listofCommetns))
+
+        var test  = repo.getCommetsForPost(1).test()
+
+        commentsViewModel.callComments(1)
+
+        test.assertComplete()
+
+    }
+
+    @Test
+    fun `call comments test Observable Empty`(){
+        `when`(repo.getCommetsForPost(1)).thenReturn(Observable.empty())
+
+        var test  = repo.getCommetsForPost(1).test()
+
+        commentsViewModel.callComments(1)
+
+        test.errors()
+
+    }
+
 }

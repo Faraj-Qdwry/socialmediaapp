@@ -1,10 +1,20 @@
 package com.icarasia.social.socialmediaapp.Posts
 
+import android.databinding.ObservableArrayList
+import android.util.Log
 import com.icarasia.social.socialmediaapp.API.DataSourece
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.extensions.onObservData
 
 class PostsViewModel(val view: PostViewContract, val repo : DataSourece)  : PostsRecyclerViewAdapter.Criteria{
+
+
+
+    val totalCount = 500
+    var page = 1
+    private var itemsPerPage = 20
+    var posts = ObservableArrayList<Post>()
+
 
     override fun isOK(data: Post): Boolean {
         (view.getCurrentUser())?.let {
@@ -12,10 +22,6 @@ class PostsViewModel(val view: PostViewContract, val repo : DataSourece)  : Post
         }
         return false
     }
-
-    val totalCount = 500
-    var page = 1
-    private var itemsPerPage = 20
 
     fun callpost(page : Int, pageCount:Int) {
         if(page>0){
@@ -51,8 +57,9 @@ class PostsViewModel(val view: PostViewContract, val repo : DataSourece)  : Post
     }
 
     fun addPost(){
+        Log.d("addPost####","called ")
         with(view){
-            if (view.logedinFlag) {
+            if (logedinFlag) {
                 showNewPostAlertDialoge()
             } else {
                 showLoginAlertDialoge()

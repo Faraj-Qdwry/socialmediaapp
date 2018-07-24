@@ -16,8 +16,8 @@ object ValusesInjector {
 
     fun inject(loginActivity: LoginActivity) {
         with(loginActivity){
-            loginPresenter = LoginViewModel(loginActivity, RepoDataSource)
-            mBinder.loginViewModel = loginPresenter
+            loginViewModel = LoginViewModel(loginActivity, RepoDataSource)
+            mBinder.loginViewModel = loginViewModel
         }
     }
 
@@ -37,7 +37,7 @@ object ValusesInjector {
 
     fun inject(pFragment: PostsFragment) {
         with(pFragment){
-            postsPresenter = PostsViewModel(this, RepoDataSource)
+            postsViewModel = PostsViewModel(this, RepoDataSource)
         }
     }
 

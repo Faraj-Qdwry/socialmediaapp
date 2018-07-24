@@ -8,6 +8,6 @@ data class Post(
     val body: String = ""
 ) {
     fun isFull(): Boolean {
-        return userId != 0 &&title.isNotEmpty()&&title.isNotBlank()&&body.isNotBlank()&&body.isNotEmpty()
+        return userId != 0 &&title.isNotBlank()&&body.isNotBlank()
     }
 }

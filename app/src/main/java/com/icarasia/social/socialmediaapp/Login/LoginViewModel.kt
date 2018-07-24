@@ -13,15 +13,14 @@ import io.reactivex.functions.Function4
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
-class LoginViewModel(private val viewInstance: viewContract, private val repo: DataSourece) : BaseObservable() {
+class LoginViewModel(private val viewInstance: viewContract, private val repo: DataSourece)
+    : BaseObservable() {
 
 
     @get:Bindable
     var userName: String by Delegates.observable("") { _, _, _ -> notifyPropertyChanged(BR.loginViewModel) }
 
-
     lateinit var user: User
-
 
     fun checkUserLogedIn() {
         if (viewInstance.userLogedIn())
@@ -63,11 +62,9 @@ class LoginViewModel(private val viewInstance: viewContract, private val repo: D
 
     fun callTodosAndAlbums(id: Int) {
         Observable.zip(repo.getTodos(id), repo.getAlbums(id),
-
                 BiFunction< ArrayList<Any>, ArrayList<Any>, Pair< ArrayList<Any>, ArrayList<Any> > > {
                     t1, t2 -> Pair(t1, t2)
                 }
-
         ).onObservData {
                     with(user) {
                         todosNumber = it.first.size
@@ -75,21 +72,6 @@ class LoginViewModel(private val viewInstance: viewContract, private val repo: D
                         saveUser(this)
                     }
                 }
-
-
-
-//        Observable.merge(repo.getTodos(id), repo.getAlbums(id),
-//
-//            BiFunction< ArrayList<Any>, ArrayList<Any>, Pair< ArrayList<Any>, ArrayList<Any> > > {
-//                t1, t2 -> Pair(t1, t2)
-//            }
-//
-//            ).onObservData {
-//
-//            }
-
-
-
     }
 
     fun saveUser(user: User?) {

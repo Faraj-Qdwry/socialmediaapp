@@ -13,7 +13,7 @@ class LoginViewModelTest {
 
     lateinit var repo: DataSourece
     lateinit var view: viewContract
-    lateinit var loginPresenter: LoginViewModel
+    lateinit var loginViewModel: LoginViewModel
     lateinit var listofAny: ArrayList<Any>
     lateinit var listofUsers: ArrayList<User>
 
@@ -32,14 +32,14 @@ class LoginViewModelTest {
 
         repo = mock(DataSourece::class.java)
         view = mock(viewContract::class.java)
-        loginPresenter = LoginViewModel(view, repo)
+        loginViewModel = LoginViewModel(view, repo)
     }
 
 
 
     @Test
     fun whenUserReceivedEmpty() {
-        loginPresenter.whenUserReceived(ArrayList())
+        loginViewModel.whenUserReceived(ArrayList())
 
         verify(view).showErrorMessage()
         verify(view).hidLoadingDialoge()
@@ -51,7 +51,7 @@ class LoginViewModelTest {
         `when`(repo.getAlbums(1)).thenReturn(Observable.fromArray(listofAny))
         `when`(repo.getTodos(1)).thenReturn(Observable.fromArray(listofAny))
 
-        loginPresenter.whenUserReceived(listofUsers)
+        loginViewModel.whenUserReceived(listofUsers)
 
         verify(repo).getAlbums(1)
         verify(repo).getTodos(1)
@@ -64,11 +64,11 @@ class LoginViewModelTest {
         `when`(repo.getAlbums(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
         `when`(repo.getTodos(ArgumentMatchers.anyInt())).thenReturn(Observable.fromArray(listofAny))
 
-        loginPresenter.user = User(1)
-        loginPresenter.callTodosAndAlbums(1)
+        loginViewModel.user = User(1)
+        loginViewModel.callTodosAndAlbums(1)
 
-        assert(loginPresenter.user.todosNumber != 0 )
-        assert(loginPresenter.user.albumsNumber != 0 )
+        assert(loginViewModel.user.todosNumber != 0 )
+        assert(loginViewModel.user.albumsNumber != 0 )
 
         verify(repo).getAlbums(ArgumentMatchers.anyInt())
         verify(repo).getTodos(ArgumentMatchers.anyInt())
@@ -79,7 +79,7 @@ class LoginViewModelTest {
     @Test
     fun checkUserLogedInWhenISlogedIn() {
         `when`(view.userLogedIn()).thenReturn(true)
-        loginPresenter.checkUserLogedIn()
+        loginViewModel.checkUserLogedIn()
 
         verify(view).toPostsActivity()
     }
@@ -87,7 +87,7 @@ class LoginViewModelTest {
     @Test
     fun checkUserLogedInWhenISNOTlogedIn() {
         `when`(view.userLogedIn()).thenReturn(false)
-        loginPresenter.checkUserLogedIn()
+        loginViewModel.checkUserLogedIn()
 
         //verify(view).loginButtunSetUp()
     }
@@ -96,7 +96,7 @@ class LoginViewModelTest {
 
     @Test
     fun saveUserEmpty() {
-        loginPresenter.saveUser(null)
+        loginViewModel.saveUser(null)
 
         verify(view, never()).saveUser(User())
         verify(view, never()).toPostsActivity()
@@ -104,7 +104,7 @@ class LoginViewModelTest {
 
     @Test
     fun saveUserNOTEmpty() {
-        loginPresenter.saveUser(User())
+        loginViewModel.saveUser(User())
 
         verify(view).saveUser(User())
         verify(view).toPostsActivity()
@@ -120,7 +120,7 @@ class LoginViewModelTest {
         `when`(view.internetStatuse).thenReturn(true)
         `when`(repo.getUser("Bret")).thenReturn(Observable.fromArray(listofUsers))
 
-        loginPresenter.CallForUser("Bret")
+        loginViewModel.CallForUser("Bret")
 
         verify(view, never()).showErrorMessage()
     }
@@ -129,14 +129,14 @@ class LoginViewModelTest {
     fun CallForUserNotEmptyWithNoInternet() {
         `when`(view.internetStatuse).thenReturn(false)
 
-        loginPresenter.CallForUser("Bret")
+        loginViewModel.CallForUser("Bret")
 
         verify(view).showErrorMessage()
     }
 
     @Test
     fun CallForUserEmpty() {
-        loginPresenter.CallForUser("")
+        loginViewModel.CallForUser("")
 
         verify(view).showErrorMessage()
         verify(repo, never()).getUser(ArgumentMatchers.anyString())

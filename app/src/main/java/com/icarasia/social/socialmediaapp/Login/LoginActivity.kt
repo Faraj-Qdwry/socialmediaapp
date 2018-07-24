@@ -22,7 +22,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
     override var internetStatuse: Boolean = false
     
-    lateinit var loginPresenter : LoginViewModel
+    lateinit var loginViewModel : LoginViewModel
     lateinit var mBinder :ActivityMainBinding
 
     var countingIdlingResource = CountingIdlingResource("LOGINIDIL")
@@ -34,7 +34,7 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
 
         ValusesInjector.inject(this)
 
-        loginPresenter.checkUserLogedIn()
+        loginViewModel.checkUserLogedIn()
     }
 
     override fun userLogedIn(): Boolean {
@@ -82,22 +82,17 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
     }
 
     @SuppressLint("ShowToast")
-    override fun saveUser(user: User){
+    override fun saveUser(user: User)=
         this.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE)
                 .edit().putString("User", Gson().toJson(user)).apply()
-    }
 
     companion object {
-        fun start( context : Context){
-            context.startActivity(Intent(context,LoginActivity::class.java))
-        }
+        fun start( context : Context) = context.startActivity(Intent(context,LoginActivity::class.java))
 
         fun getUserlogedIn(context: Context): User? =
                 Gson().fromJson<User>(context.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE).getString("User",""), User::class.java)
 
-        fun erraseUserDetails(pref: SharedPreferences) {
-            pref.edit().putString("User","").apply()
-        }
+        fun erraseUserDetails(pref: SharedPreferences) = pref.edit().putString("User","").apply()
     }
 
 }

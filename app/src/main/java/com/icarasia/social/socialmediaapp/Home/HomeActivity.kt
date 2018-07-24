@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -120,16 +119,15 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
             }
             R.id.delete -> {
                 Log.d("position At $$$$$  ",fragmentPost.curruntAdapterPosition.toString())
-
-                with(fragmentPost){
-                    recyclerView.findViewHolderForAdapterPosition(curruntAdapterPosition)
-                            ?.itemView!!.performLongClick()
-                }
+                fragmentPost.trigerDeletionMode()
+//                with(fragmentPost){
+//                    //recyclerView.findViewHolderForAdapterPosition(curruntAdapterPosition)?.itemView?.performLongClick()
+//                }
             }
             R.id.clearRecyclerData ->{
                 fragmentPost.postsAdapter.clear()
-                fragmentPost.postsPresenter.callpost(fragmentPost.postsPresenter.getCurrentPage()
-                        ,fragmentPost.postsPresenter.getItemsPerPageCount())
+                fragmentPost.postsViewModel.callpost(fragmentPost.postsViewModel.getCurrentPage()
+                        ,fragmentPost.postsViewModel.getItemsPerPageCount())
             }
         }
 

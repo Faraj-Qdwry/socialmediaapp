@@ -40,11 +40,11 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     lateinit var deletionGroupRelativeLayout: RelativeLayout
     lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
-    lateinit var postsPresenter : PostsViewModel
+    lateinit var postsViewModel : PostsViewModel
     val postsAdapter = PostsRecyclerViewAdapter()
     var curruntAdapterPosition = 0
 
-    var dataOBlist = ObservableArrayList<Post>()
+
     lateinit var mBinder : FragmentPostsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +59,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
 
         mBinder = DataBindingUtil.inflate(inflater,R.layout.fragment_posts,container,false)
 
-        mBinder.posts = dataOBlist
+        mBinder.postViewModel = this.postsViewModel
         //var view = inflater.inflate(R.layout.fragment_posts, container, false)
 
         with(mBinder.root) {
@@ -85,26 +85,28 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
         hideProgress()
 
         postsAdapter.getPaginationObservable().subscribe {
-            if (AddapterItemCount() < postsPresenter.totalCount){
-            postsPresenter.page++
-            postsPresenter.callpost(postsPresenter.getCurrentPage(), postsPresenter.getItemsPerPageCount())
+            if (AddapterItemCount() < postsViewModel.totalCount){
+            postsViewModel.page++
+            postsViewModel.callpost(postsViewModel.getCurrentPage(), postsViewModel.getItemsPerPageCount())
         } }
 
-        postsAdapter.getClickObservable().subscribe { postsPresenter.clickHandle(it.first,it.second) }
+        postsAdapter.getClickObservable().subscribe { postsViewModel.clickHandle(it.first,it.second) }
 
         postsAdapter.getPositionObservable().subscribe { curruntAdapterPosition = it }
 
     }
 
     override fun addSinglePostToAddapter(post: Post) {
-        dataOBlist.add(post)
+        postsViewModel.posts.add(post)
+        //dataOBlist.add(post)
         //postsAdapter.insert(post,0)
         snakeMessage("Your post was added Successfully with the ID : ${post.id}", this.view!!)
     }
 
     override fun addPostsToAddapter(posts: ArrayList<Post>) {
+        postsViewModel.posts.addAll(posts)
         //postsAdapter.addData(posts)
-        dataOBlist.addAll(posts)
+        //dataOBlist.addAll(posts)
     }
 
     override fun deletionConfirmingMessage() {
@@ -122,7 +124,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     override fun onInternetConnected() {
         snakBar.dismiss()
         Log.d("PostsFragment", "TRUE******************************************************")
-        postsPresenter.callpost(postsPresenter.getCurrentPage(), postsPresenter.getItemsPerPageCount())
+        postsViewModel.callpost(postsViewModel.getCurrentPage(), postsViewModel.getItemsPerPageCount())
     }
 
     override fun onInternetDisconnected() {
@@ -138,7 +140,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     }
     private fun setUpdeletConfirmation(){
         confirmDelete.setOnClickListener {
-            postsAdapter.remove(postsPresenter.postsToremove(postsAdapter.getSelectedData()))
+            postsAdapter.remove(postsViewModel.postsToremove(postsAdapter.getSelectedData()))
             postsAdapter.disableSelectionMode()
             dismissDeletionGroup()
         }
@@ -159,7 +161,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     override fun trigerDeletionMode() {
         with(getCurrentUser()){
             this?.let {
-                postsAdapter.enableSelectionMode(object : PostsRecyclerViewAdapter.Criteria by postsPresenter{})
+                postsAdapter.enableSelectionMode(object : PostsRecyclerViewAdapter.Criteria by postsViewModel{})
                 shouwUpDeletionGroup()
             }
         }
@@ -203,7 +205,7 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
                 .setView(poster)
                 .setPositiveButton("Post") { _, _ ->
                     if (!title.text.isNullOrBlank() && !body.text.isNullOrEmpty()) {
-                        postsPresenter.sendApost(Post(userId = user.id,title = title.text.toString(),
+                        postsViewModel.sendApost(Post(userId = user.id,title = title.text.toString(),
                                 body = body.text.toString()))
                     } else {
                         snakeMessage("Empty Post", view)
