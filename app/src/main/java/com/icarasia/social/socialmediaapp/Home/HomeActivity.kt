@@ -12,22 +12,27 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
+import com.icarasia.social.socialmediaapp.Dagger2.daggerHomeActivity.DaggerHomeActivityComponent
+import com.icarasia.social.socialmediaapp.Dagger2.daggerHomeActivity.HomeActivityModule
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Posts.PostsFragment
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsFragment
-import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.content_navigation.*
 import kotlinx.android.synthetic.main.home_navigation_avtivity.*
+import javax.inject.Inject
 
 class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
         NavigationView.OnNavigationItemSelectedListener {
 
-    lateinit var fragmentPost: PostsFragment
+    @Inject
+    lateinit var fragmentPost : PostsFragment
+    @Inject
     lateinit var fragmentUserDetails: UserDetailsFragment
+//    @Inject
     lateinit var toggle : ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +40,10 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
         setContentView(R.layout.home_navigation_avtivity)
         setSupportActionBar(toolbar)
 
-        ValusesInjector.inject(this)
+        DaggerHomeActivityComponent.builder()
+                .homeActivityModule(HomeActivityModule())
+                .build()
+                .inject(this)
 
         toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -51,8 +59,8 @@ class HomeActivity : SocialMediaNetworkActivity((R.id.drawer_layout)),
         navigationNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         LoginActivity.getUserlogedIn(this)?.let {
-                setUpheader(it)
-            }
+            setUpheader(it)
+        }
 
     }
 

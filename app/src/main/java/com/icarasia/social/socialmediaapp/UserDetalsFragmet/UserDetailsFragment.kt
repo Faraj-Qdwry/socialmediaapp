@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
-import android.os.Binder
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
@@ -14,13 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.icarasia.social.socialmediaapp.BR
 
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.Login.*
 import com.icarasia.social.socialmediaapp.databinding.FragmentUserDetailsBinding
-import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
 
 class UserDetailsFragment : Fragment() , UserDetailsContract {
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.databinding.ObservableArrayList
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
@@ -22,7 +21,7 @@ import com.icarasia.social.socialmediaapp.Comments.CommentsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 import com.icarasia.social.socialmediaapp.databinding.FragmentPostsBinding
 

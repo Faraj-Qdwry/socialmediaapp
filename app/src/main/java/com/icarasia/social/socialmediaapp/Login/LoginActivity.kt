@@ -11,7 +11,7 @@ import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
-import com.icarasia.social.socialmediaapp.extensions.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
 import com.icarasia.social.socialmediaapp.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -26,7 +26,6 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
     lateinit var mBinder :ActivityMainBinding
 
     var countingIdlingResource = CountingIdlingResource("LOGINIDIL")
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,4 +1,4 @@
-package com.icarasia.social.socialmediaapp.extensions
+package com.icarasia.social.socialmediaapp.Dagger2
 
 import com.icarasia.social.socialmediaapp.API.RepoDataSource
 import com.icarasia.social.socialmediaapp.Comments.CommentsViewModel
@@ -18,13 +18,6 @@ object ValusesInjector {
         with(loginActivity){
             loginViewModel = LoginViewModel(loginActivity, RepoDataSource)
             mBinder.loginViewModel = loginViewModel
-        }
-    }
-
-    fun inject(homeActivity: HomeActivity) {
-        with(homeActivity){
-            fragmentPost = PostsFragment.newInstance()
-            fragmentUserDetails = UserDetailsFragment.newInstance()
         }
     }
 

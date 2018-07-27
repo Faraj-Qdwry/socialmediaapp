@@ -9,7 +9,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class RemoteDataSource : DataSourece {
+open class RemoteDataSource : DataSourece {
 
     private val retrofit = Retrofit.Builder().apply {
         baseUrl("https://jsonplaceholder.typicode.com")

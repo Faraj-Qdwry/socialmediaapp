@@ -1,5 +1,6 @@
 package com.icarasia.social.socialmediaapp.Login
 
+import android.content.Context
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.*
@@ -30,16 +31,19 @@ class LoginActivityTest {
 
     @Before
     fun setUp() {
-
     }
 
     @Test
     fun espressoClikesOnSkip() {
+        LoginActivity.erraseUserDetails(activityTestRule.activity.baseContext.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE))
+
         onView(withId(skipText)).perform(click())
     }
 
     @Test
     fun logginwithemptyusername(){
+        LoginActivity.erraseUserDetails(activityTestRule.activity.baseContext.getSharedPreferences(sharedPreferencesName,Context.MODE_PRIVATE))
+
         onView(withId(nameEditText)).perform(typeText(""))
         onView(withId(loginButton)).perform(click())
         onView(withId(nameEditText)).check(matches(ViewMatchers.hasErrorText(activityTestRule.activity.getString(R.string.nameError))))
@@ -47,14 +51,16 @@ class LoginActivityTest {
 
     @Test
     fun logginwithFullusername() {
-        registerIdlingResources(activityTestRule.activity.countingIdlingResource)
+        LoginActivity.getUserlogedIn(activityTestRule.activity.baseContext)?.let {
+            registerIdlingResources(activityTestRule.activity.countingIdlingResource)
 
-        onView(withId(nameEditText)).perform(typeText("Bret"))
-        onView(withId(mainLoginActivity)).perform(ViewActions.closeSoftKeyboard())
-        onView(withId(loginButton)).perform(click())
+            onView(withId(nameEditText)).perform(typeText("Bret"))
+            onView(withId(mainLoginActivity)).perform(ViewActions.closeSoftKeyboard())
+            onView(withId(loginButton)).perform(click())
 
-        onView(withId(R.id.addNewPost))
-                .check(matches(isDisplayed()))
+            onView(withId(R.id.addNewPost))
+                    .check(matches(isDisplayed()))
+        }
     }
 
 }
