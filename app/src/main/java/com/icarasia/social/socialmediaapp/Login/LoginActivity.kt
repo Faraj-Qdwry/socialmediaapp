@@ -11,9 +11,11 @@ import com.google.gson.Gson
 import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
-import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.daggerLoginActivity.DaggerLoginActivityComponent
+import com.icarasia.social.socialmediaapp.Dagger2.daggerLoginActivity.LoginActivityModule
 import com.icarasia.social.socialmediaapp.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 const val sharedPreferencesName : String = "UserDetails"
 
@@ -21,8 +23,10 @@ const val sharedPreferencesName : String = "UserDetails"
 class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewContract {
 
     override var internetStatuse: Boolean = false
-    
+
+    @Inject
     lateinit var loginViewModel : LoginViewModel
+
     lateinit var mBinder :ActivityMainBinding
 
     var countingIdlingResource = CountingIdlingResource("LOGINIDIL")
@@ -31,7 +35,13 @@ class LoginActivity : SocialMediaNetworkActivity(R.id.mainLoginActivity) , viewC
         super.onCreate(savedInstanceState)
         mBinder = DataBindingUtil.setContentView(this,R.layout.activity_main)
 
-        ValusesInjector.inject(this)
+        //ValusesInjector.inject(this)
+        DaggerLoginActivityComponent
+                .builder()
+                .loginActivityModule(LoginActivityModule(this))
+                .build()
+
+        mBinder.loginViewModel = loginViewModel
 
         loginViewModel.checkUserLogedIn()
     }

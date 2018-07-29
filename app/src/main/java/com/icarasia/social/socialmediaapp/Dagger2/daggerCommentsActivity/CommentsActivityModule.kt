@@ -13,8 +13,8 @@ import dagger.Provides
 class CommentsActivityModule {
     private val context : CommentsViewCotract
 
-    constructor(contextMenu: CommentsActivityView) {
-        this.context = contextMenu
+    constructor(activity : CommentsActivityView) {
+        this.context = activity
     }
 
     @Provides

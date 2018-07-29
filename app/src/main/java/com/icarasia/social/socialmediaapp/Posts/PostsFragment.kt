@@ -21,9 +21,11 @@ import com.icarasia.social.socialmediaapp.Comments.CommentsActivityView
 import com.icarasia.social.socialmediaapp.Login.User
 import com.icarasia.social.socialmediaapp.Login.LoginActivity
 import com.icarasia.social.socialmediaapp.R
-import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.daggerPostFragmet.DaggerPostFragmetComponent
+import com.icarasia.social.socialmediaapp.Dagger2.daggerPostFragmet.PostFragmetModule
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkFragment
 import com.icarasia.social.socialmediaapp.databinding.FragmentPostsBinding
+import javax.inject.Inject
 
 class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostViewContract {
 
@@ -39,11 +41,11 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
     lateinit var deletionGroupRelativeLayout: RelativeLayout
     lateinit var selectionCounterTextView: TextView
     lateinit var recyclerView: RecyclerView
-    lateinit var postsViewModel : PostsViewModel
     val postsAdapter = PostsRecyclerViewAdapter()
     var curruntAdapterPosition = 0
 
-
+    @Inject
+    lateinit var postsViewModel : PostsViewModel
     lateinit var mBinder : FragmentPostsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +56,10 @@ class  PostsFragment : SocialMediaNetworkFragment(R.id.drawer_layout) , PostView
             logedinFlag = true
         }
 
-        ValusesInjector.inject(this@PostsFragment)
+        DaggerPostFragmetComponent
+                .builder()
+                .postFragmetModule(PostFragmetModule(this))
+                .build()
 
         mBinder = DataBindingUtil.inflate(inflater,R.layout.fragment_posts,container,false)
 

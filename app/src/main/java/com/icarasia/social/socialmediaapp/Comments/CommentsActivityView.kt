@@ -10,7 +10,6 @@ import android.view.View
 import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.abstracts.SocialMediaNetworkActivity
 import com.icarasia.social.socialmediaapp.databinding.ActivityPostCommintsBinding
-import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
 import com.icarasia.social.socialmediaapp.Dagger2.daggerCommentsActivity.CommentsActivityModule
 import com.icarasia.social.socialmediaapp.Dagger2.daggerCommentsActivity.DaggerCommentsActivityComponent
 import kotlinx.android.synthetic.main.activity_post_commints.*

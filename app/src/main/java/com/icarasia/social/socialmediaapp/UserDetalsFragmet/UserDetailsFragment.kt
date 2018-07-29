@@ -18,12 +18,15 @@ import com.icarasia.social.socialmediaapp.R
 import com.icarasia.social.socialmediaapp.Home.HomeActivity
 import com.icarasia.social.socialmediaapp.Login.*
 import com.icarasia.social.socialmediaapp.databinding.FragmentUserDetailsBinding
-import com.icarasia.social.socialmediaapp.Dagger2.ValusesInjector
+import com.icarasia.social.socialmediaapp.Dagger2.daggerUserDetailsFragment.DaggerUserDetailsFragmentComponent
+import com.icarasia.social.socialmediaapp.Dagger2.daggerUserDetailsFragment.UserDetailsMoule
+import javax.inject.Inject
 
 class UserDetailsFragment : Fragment() , UserDetailsContract {
 
     lateinit var logout : Button
     lateinit var login : Button
+    @Inject
     lateinit var userDetailsViewModel: UserDetailsViewModel
     lateinit var mBinder : FragmentUserDetailsBinding
     private val data: ObservableArrayList<UserDetails> = ObservableArrayList()
@@ -33,7 +36,13 @@ class UserDetailsFragment : Fragment() , UserDetailsContract {
         mBinder = DataBindingUtil.inflate(inflater,R.layout.fragment_user_details,container,false)
         with(mBinder.root){
 
-            ValusesInjector.inject(this@UserDetailsFragment)
+            //ValusesInjector.inject(this@UserDetailsFragment)
+            DaggerUserDetailsFragmentComponent
+                    .builder()
+                    .userDetailsMoule(UserDetailsMoule(this@UserDetailsFragment))
+                    .build()
+
+            mBinder.userDetalsViewModel = userDetailsViewModel
 
             with(getUser()){
                 this?.let {
