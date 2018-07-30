@@ -4,7 +4,7 @@
     <data>
         <variable
             name="loginViewModel"
-            type="com.icarasia.social.socialmediaapp.Login.LoginViewModel"/>
+            type="com.icarasia.social.socialmediaapp.loginActivity.LoginViewModel"/>
 
     </data>
 <android.support.constraint.ConstraintLayout
@@ -15,7 +15,7 @@
     android:layout_height="match_parent"
     android:id="@+id/mainLoginActivity"
     android:background="@drawable/main_greadeint_background"
-    tools:context=".Login.LoginActivity">
+    tools:context=".loginActivity.LoginActivity">
 
     <EditText
         android:id="@+id/nameEditText"

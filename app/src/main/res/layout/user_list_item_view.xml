@@ -3,7 +3,7 @@
     <data>
         <variable
             name="userD"
-            type="com.icarasia.social.socialmediaapp.Login.UserDetails"/>
+            type="com.icarasia.social.socialmediaapp.loginActivity.UserDetails"/>
     </data>
 <LinearLayout
     android:orientation="vertical"

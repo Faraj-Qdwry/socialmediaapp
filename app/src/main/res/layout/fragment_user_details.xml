@@ -3,11 +3,11 @@
     <data>
         <variable
             name="userDetalsViewModel"
-            type="com.icarasia.social.socialmediaapp.UserDetalsFragmet.UserDetailsViewModel"/>
+            type="com.icarasia.social.socialmediaapp.userDetailsFragmet.UserDetailsViewModel"/>
 
         <variable
             name="userList"
-            type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.Login.UserDetails&gt;"/>
+            type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.loginActivity.UserDetails&gt;"/>
     </data>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,7 +16,7 @@
     android:layout_height="match_parent"
     style="@style/AppTheme.NoActionBar"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".UserDetalsFragmet.UserDetailsFragment">
+    tools:context=".userDetailsFragmet.UserDetailsFragment">
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:id="@+id/loginButtonFragment"
-        android:textColor="@color/black"
+        android:textColor="#FFFFFF"
         android:textSize="26dp"
         android:onClick="@{()->userDetalsViewModel.loginUser()}"
         android:background="@color/colorAccent"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Logout"
             android:id="@+id/logout"
-            android:textColor="@color/black"
+            android:textColor="#FFFFFF"
             android:textSize="26dp"
             android:background="@color/colorAccent"
             android:layout_margin="10dp"

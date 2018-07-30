@@ -7,10 +7,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import com.icarasia.social.socialmediaapp.API.DataSourece
-import com.icarasia.social.socialmediaapp.API.RemoteDataSource
 import com.icarasia.social.socialmediaapp.extensions.isNetworkAvailable
-import io.reactivex.disposables.CompositeDisposable
 
 abstract class SocialMediaNetworkActivity(private val view: Int) : SocialMediaActivity() {
 

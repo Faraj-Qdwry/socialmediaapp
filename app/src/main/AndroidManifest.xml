@@ -9,19 +9,20 @@
 
 
     <application
+        android:name=".application.App"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login.LoginActivity"/>
-        <activity android:name=".Comments.CommentsActivityView" />
+        <activity android:name=".loginActivity.LoginActivity"/>
+        <activity android:name=".commentsActivity.CommentsActivity" />
         <activity
-            android:name=".Home.HomeActivity"
+            android:name=".homeActivity.HomeActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Splash.SplashScreeActivity">
+        <activity android:name=".splashScreen.SplashScreeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

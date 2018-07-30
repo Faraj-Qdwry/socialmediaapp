@@ -4,7 +4,7 @@
     <data>
         <variable
             name="itemView"
-            type="com.icarasia.social.socialmediaapp.Comments.Comment"/>
+            type="com.icarasia.social.socialmediaapp.commentsActivity.Comment"/>
     </data>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="postViewModel"
-            type="com.icarasia.social.socialmediaapp.Posts.PostsViewModel"/>
+            type="com.icarasia.social.socialmediaapp.postsFragment.PostsViewModel"/>
         <!--<variable-->
             <!--name="posts"-->
             <!--type="android.databinding.ObservableArrayList&lt;com.icarasia.social.socialmediaapp.Posts.Post&gt;"/>-->
@@ -12,7 +12,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Posts.PostsFragment">
+    tools:context=".postsFragment.PostsFragment">
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,7 +20,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Posts.PostsActivity">
+        tools:context=".postsFragment.PostsActivity">
 
         <!--xmlns:bind="http://schemas.android.com/tools"-->
 

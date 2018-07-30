@@ -1,0 +1,58 @@
+package com.icarasia.social.socialmediaapp.dataSource
+
+import com.icarasia.social.socialmediaapp.commentsActivity.Comment
+import com.icarasia.social.socialmediaapp.postsFragment.Post
+import com.icarasia.social.socialmediaapp.loginActivity.User
+import io.reactivex.Observable
+import io.reactivex.Observable.*
+import io.reactivex.subjects.BehaviorSubject
+
+open class LocalDataSource : DataSourece {
+
+    private var map: HashMap<String, Any> = HashMap()
+
+    val postsSubject = BehaviorSubject.create<ArrayList<Post>>()
+    val commentsSubject = BehaviorSubject.create<ArrayList<Comment>>()
+
+    fun contains(key: String): Boolean = map.containsKey(key)
+
+    fun cashThis(key: String, arr: Any) {
+        map.put(key, arr)
+    }
+
+    fun clearCash() = map.clear()
+
+//    fun setMap(inMap : HashMap<String,Any>){
+//        this.map = inMap
+//    }
+
+        override fun deletePosts(postsId: Int): Observable<Post> {
+            return create<Post> { }
+        }
+
+        override fun createPost(post: Post): Observable<Post> {
+            return create<Post> { }
+        }
+
+        override fun getCommetsForPost(postId: Int): Observable<ArrayList<Comment>> {
+            commentsSubject.onNext(map.get("$postId") as ArrayList<Comment>)
+            return commentsSubject as Observable<ArrayList<Comment>>
+        }
+
+        override fun getPosts(page: Int, pageCount: Int): Observable<ArrayList<Post>> {
+            postsSubject.onNext(map.get("$page$pageCount") as ArrayList<Post>)
+            return postsSubject as Observable<ArrayList<Post>>
+        }
+
+        override fun getUser(username: String): Observable<List<User>> {
+            return create<List<User>> { }
+        }
+
+        override fun getAlbums(id: Int): Observable<ArrayList<Any>> {
+            return create<ArrayList<Any>> { }
+        }
+
+        override fun getTodos(id: Int): Observable<ArrayList<Any>> {
+            return create<ArrayList<Any>> { }
+        }
+}
